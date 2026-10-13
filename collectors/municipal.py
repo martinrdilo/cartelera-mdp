@@ -49,11 +49,14 @@ _SEGMENT_RE = re.compile(
 
 
 def parse_schedule_segments(schedule_text):
-    """Pair each desde/hasta range with the weekday names that follow it."""
+    """Pair each desde/hasta range with the weekday names that follow it.
+
+    Weekdays come back as a sorted list so raw records stay JSON-ready.
+    """
     segments = []
     for match in _SEGMENT_RE.finditer(schedule_text or ""):
         desde, hasta, tail = match.groups()
-        segments.append({"desde": desde, "hasta": hasta, "weekdays": parse_weekdays(tail)})
+        segments.append({"desde": desde, "hasta": hasta, "weekdays": sorted(parse_weekdays(tail))})
     return segments
 
 
@@ -212,7 +215,9 @@ def normalize(records):
             start = parse_ddmmyyyy(item["desde"])
             end = parse_ddmmyyyy(item["hasta"]) or start
             if start and end:
-                segments.append({"start": start, "end": end, "weekdays": item.get("weekdays") or set()})
+                segments.append(
+                    {"start": start, "end": end, "weekdays": set(item.get("weekdays") or [])}
+                )
         starts = [segment["start"] for segment in segments]
         ends = [segment["end"] for segment in segments]
         occurrences, recurrence_unknown = expand_segments(segments)

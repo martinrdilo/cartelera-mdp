@@ -40,15 +40,22 @@ class TestParseScheduleSegments:
             ("23/10/2026", "23/10/2026"),
             ("27/11/2026", "29/11/2026"),
         ]
-        assert segments[0]["weekdays"] == {4}
-        assert segments[1]["weekdays"] == {4, 5, 6}
-        assert segments[2]["weekdays"] == {4}
+        assert segments[0]["weekdays"] == [4]
+        assert segments[1]["weekdays"] == [4, 5, 6]
+        assert segments[2]["weekdays"] == [4]
 
     def test_no_dates_returns_empty(self):
         assert parse_schedule_segments("Horarios\na confirmar") == []
 
     def test_empty_text_returns_empty(self):
         assert parse_schedule_segments("") == []
+
+    def test_segments_are_json_ready_for_raw_evidence(self):
+        # data/raw/<source>.json stores the segments verbatim.
+        import json
+
+        segments = parse_schedule_segments(MARDELCANTO_SCHEDULE)
+        assert json.loads(json.dumps(segments))[1]["weekdays"] == [4, 5, 6]
 
 
 class TestNormalizeOccurrences:
