@@ -38,8 +38,8 @@ No existe una cartelera music-first de MDP con links de compra. Antes de inverti
 - [x] **T2** — Collector MuchTicket (Articket + CultuTickets; filtro "Mar del Plata" en `lugar`).
 - [x] **T3** — Collector ClubTri (HTML; "Mié 14 de Octubre" → ISO con inferencia de año).
 - [x] **T4** — Normalizador + esquema común (tests primero en parsing de fechas).
-- [ ] **T5** — Dedupe (fingerprint venue+fecha + similitud de título / match por slug de compra).
-- [ ] **T6** — REPORT.md (cobertura, solapamientos, limitaciones) + README de uso.
+- [x] **T5** — Dedupe (fingerprint venue+fecha + similitud de título / match por slug de compra).
+- [x] **T6** — REPORT.md (cobertura, solapamientos, limitaciones) + README de uso.
 
 ## Verificación
 
@@ -65,3 +65,9 @@ Heurística ~400–600 líneas autoradas, sin UI. Spike acotado.
 **T4 — Normalizador + esquema.** `lib/schema.py` (`Event`, 18 campos) y `lib/dates.py` (dd/mm/yyyy, español sin año con inferencia, extracción de hora). TDD: tests primero (`tests/test_dates.py`) con RED observado (`ModuleNotFoundError`), luego implementación → GREEN. `tests/conftest.py` agrega el root al `sys.path`.
 
 **Verificación parcial (al cierre de T1–T4):** `.venv/bin/python -m pytest tests/ -q` → `42 passed`. Los collectors se validaron con la corrida live completa (ver T5/T6).
+
+**T5 — Dedupe.** `lib/dedupe.py` + `tests/test_dedupe.py` (TDD, RED observado en los tests de alias y de prefijos de fecha). Corrida live: **41 clusters** (91 eventos involucrados, 197 → 147 únicos); 11 por slug exacto ClubTri↔Articket, 9 triples municipal+articket+clubtri. Umbral fuzzy 85 tuneado con el corpus: 78.3 separa eventos distintos el mismo día, y el falso positivo detectado ("Oktubre MdP") se eliminó limpiando prefijos de fecha en títulos de CultuTickets (además recuperó "Una Obra Redonda"). Alias de venues (Brew House, Abbey Road, Polideportivo, Villa Victoria) como parche documentado hasta el canónico.
+
+**T6 — Reporte + README.** `REPORT.md` con números reales (197 crudos/normalizados, 147 únicos, 41 clusters, inventario de 38 lugares crudos) y limitaciones (multi-fecha, precios nulos, horas discrepantes, fecha 2029 typo de la fuente). `README.md` con el camino rápido (venv → pytest → run_spike).
+
+**Verificación final:** `.venv/bin/python -m pytest tests/ -q` → `42 passed`; `.venv/bin/python run_spike.py` → `TOTAL normalized=197 unique=147` + `duplicate clusters: 41`.

@@ -1,0 +1,2480 @@
+{
+  "total_normalized": 197,
+  "unique_events": 147,
+  "duplicate_clusters": 41,
+  "events_in_clusters": 91,
+  "clusters": [
+    {
+      "venue_date": "club tri|2026-11-20",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49411",
+          "title": "An Espil",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-11-20",
+          "date_end": "2026-11-20",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$12000, en venta en articket.com.ar",
+          "price_min": 12000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49411_ACT-AN.ESPIL.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "AN-ESPIL-EN-CLUB-TRI",
+          "title": "AN ESPIL EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-20",
+          "date_end": "2026-11-20",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 12000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/post_mardelpla.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "682",
+          "title": "AN ESPIL EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-11-20",
+          "date_end": "2026-11-20",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/682/thumb0000.jpg?v=1788556862",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49411",
+          "b": "articket:AN-ESPIL-EN-CLUB-TRI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49411",
+          "b": "clubtri:682",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:AN-ESPIL-EN-CLUB-TRI",
+          "b": "clubtri:682",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:an-espil-en-club-tri"
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-30",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "45161",
+          "title": "Attitude",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$20000 en www.cultutickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45161_ACT-ATTITUDE2.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "ATTITUDE-MDP",
+          "title": "ATTITUDE MDP",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/ATTITUDE-MDP/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_XmrHHrH.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:45161",
+          "b": "cultutickets:ATTITUDE-MDP",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-11-12",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "47292",
+          "title": "Barbi Recanati",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-11-12",
+          "date_end": "2026-11-12",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Desde $14000; en venta en www.articket.com.ar",
+          "price_min": 14000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47292_ACT-BARBI.R.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "BARBI-RECANATI-UNICO-Y-NUESTRO",
+          "title": "BARBI RECANATI PRESENTA - UNICO Y NUESTRO EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-12",
+          "date_end": "2026-11-12",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 14000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/BARBI-RECANATI-UNICO-Y-NUESTRO/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/BRB.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "681",
+          "title": "BARBI RECANATI PRESENTA - UNICO Y NUESTRO",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-11-12",
+          "date_end": "2026-11-12",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/BARBI-RECANATI-UNICO-Y-NUESTRO/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/681/thumb0000.jpg?v=1788394907",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:47292",
+          "b": "articket:BARBI-RECANATI-UNICO-Y-NUESTRO",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:47292",
+          "b": "clubtri:681",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:BARBI-RECANATI-UNICO-Y-NUESTRO",
+          "b": "clubtri:681",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:barbi-recanati-unico-y-nuestro"
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-31",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "44693",
+          "title": "C4",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "desde $25000; en venta en www.articket.com.ar",
+          "price_min": 25000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/44693_ACT%20-%20C4.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "C4-EN-ABBEY-ROAD",
+          "title": "C4 EN ABBEY ROAD",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/C4-EN-ABBEY-ROAD/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/FEED_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:44693",
+          "b": "articket:C4-EN-ABBEY-ROAD",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-17",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49745",
+          "title": "Cantamos Fatal - Karaoke con Charo",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "23:30",
+          "is_free": false,
+          "price_text": "$10000; en www.articket.com",
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49745_ACT-CANTAMOS_FATAL.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "KARAOKE-CON-CHARO-LOPEZ-17-10",
+          "title": "CANTAMOS FATAL - KARAOKE CON CHARO LOPEZ EN CLUB TRI 17-10",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/KARAOKE-CON-CHARO-LOPEZ-17-10/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/cantamos_fatal.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "696",
+          "title": "CANTAMOS FATAL KARAOKE CON CHARO LOPEZ",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/KARAOKE-CON-CHARO-LOPEZ-17-10",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/696/thumb0000.jpg?v=1790103155",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49745",
+          "b": "articket:KARAOKE-CON-CHARO-LOPEZ-17-10",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49745",
+          "b": "clubtri:696",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:KARAOKE-CON-CHARO-LOPEZ-17-10",
+          "b": "clubtri:696",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:karaoke-con-charo-lopez-17-10"
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-18",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49699",
+          "title": "Cumbia Rock Emma Pochi",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-18",
+          "date_end": "2026-10-18",
+          "time": "17:00",
+          "is_free": true,
+          "price_text": "Gratuita previa inscripción en www.cultutickets.com",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49699_ACT-CUMBIA_ROCK.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "DOM-18-DE-OCT--CUMBIA-ROCK-EMMA-POCHI",
+          "title": "DOM 18 DE OCT  CUMBIA ROCK EMMA POCHI",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-18",
+          "date_end": "2026-10-18",
+          "time": "17:00",
+          "is_free": true,
+          "price_text": null,
+          "price_min": 0.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/DOM-18-DE-OCT--CUMBIA-ROCK-EMMA-POCHI/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/CUMBIA_ROCK.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49699",
+          "b": "cultutickets:DOM-18-DE-OCT--CUMBIA-ROCK-EMMA-POCHI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-18",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49701",
+          "title": "Rocío Quiroz",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-18",
+          "date_end": "2026-10-18",
+          "time": "23:00",
+          "is_free": true,
+          "price_text": "Gratuita previa inscripción en www.cultutickets.com",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49701_ACT-R.QUIROZ.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=10&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "DOM-18-DE-OCT-ROCIO-QUIROZ-",
+          "title": "DOM 18 DE OCT ROCIO QUIROZ",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-18",
+          "date_end": "2026-10-18",
+          "time": "23:00",
+          "is_free": true,
+          "price_text": null,
+          "price_min": 0.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/DOM-18-DE-OCT-ROCIO-QUIROZ-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_9.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49701",
+          "b": "cultutickets:DOM-18-DE-OCT-ROCIO-QUIROZ-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-11-14",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "45599",
+          "title": "Dante Spinetta",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-11-14",
+          "date_end": "2026-11-14",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$30000, en venta en articket.com.ar",
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45599_ACT%20-14%20NOVIEMBRE%20DANTE%20SPINETTA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "DANTE-SPINETTA-CLUB-TRI",
+          "title": "DANTE SPINETTA - CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-14",
+          "date_end": "2026-11-14",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/DANTE-SPINETTA-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/06/1080x1350_29.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "634",
+          "title": "Dante Spinetta en Club TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-11-14",
+          "date_end": "2026-11-14",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/DANTE-SPINETTA-CLUB-TRI",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/634/thumb0000.jpg?v=1782781020",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:45599",
+          "b": "articket:DANTE-SPINETTA-CLUB-TRI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:45599",
+          "b": "clubtri:634",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:DANTE-SPINETTA-CLUB-TRI",
+          "b": "clubtri:634",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:dante-spinetta-club-tri"
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-11-08",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49750",
+          "title": "El Príncipe Idiota",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-11-08",
+          "date_end": "2026-11-08",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$10000; en www.articket.com.ar",
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49750_ACT-PRINCIPE.IDIOTA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "EL-PRINCIPE-IDIOTA-EN-CLUB-TRI",
+          "title": "EL PRINCIPE IDIOTA EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-08",
+          "date_end": "2026-11-08",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/EL-PRINCIPE-IDIOTA-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/prin_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "690",
+          "title": "El principe idiota en Club TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-11-08",
+          "date_end": "2026-11-08",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/EL-PRINCIPE-IDIOTA-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/690/thumb0000.jpg?v=1789787683",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49750",
+          "b": "articket:EL-PRINCIPE-IDIOTA-EN-CLUB-TRI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49750",
+          "b": "clubtri:690",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:EL-PRINCIPE-IDIOTA-EN-CLUB-TRI",
+          "b": "clubtri:690",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:el-principe-idiota-en-club-tri"
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-23",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "47731",
+          "title": "Fantasía o Realidad",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$15000; en venta en www.articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47731_ACT-FANTASIA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "FANTASIA-O-REALIDAD-EN-ABBEY-ROAD",
+          "title": "FANTASIA O REALIDAD - JUANCHO CARBONE - OBRAS 2004 - PUÑO Y LETRA Y MANJAR",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/FANTASIA-O-REALIDAD-EN-ABBEY-ROAD/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/IMG_7062.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:47731",
+          "b": "articket:FANTASIA-O-REALIDAD-EN-ABBEY-ROAD",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-23",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49714",
+          "title": "Flaco Vazquez",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$20000 en www.passline.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Passline",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49714_ACT-FLACO-VAZQUEZ.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "693",
+          "title": "Flaco Vazquez en Club TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://www.passline.com/eventos/flaco-vazquez-mar-del-plata-535946",
+          "seller": "Passline",
+          "image_url": "https://clubtri.com/imgs/agenda/693/thumb0000.jpg?v=1789936700",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49714",
+          "b": "clubtri:693",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-23",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49649",
+          "title": "Post Punk Junk",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "23:59",
+          "is_free": false,
+          "price_text": "$5000; en venta en articket.com.ar",
+          "price_min": 5000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49649_ACT%20-POST-PUNK-JUNK-MAR-DEL-PLATA-.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=9&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "POST-PUNK-JUNK-EN-CLUB-TRI",
+          "title": "POST PUNK JUNK EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "23:59",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 5000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/POST-PUNK-JUNK-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/1080x1350-POST-PUNK-JUNK-MAR-DEL-PLATA-.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "672",
+          "title": "Post Punk Junk en Club TRI : Sergio Rotman y Asia del Sur.",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "23:59",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/POST-PUNK-JUNK-EN-CLUB-TRI",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/672/thumb0000.jpg?v=1787606257",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49649",
+          "b": "articket:POST-PUNK-JUNK-EN-CLUB-TRI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49649",
+          "b": "clubtri:672",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:POST-PUNK-JUNK-EN-CLUB-TRI",
+          "b": "clubtri:672",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:post-punk-junk-en-club-tri"
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-31",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49703",
+          "title": "Halloween con Nico Mattioli",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$12000 en www.cultutickets.com",
+          "price_min": 12000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49703_ACT-NICO%20MAT..JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "HALLOWEEN-NICO-MATTIOLI",
+          "title": "HALLOWEEN NICO MATTIOLI",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 12000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/HALLOWEEN-NICO-MATTIOLI/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_YAXDOXP.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49703",
+          "b": "cultutickets:HALLOWEEN-NICO-MATTIOLI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "vorterix|2026-11-13",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "43394",
+          "title": "Jurassic Fest",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, Diag. Pueyrredon 3338",
+          "date_start": "2026-11-13",
+          "date_end": "2026-11-13",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "$10000; en venta en www.articket.com.ar",
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43394_ACT%20-%20%20FEED-JURASSIC.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "JURASSIC-FEST-10-EN-VORTERIX",
+          "title": "JURASSIC FEST 10 EN VORTERIX",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, MAR DEL PLATA, BUENOS AIRES",
+          "date_start": "2026-11-13",
+          "date_end": "2026-11-13",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/JURASSIC-FEST-10-EN-VORTERIX/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/1000727942.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:43394",
+          "b": "articket:JURASSIC-FEST-10-EN-VORTERIX",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-24",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "48532",
+          "title": "Koino Yokan",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "desde $35000; en venta en https://ticketmas.ar/",
+          "price_min": 35000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Ticketmas",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48532_ACT%20-%20KOINO%20YOKAN.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "680",
+          "title": "KOINO YOKAN en MAR DEL PLATA",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://ticketmas.ar/es/ticketmas/evento/koino-yokan-en-mar-del-plata-club-tri-d7pm",
+          "seller": "Ticketmas",
+          "image_url": "https://clubtri.com/imgs/agenda/680/thumb0000.jpg?v=1788391562",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:48532",
+          "b": "clubtri:680",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-24",
+      "events": [
+        {
+          "source": "articket",
+          "source_event_id": "FIESTA-PLOP-ATIENDE-AL-DEMONIO",
+          "title": "FIESTA PLOP ATIENDE AL DEMONIO",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "23:59",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 7000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/FIESTA-PLOP-ATIENDE-AL-DEMONIO/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/1000746546.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "708",
+          "title": "FIESTA PLOP ESPECIAL LALI EN RIVER",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "23:59",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/FIESTA-PLOP-ATIENDE-AL-DEMONIO/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/708/thumb0000.jpg?v=1791404112",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "articket:FIESTA-PLOP-ATIENDE-AL-DEMONIO",
+          "b": "clubtri:708",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:fiesta-plop-atiende-al-demonio"
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-11-13",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "45640",
+          "title": "La 2001",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-11-13",
+          "date_end": "2026-11-13",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$18000; en venta en www.cultutickets.com",
+          "price_min": 18000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45640_ACT%20-%2013%20DE%20NOVIEMBRE%202001.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "VIER-13-DE-NOV-LA-2001-",
+          "title": "VIER 13 DE NOV LA 2001",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-11-13",
+          "date_end": "2026-11-13",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 18000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/VIER-13-DE-NOV-LA-2001-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/2001.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:45640",
+          "b": "cultutickets:VIER-13-DE-NOV-LA-2001-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-17",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "48523",
+          "title": "La Chancha Muda",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$30000, en venta articket.com.ar",
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48523_ACT%20-%20CHANCHA_MUDA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "LA-CHANCHA-MUDA-EN-ABBEY-ROAD",
+          "title": "LA CHANCHA MUDA EN ABBEY ROAD",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/LA-CHANCHA-MUDA-EN-ABBEY-ROAD/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/06/chancha_muda.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:48523",
+          "b": "articket:LA-CHANCHA-MUDA-EN-ABBEY-ROAD",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-31",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49692",
+          "title": "Latin Gateo FT Sutra Angels",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "$6000 en www.articket.com.ar",
+          "price_min": 6000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49692_ACT-LATINGATEO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "LATIN-GATEO-SUTRA-ANGELS-EDICION-HALLOWEEN",
+          "title": "LATIN GATEO FT SUTRA ANGELS EDICION HALLOWEEN EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 6000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/LATIN-GATEO-SUTRA-ANGELS-EDICION-HALLOWEEN/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/lg.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "686",
+          "title": "LATIN GATEO EDICIÓN HALLOWEEN FT SUTRA ANGELS",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/LATIN-GATEO-SUTRA-ANGELS-EDICION-HALLOWEEN",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/686/thumb0000.jpg?v=1788980962",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49692",
+          "b": "articket:LATIN-GATEO-SUTRA-ANGELS-EDICION-HALLOWEEN",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49692",
+          "b": "clubtri:686",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:LATIN-GATEO-SUTRA-ANGELS-EDICION-HALLOWEEN",
+          "b": "clubtri:686",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:latin-gateo-sutra-angels-edicion-halloween"
+        }
+      ]
+    },
+    {
+      "venue_date": "vorterix|2026-11-07",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "46421",
+          "title": "Los Pérez García",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, Diag. Pueyrredon 3338",
+          "date_start": "2026-11-07",
+          "date_end": "2026-11-07",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$50000; en venta en www.articket.com.ar",
+          "price_min": 50000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46421_ACT-PEREZ.GARCIA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "LOS-PEREZ-GARCIA-VORTERIX",
+          "title": "LOS PEREZ GARCIA - VORTERIX",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, MAR DEL PLATA, BUENOS AIRES",
+          "date_start": "2026-11-07",
+          "date_end": "2026-11-07",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 50000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/LOS-PEREZ-GARCIA-VORTERIX/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/MdP-1080_1350_1.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:46421",
+          "b": "articket:LOS-PEREZ-GARCIA-VORTERIX",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-17",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "47806",
+          "title": "Lucho SSJ - El Trap de la City",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$20000; en venta en cultutickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47806_ACT%20-%2017%20DE%20OCTUBRE%20LUCHO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "SAB-17-10-LUCHO-SSJ-",
+          "title": "SAB 17-10 LUCHO SSJ",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "19:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/SAB-17-10-LUCHO-SSJ-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/liucho.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:47806",
+          "b": "cultutickets:SAB-17-10-LUCHO-SSJ-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-17",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "48896",
+          "title": "Seba Mendoza",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$20000; en venta en www.cultitickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": null,
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48896_ACT%20-%2017%20DE%20OCTUBRE%20SEBA_MENDOZA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=10&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "SAB-17-OCTUBRE-SEBA-MENDOZA",
+          "title": "SAB 17 OCTUBRE SEBA MENDOZA",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-17",
+          "date_end": "2026-10-17",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/SAB-17-OCTUBRE-SEBA-MENDOZA/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/07/seba_mendoza.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:48896",
+          "b": "cultutickets:SAB-17-OCTUBRE-SEBA-MENDOZA",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-23",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "20183",
+          "title": "Mario Luis",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$10000; en venta en cultutickets.com",
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/20183_ACT%20-%2023%20DE%20OCTUBRE%20MARIO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "VIER-23-OCT-MARIO-LUIS-",
+          "title": "VIER 23 OCT MARIO LUIS",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 10000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/VIER-23-OCT-MARIO-LUIS-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/MARIO.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:20183",
+          "b": "cultutickets:VIER-23-OCT-MARIO-LUIS-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-10-30",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "47870",
+          "title": "Mir Nicolas",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "desde $15000; en www.articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47870_ACT-MIR_NICOLAS.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "MIR-NICOLAS-SOSA-66S-MATI-RJ-EN-CLUB-TRI",
+          "title": "MIR NICOLAS - SOSA 66S - MATI RJ EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/MIR-NICOLAS-SOSA-66S-MATI-RJ-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/mir_nicolas.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "692",
+          "title": "MIR NICOLAS - SOSA 66S - MATI RJ",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/MIR-NICOLAS-SOSA-66S-MATI-RJ-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/692/thumb0000.jpg?v=1789912236",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:47870",
+          "b": "articket:MIR-NICOLAS-SOSA-66S-MATI-RJ-EN-CLUB-TRI",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:47870",
+          "b": "clubtri:692",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:MIR-NICOLAS-SOSA-66S-MATI-RJ-EN-CLUB-TRI",
+          "b": "clubtri:692",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:mir-nicolas-sosa-66s-mati-rj-en-club-tri"
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-11-07",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49746",
+          "title": "Nahue MC presenta Efecto Boomerang",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, 20 de Septiembre 2650",
+          "date_start": "2026-11-07",
+          "date_end": "2026-11-07",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$5000; en www.articket.com",
+          "price_min": 5000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49746_ACT-EFECTO.BOOMERANG.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "NAHUE-MC-EFECTO-BOOMERANG",
+          "title": "NAHUE MC PRESENTA EFECTO BOOMERANG EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-07",
+          "date_end": "2026-11-07",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 5000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/NAHUE-MC-EFECTO-BOOMERANG/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/FEED_1_FLYER_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "694",
+          "title": "NAHUE MC PRESENTA EFECTO BOOMERANG",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-11-07",
+          "date_end": "2026-11-07",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/NAHUE-MC-EFECTO-BOOMERANG/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/694/thumb0000.jpg?v=1790964667",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49746",
+          "b": "articket:NAHUE-MC-EFECTO-BOOMERANG",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "municipal:49746",
+          "b": "clubtri:694",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        },
+        {
+          "a": "articket:NAHUE-MC-EFECTO-BOOMERANG",
+          "b": "clubtri:694",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:nahue-mc-efecto-boomerang"
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-24",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "46207",
+          "title": "Nepal - Caudillo - Fatigados - Hellraider",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$30000; en venta en articket.com.ar",
+          "price_min": 30000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46207_ACT%20-%20NEPAL.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "NEPAL-CAUDILLO-FATIGADOS-HELLRAIDER",
+          "title": "NEPAL - CAUDILLO - FATIGADOS - HELLRAIDER EN ABBEY ROAD",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-24",
+          "date_end": "2026-10-24",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 40000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/NEPAL-CAUDILLO-FATIGADOS-HELLRAIDER/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/IMG_6752.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:46207",
+          "b": "articket:NEPAL-CAUDILLO-FATIGADOS-HELLRAIDER",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2027-01-16",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "45918",
+          "title": "Nonpalidece",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2027-01-16",
+          "date_end": "2027-01-16",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Desde $20000; en venta en www.cultutickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45918_ACT%20-%20NONPALICEDE.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "SAB-16-ENE-2027-NONPALIDECE----30-ANOS",
+          "title": "SAB 16-ENE-2027 NONPALIDECE  - 30 AÑOS",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2027-01-16",
+          "date_end": "2027-01-16",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/SAB-16-ENE-2027-NONPALIDECE----30-ANOS/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/home_y_detalle_5.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:45918",
+          "b": "cultutickets:SAB-16-ENE-2027-NONPALIDECE----30-ANOS",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-10-16",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "48898",
+          "title": "Una Obra Redonda en Brew House",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-10-16",
+          "date_end": "2026-10-16",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "$20000, en venta en www.cultutickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48898_ACT%20-%2016%20DE%20OCTUBRE%20UNA%20OBRA%20REDONDA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=11&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "VIER-16-DE-OKTUBRE-MDP-UNA-OBRA-REDONDA",
+          "title": "VIER 16 DE OKTUBRE MDP UNA OBRA REDONDA",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-10-16",
+          "date_end": "2026-10-16",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/VIER-16-DE-OKTUBRE-MDP-UNA-OBRA-REDONDA/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/mdp.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:48898",
+          "b": "cultutickets:VIER-16-DE-OKTUBRE-MDP-UNA-OBRA-REDONDA",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "vorterix|2026-10-23",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "46105",
+          "title": "One Vision",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, Diag. Pueyrredon 3338",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$15000; en venta en articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46105_ACT%20-%2023%20DE%20OCTUBRE%20ONE_VISION.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "ONE-VISION-HOMENAJE-A-QUEEN",
+          "title": "ONE VISION - HOMENAJE A QUEEN",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, MAR DEL PLATA, BUENOS AIRES",
+          "date_start": "2026-10-23",
+          "date_end": "2026-10-23",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/ONE-VISION-HOMENAJE-A-QUEEN/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/ONE_VISION.png",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:46105",
+          "b": "articket:ONE-VISION-HOMENAJE-A-QUEEN",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "vorterix|2026-10-31",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49694",
+          "title": "Patricia Lucas",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, Diag. Pueyrredon 3338",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "$40000 en www.articket.com.ar",
+          "price_min": 40000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49694_ACT-P.LEE.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "PATRICIA-LUCAS-TRIBUTO-A-RITA-LEE",
+          "title": "PATRICIA LUCAS - TRIBUTO A RITA LEE EN VORTERIX",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, MAR DEL PLATA, BUENOS AIRES",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 40000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/PATRICIA-LUCAS-TRIBUTO-A-RITA-LEE/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/lee.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49694",
+          "b": "articket:PATRICIA-LUCAS-TRIBUTO-A-RITA-LEE",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "vorterix|2026-11-06",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49504",
+          "title": "Prayer - Bon Jovi Experience",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, Diag. Pueyrredon 3338",
+          "date_start": "2026-11-06",
+          "date_end": "2026-11-06",
+          "time": "20:30",
+          "is_free": false,
+          "price_text": "$20000, en venta en articket.com.ar",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49504_ACT%20-%20PRAYER.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=9&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "PRAYER-THE-BON-JOVI-EXPERIENCE-EN-VORTERIX-6-11",
+          "title": "PRAYER - THE BON JOVI EXPERIENCE EN VORTERIX 6-11",
+          "venue_name": "Vorterix",
+          "venue_raw": "Vorterix, MAR DEL PLATA, BUENOS AIRES",
+          "date_start": "2026-11-06",
+          "date_end": "2026-11-06",
+          "time": "20:30",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/PRAYER-THE-BON-JOVI-EXPERIENCE-EN-VORTERIX-6-11/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/FEED_2_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49504",
+          "b": "articket:PRAYER-THE-BON-JOVI-EXPERIENCE-EN-VORTERIX-6-11",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "vinoteca perrier|2026-10-31",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49693",
+          "title": "Proyecto Roswell - New Level - AK",
+          "venue_name": "Vinoteca Perrier",
+          "venue_raw": "Vinoteca Perrier, España 2051",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": "$15000 en www.articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49693_ACT-P.ROSWELL.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=9&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "PROYECTO-ROSWELL-FIESTA-DE-HALLOWEEN",
+          "title": "PROYECTO ROSWELL - NEW LEVEL -AK - FIESTA DE HALLOWEEN EN VINOTECA PERRIER",
+          "venue_name": "Vinoteca Perrier",
+          "venue_raw": "Vinoteca Perrier, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-31",
+          "date_end": "2026-10-31",
+          "time": "22:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/PROYECTO-ROSWELL-FIESTA-DE-HALLOWEEN/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/PR_FEED.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49693",
+          "b": "articket:PROYECTO-ROSWELL-FIESTA-DE-HALLOWEEN",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-12-04",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "45493",
+          "title": "Pulso Cósmico",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-12-04",
+          "date_end": "2026-12-04",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "desde $15000; en venta en www.articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45493_ACT%20-%20PULSO%20COSMICO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=9&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "PULSO-COSMICO-VOTA-TU-GROOVE",
+          "title": "PULSO COSMICO - VOTA TU GROOVE",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-12-04",
+          "date_end": "2026-12-04",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/PULSO-COSMICO-VOTA-TU-GROOVE/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/IMG_6728_1.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:45493",
+          "b": "articket:PULSO-COSMICO-VOTA-TU-GROOVE",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-12-05",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "46001",
+          "title": "Rey Garufa",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-12-05",
+          "date_end": "2026-12-05",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "desde $25000; en venta en www.cultutickets.com",
+          "price_min": 25000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46001_ACT%20-%20REY%20GARUFA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=9&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "REY-GARUFA-",
+          "title": "REY GARUFA",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-12-05",
+          "date_end": "2026-12-05",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 25000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/REY-GARUFA-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_JXIHMEu.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:46001",
+          "b": "cultutickets:REY-GARUFA-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-16",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "44010",
+          "title": "Santo Pecado",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-16",
+          "date_end": "2026-10-16",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$15000; en venta en www.articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/44010_ACT%20-%2011%20DE%20SEPTIEMBRE%20SANTO%20PECADO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=10&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "SANTO-PECADO-EN-ABBEY-ROAD-16-10",
+          "title": "SANTO PECADO EN ABBEY ROAD 16-10",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-16",
+          "date_end": "2026-10-16",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/SANTO-PECADO-EN-ABBEY-ROAD-16-10/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/sp2.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:44010",
+          "b": "articket:SANTO-PECADO-EN-ABBEY-ROAD-16-10",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "polideportivo islas malvinas|2026-11-21",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "46015",
+          "title": "Tan Biónica",
+          "venue_name": "Estadio Polideportivo Islas Malvinas",
+          "venue_raw": "Estadio Polideportivo Islas Malvinas, Av. Juan B. Justo 3600",
+          "date_start": "2026-11-21",
+          "date_end": "2026-11-22",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "desde $80000, en venta en articket.com.ar",
+          "price_min": 80000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46015_ACT%20-%2021%20DE%20NOVIEMBRE%20TAN%20BIONICA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=10&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "TAN-BIONICA-EN-MAR-DEL-PLATA-21-11",
+          "title": "TAN BIONICA EN MAR DEL PLATA 21-11",
+          "venue_name": "Polideportivo Islas Malvinas",
+          "venue_raw": "Polideportivo Islas Malvinas, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-21",
+          "date_end": "2026-11-21",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 80000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/TAN-BIONICA-EN-MAR-DEL-PLATA-21-11/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/05/TAN_BIONICA_-_AGOTADO_c.png",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:46015",
+          "b": "articket:TAN-BIONICA-EN-MAR-DEL-PLATA-21-11",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2027-01-09",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49093",
+          "title": "The La Planta.",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2027-01-09",
+          "date_end": "2027-01-09",
+          "time": "19:00",
+          "is_free": false,
+          "price_text": "$15000; en venta en www.cultutickets.com",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49093_ACT%20-%20THE%20LA%20PLANTA.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=11&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "SAB-9-DE-ENERO-THE-LA-PLANTA",
+          "title": "SAB 9 DE ENERO THE LA PLANTA",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2027-01-09",
+          "date_end": "2027-01-09",
+          "time": "19:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/SAB-9-DE-ENERO-THE-LA-PLANTA/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_17.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49093",
+          "b": "cultutickets:SAB-9-DE-ENERO-THE-LA-PLANTA",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "brew house|2026-11-20",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "43480",
+          "title": "Uriel Lozano",
+          "venue_name": "Brew House",
+          "venue_raw": "Brew House, Diag. Garibaldi 4830",
+          "date_start": "2026-11-20",
+          "date_end": "2026-11-20",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$20000; en venta en www.cultutickets.com",
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "CultuTickets",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43480_ACT%20-%20URIEL%20LOZANO.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=11&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "cultutickets",
+          "source_event_id": "VIER-20-DE-NOV-URIEL-LOZANO-",
+          "title": "VIER 20 DE NOV URIEL LOZANO",
+          "venue_name": "Ciudad Cultural Brew House",
+          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
+          "date_start": "2026-11-20",
+          "date_end": "2026-11-20",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 20000.0,
+          "currency": "ARS",
+          "ticket_url": "https://cultutickets.com/VIER-20-DE-NOV-URIEL-LOZANO-/",
+          "seller": "CultuTickets",
+          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:43480",
+          "b": "cultutickets:VIER-20-DE-NOV-URIEL-LOZANO-",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "abbey road|2026-10-30",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "49519",
+          "title": "Zrock",
+          "venue_name": "Abbey Road - Concert Bar",
+          "venue_raw": "Abbey Road - Concert Bar, Av. Juan B. Justo 620",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": "$15000, en venta en articket.com.ar",
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49519_ACT-ZROCK.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=11&tipo=11",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "ZROCK-LOS-TOXICOS-SPLASH-SATIVA-JOVENES-INDOCUMENTADOS",
+          "title": "ZROCK - LOS TÓXICOS SPLASH - SATIVA - JOVENES INDOCUMENTADOS",
+          "venue_name": "Abbey Road",
+          "venue_raw": "Abbey Road, Mar del Plata, Buenos Aires",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
+          "time": "21:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/ZROCK-LOS-TOXICOS-SPLASH-SATIVA-JOVENES-INDOCUMENTADOS/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/IMG_7114.jpeg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:49519",
+          "b": "articket:ZROCK-LOS-TOXICOS-SPLASH-SATIVA-JOVENES-INDOCUMENTADOS",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "villa victoria ocampo|2026-11-21",
+      "events": [
+        {
+          "source": "municipal",
+          "source_event_id": "48862",
+          "title": "Festival Etcétera 2026",
+          "venue_name": "Centro Cultural Victoria Ocampo. Villa Victoria",
+          "venue_raw": "Centro Cultural Victoria Ocampo. Villa Victoria, Matheu 1851",
+          "date_start": "2026-11-21",
+          "date_end": "2026-11-21",
+          "time": "12:00",
+          "is_free": false,
+          "price_text": "Desde $35000 en www.articket.com.ar",
+          "price_min": 35000.0,
+          "currency": "ARS",
+          "ticket_url": null,
+          "seller": "Articket",
+          "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48862_ACT%20-%20FESTIVAL%20ETCET%C3%89RA%20NOV%202026.JPG",
+          "city": "Mar del Plata",
+          "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=19",
+          "collected_at": "2026-10-13T22:05:07+00:00"
+        },
+        {
+          "source": "articket",
+          "source_event_id": "FESTIVAL-ETCETERA",
+          "title": "FESTIVAL ETCETERA",
+          "venue_name": "Villa Victoria Ocampo",
+          "venue_raw": "Villa Victoria Ocampo, Mar del Plata, Buenos Aires",
+          "date_start": "2026-11-21",
+          "date_end": "2026-11-21",
+          "time": "12:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 42000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/FESTIVAL-ETCETERA/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/FESTIVAL_ETCETERA_2026_1.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "municipal:48862",
+          "b": "articket:FESTIVAL-ETCETERA",
+          "kind": "title_fuzzy",
+          "score": 100.0
+        }
+      ]
+    },
+    {
+      "venue_date": "club tri|2026-12-12",
+      "events": [
+        {
+          "source": "articket",
+          "source_event_id": "LOLO-MORALES-EN-CLUB-TRI",
+          "title": "LOLO MORALES EN CLUB TRI",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, Mar del Plata, Buenos Aires",
+          "date_start": "2026-12-12",
+          "date_end": "2026-12-12",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": null,
+          "price_min": 15000.0,
+          "currency": "ARS",
+          "ticket_url": "https://articket.com.ar/LOLO-MORALES-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/Untitled_design_29.jpg",
+          "city": "Mar del Plata",
+          "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        },
+        {
+          "source": "clubtri",
+          "source_event_id": "698",
+          "title": "LOLO MORALES",
+          "venue_name": "Club TRI",
+          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
+          "date_start": "2026-12-12",
+          "date_end": "2026-12-12",
+          "time": "20:00",
+          "is_free": false,
+          "price_text": "Comprar",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": "https://articket.com.ar/LOLO-MORALES-EN-CLUB-TRI/",
+          "seller": "Articket",
+          "image_url": "https://clubtri.com/imgs/agenda/698/thumb0000.jpg?v=1790357854",
+          "city": "Mar del Plata",
+          "raw_url": "https://clubtri.com/",
+          "collected_at": "2026-10-13T22:05:11+00:00"
+        }
+      ],
+      "pairs": [
+        {
+          "a": "articket:LOLO-MORALES-EN-CLUB-TRI",
+          "b": "clubtri:698",
+          "kind": "ticket_slug",
+          "score": 100.0,
+          "slug": "articket.com.ar:lolo-morales-en-club-tri"
+        }
+      ]
+    }
+  ]
+}
