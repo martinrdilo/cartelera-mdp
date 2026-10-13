@@ -1,7 +1,7 @@
 """Cross-source dedupe.
 
 Strategy:
-1. Gate: events only compare inside the same (normalized venue, ISO date)
+1. Gate: events only compare inside the same (canonical venue, ISO date)
    fingerprint, which keeps false positives out of fuzzy matching.
 2. Exact join: same ticket slug (host + slug) on both sides wins outright.
 3. Fuzzy fallback: rapidfuzz token_set_ratio over normalized titles,
@@ -11,10 +11,11 @@ Returns clusters of >= 2 events with per-pair evidence.
 """
 
 import re
-import unicodedata
 from urllib.parse import urlparse
 
 from rapidfuzz import fuzz
+
+from lib.venues import normalize_name, venue_key
 
 # Hosts whose URL path ends in a stable event slug (exact join signal).
 TICKET_HOSTS = (
@@ -42,27 +43,18 @@ _TITLE_DATE_PREFIX_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Stopgap: the same venue is spelled differently across sources. A canonical
-# venue table is future work (see REPORT.md); this small map unblocks the
-# cross-source matches already visible in the live corpus.
-VENUE_ALIASES = {
-    "ciudad cultural brew house": "brew house",
-    "estadio polideportivo islas malvinas": "polideportivo islas malvinas",
-    "abbey road concert bar": "abbey road",
-    "microteatro chauvin": "chauvin",
-    "centro cultural victoria ocampo villa victoria": "villa victoria ocampo",
-}
+
+# Venue fingerprint: the registry (data/venues.json via lib.venues) resolves
+# every known spelling to a canonical id; unknown venues fall back to their
+# normalized raw name. See REPORT.md for the venue inventory.
+def canonical_venue(value):
+    """Canonical fingerprint: registry id when resolvable, else normalized raw."""
+    return venue_key(value)
 
 
 def normalize_text(value):
     """Lowercase, strip accents and punctuation, collapse whitespace."""
-    if not value:
-        return ""
-    decomposed = unicodedata.normalize("NFKD", value)
-    ascii_text = "".join(char for char in decomposed if not unicodedata.combining(char))
-    ascii_text = ascii_text.lower()
-    ascii_text = re.sub(r"[^a-z0-9\s]", " ", ascii_text)
-    return re.sub(r"\s+", " ", ascii_text).strip()
+    return normalize_name(value)
 
 
 def extract_slug(url):
@@ -92,14 +84,8 @@ def title_similarity(title_a, title_b):
     )
 
 
-def canonical_venue(value):
-    """Normalize a venue name and apply the cross-source alias map."""
-    normalized = normalize_text(value)
-    return VENUE_ALIASES.get(normalized, normalized)
-
-
 def venue_date_key(event):
-    """Fingerprint gate: normalized venue + ISO start date."""
+    """Fingerprint gate: canonical venue + ISO start date."""
     venue = canonical_venue(event.venue_name or event.venue_raw)
     return f"{venue}|{event.date_start or ''}"
 

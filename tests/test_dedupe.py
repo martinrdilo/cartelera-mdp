@@ -125,6 +125,27 @@ class TestClusterEvents:
         b = make_event("cultutickets", "REY GARUFA", "Ciudad Cultural Brew House", "2026-12-05")
         assert len(cluster_events([a, b])) == 1
 
+    def test_registry_variant_not_in_the_old_hardcoded_map_joins(self):
+        # The Sheraton oddity: the municipal source names the hall, Articket
+        # names the hotel. The registry is the source of truth now.
+        a = make_event("municipal", "La Vin - Los Totora Tour", "Sheraton Mar del Plata - Auditorium Victoria Ocampo", "2026-10-24")
+        b = make_event("articket", "LA VIN - LOS TOTORA TOUR", "Sheraton Mar del Plata", "2026-10-24")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_villa_victoria_and_sheraton_hall_do_not_merge(self):
+        # Both spellings contain "Victoria Ocampo" but they are different places.
+        a = make_event("municipal", "Coro de Cámara", "Villa Victoria Ocampo", "2026-11-07")
+        b = make_event("municipal", "Coro de Cámara", "Sheraton Mar del Plata - Auditorium Victoria Ocampo", "2026-11-07")
+        assert cluster_events([a, b]) == []
+
+    def test_unknown_venues_fall_back_to_normalized_raw(self):
+        a = make_event("municipal", "Peña del Barrio", "Bolichito de la Esquina!", "2026-11-07")
+        b = make_event("municipal", "Peña del Barrio", "Bolichito de la esquina", "2026-11-07")
+        c = make_event("municipal", "Peña del Barrio", "Otro Bolichito", "2026-11-07")
+        clusters = cluster_events([a, b, c])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+
     def test_events_without_date_are_ignored(self):
         a = make_event("municipal", "Sin fecha", "Club TRI", None)
         b = make_event("articket", "Sin fecha", "Club TRI", None)

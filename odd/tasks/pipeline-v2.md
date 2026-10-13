@@ -35,8 +35,8 @@ El spike dejó tres deudas: 38 nombres crudos ≈ 30 lugares reales (13 clusters
 
 ## Tareas
 
-- [ ] **T1** — `data/venues.json` + `lib/venues.py` (normalización y resolución por alias) + tests.
-- [ ] **T2** — Integrar registry al dedupe (migrar los 5 alias hardcodeados) + tests.
+- [x] **T1** — `data/venues.json` + `lib/venues.py` (normalización y resolución por alias) + tests.
+- [x] **T2** — Integrar registry al dedupe (migrar los 5 alias hardcodeados) + tests.
 - [ ] **T3** — `occurrences` en schema + expansión de rangos municipal (regla documentada) + tests.
 - [ ] **T4** — Enriquecer Articket multi-fecha desde la página de detalle (JSON-LD/HTML) + tests.
 - [ ] **T5** — Dedupe por ocurrencias + tests.
@@ -58,4 +58,5 @@ Heurística ~500–700 líneas autoradas. Sin UI.
 
 ## Evidencia / Progreso
 
-_(se actualiza al cierre de cada tarea)_
+- **T1 (2026-10-13):** `data/venues.json` con 30 venues y los alias observados en `data/raw/*.json`; `lib/venues.py` (`normalize_name`, `resolve`, `venue_key`) + 23 tests en `tests/test_venues.py`. Cobertura sobre el corpus: 42 strings crudos distintos → 0 sin resolver. Sheraton: el hall "Auditorium Victoria Ocampo" (Alem 4221) mapea al Sheraton; Villa Victoria (Matheu 1851) queda como venue aparte.
+- **T2 (2026-10-13):** el dedupe usa `venue_key` (id canónico o nombre normalizado) y se eliminó el mapa hardcodeado de 5 alias. `pytest tests/ -q`: 68 verdes. Nuevo cluster habilitado por el registry: Sheraton municipal ↔ Articket (no resolvía con el mapa viejo).

@@ -1,0 +1,185 @@
+{
+  "venues": [
+    {
+      "id": "club-tri",
+      "name": "Club TRI",
+      "aliases": ["Club TRI", "ClubTri"],
+      "address": "20 de Septiembre 2650"
+    },
+    {
+      "id": "vorterix",
+      "name": "Vorterix",
+      "aliases": ["Vorterix"],
+      "address": "Diag. Pueyrredón 3338"
+    },
+    {
+      "id": "brew-house",
+      "name": "Ciudad Cultural Brew House",
+      "aliases": ["Brew House", "Ciudad Cultural Brew House"],
+      "address": "Diag. Garibaldi 4830"
+    },
+    {
+      "id": "teatro-municipal-colon",
+      "name": "Teatro Municipal Colón",
+      "aliases": ["Teatro Municipal Colón", "Teatro Municipal Colon"],
+      "address": "H. Yrigoyen 1665"
+    },
+    {
+      "id": "arena-mar-del-plata",
+      "name": "Arena Mar del Plata",
+      "aliases": ["Arena Mar del Plata"],
+      "address": "Av. Luro 4220"
+    },
+    {
+      "id": "abbey-road",
+      "name": "Abbey Road",
+      "aliases": ["Abbey Road", "Abbey Road - Concert Bar"],
+      "address": "Av. Juan B. Justo 620"
+    },
+    {
+      "id": "radio-city",
+      "name": "Centro de Arte Radio City - Roxy - Melany",
+      "aliases": ["Centro de Arte Radio City - Roxy - Melany"],
+      "address": "San Luis 1752"
+    },
+    {
+      "id": "villa-victoria-ocampo",
+      "name": "Villa Victoria Ocampo",
+      "aliases": [
+        "Centro Cultural Victoria Ocampo. Villa Victoria",
+        "Villa Victoria Ocampo",
+        "Centro Cultural Victoria Ocampo"
+      ],
+      "address": "Matheu 1851"
+    },
+    {
+      "id": "bendu",
+      "name": "Bendu",
+      "aliases": ["Bendu"],
+      "address": "Av. de los Trabajadores 150"
+    },
+    {
+      "id": "wolfgang-teatro-bar",
+      "name": "Wolfgang Teatro Bar",
+      "aliases": ["Wolfgang Teatro Bar"]
+    },
+    {
+      "id": "la-bancaria-jauretche",
+      "name": "La Bancaria - Sala Arturo Jauretche",
+      "aliases": ["La Bancaria - Sala Arturo Jauretche", "La Bancaria"],
+      "address": "San Luis 2069"
+    },
+    {
+      "id": "chauvin",
+      "name": "Chauvin",
+      "aliases": ["Chauvin", "Microteatro Chauvin"],
+      "address": "San Luis 2849"
+    },
+    {
+      "id": "vinoteca-perrier",
+      "name": "Vinoteca Perrier",
+      "aliases": ["Vinoteca Perrier"],
+      "address": "España 2051"
+    },
+    {
+      "id": "polideportivo-islas-malvinas",
+      "name": "Polideportivo Islas Malvinas",
+      "aliases": ["Polideportivo Islas Malvinas", "Estadio Polideportivo Islas Malvinas"],
+      "address": "Av. Juan B. Justo 3600"
+    },
+    {
+      "id": "club-39",
+      "name": "Club 39 Cervecería",
+      "aliases": ["Club 39 Cervecería"]
+    },
+    {
+      "id": "espacio-la-rosa",
+      "name": "Espacio La Rosa",
+      "aliases": ["Espacio La Rosa"]
+    },
+    {
+      "id": "ogham-diagonal",
+      "name": "Ogham diagonal",
+      "aliases": ["Ogham diagonal"]
+    },
+    {
+      "id": "sheraton-mar-del-plata",
+      "name": "Sheraton Mar del Plata",
+      "aliases": ["Sheraton Mar del Plata", "Sheraton Mar del Plata - Auditorium Victoria Ocampo"],
+      "address": "Alem 4221"
+    },
+    {
+      "id": "teatro-auditorium",
+      "name": "Teatro Auditorium",
+      "aliases": [
+        "Teatro Auditorium",
+        "Teatro Auditorium - Sala Roberto J. Payró",
+        "Teatro Auditorium - Sala Gregorio Nachman"
+      ],
+      "address": "Bv. Marítimo Patricio Peralta Ramos 2282"
+    },
+    {
+      "id": "capilla-divino-maestro",
+      "name": "Capilla del Divino Maestro - Pías Discípulas",
+      "aliases": ["Capilla del Divino Maestro - Pías Discípulas"],
+      "address": "Alberti 2179"
+    },
+    {
+      "id": "teatro-tronador",
+      "name": "Teatro Tronador",
+      "aliases": ["Teatro Tronador"],
+      "address": "Santiago del Estero 1746"
+    },
+    {
+      "id": "casa-de-madera",
+      "name": "Casa de Madera",
+      "aliases": ["Casa de Madera"],
+      "address": "Rawson 2250"
+    },
+    {
+      "id": "archivo-museo-villa-mitre",
+      "name": "Archivo Museo Histórico Municipal Don Roberto T. Barili. Villa Mitre",
+      "aliases": [
+        "Archivo Museo Histórico Municipal Don Roberto T. Barili. Villa Mitre",
+        "Villa Mitre"
+      ],
+      "address": "Lamadrid 3870"
+    },
+    {
+      "id": "jose-hernandez",
+      "name": "José Hernandez",
+      "aliases": ["José Hernandez"],
+      "address": "Magallanes 11742"
+    },
+    {
+      "id": "casa-del-mar",
+      "name": "Casa del Mar",
+      "aliases": ["Casa del Mar"]
+    },
+    {
+      "id": "nh-gran-hotel-provincial",
+      "name": "NH Gran Hotel Provincial",
+      "aliases": ["NH Gran Hotel Provincial"]
+    },
+    {
+      "id": "ccave",
+      "name": "CCAVE",
+      "aliases": ["CCAVE"]
+    },
+    {
+      "id": "teatro-san-martin",
+      "name": "Teatro San Martin",
+      "aliases": ["Teatro San Martin"]
+    },
+    {
+      "id": "plaza-de-la-musica",
+      "name": "PLAZA DE LA MÚSICA",
+      "aliases": ["PLAZA DE LA MÚSICA"]
+    },
+    {
+      "id": "lo-de-julio",
+      "name": "Lo de Julio Cerveceria",
+      "aliases": ["Lo de Julio Cerveceria"]
+    }
+  ]
+}
