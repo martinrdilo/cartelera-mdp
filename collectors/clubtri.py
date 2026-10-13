@@ -14,7 +14,7 @@ from lib.dates import extract_time, parse_spanish_date, to_iso
 from lib.schema import Event
 
 URL = "https://clubtri.com/"
-USER_AGENT = "cartelera-mdp-spike/0.1 (local research)"
+USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 SOURCE = "clubtri"
 VENUE_NAME = "Club TRI"
 VENUE_RAW = "Club TRI, XX de Septiembre 2650, Mar del Plata"
@@ -75,6 +75,7 @@ def normalize(records):
                 venue_raw=VENUE_RAW,
                 date_start=date_iso,
                 date_end=date_iso,
+                occurrences=[date_iso] if date_iso else [],
                 time=extract_time(record["time_text"]),
                 is_free=is_free,
                 price_text=record["status_text"] or None,

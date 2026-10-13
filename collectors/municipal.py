@@ -15,12 +15,13 @@ import requests
 from bs4 import BeautifulSoup
 
 from lib.dates import extract_time, parse_ddmmyyyy, to_iso
+from lib.occurrences import expand_segments, parse_weekdays
 from lib.schema import Event
 
 BASE = "https://www.turismomardelplata.gob.ar"
 RESULTS_URL = f"{BASE}/ASP/SP/resultados-eventos.asp"
 CATEGORIES = (("11", "musica"), ("16", "cena_show_pena"), ("19", "festivales"))
-USER_AGENT = "cartelera-mdp-spike/0.1 (local research)"
+USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 REQUEST_DELAY = 1.0
 MAX_PAGES = 15
 SOURCE = "municipal"
@@ -39,8 +40,21 @@ _SELLERS = {
 }
 _PHOTO_RE = re.compile(r"Fotos[\\/]eventos[\\/](\d+)_([^\"'<>]+?\.(?:jpe?g|png|gif))", re.IGNORECASE)
 _PRICE_RE = re.compile(r"\$\s*([\d.]+)")
-_DESDE_RE = re.compile(r"desde:\s*(\d{1,2}/\d{1,2}/\d{4})", re.IGNORECASE)
-_HASTA_RE = re.compile(r"hasta:\s*(\d{1,2}/\d{1,2}/\d{4})", re.IGNORECASE)
+# A schedule block repeats "desde: <date> - hasta: <date> Horarios <weekdays>"
+# once per range; the tail is scanned for weekday names.
+_SEGMENT_RE = re.compile(
+    r"desde:\s*(\d{1,2}/\d{1,2}/\d{4})\s*-\s*hasta:\s*(\d{1,2}/\d{1,2}/\d{4})(.*?)(?=desde:|$)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def parse_schedule_segments(schedule_text):
+    """Pair each desde/hasta range with the weekday names that follow it."""
+    segments = []
+    for match in _SEGMENT_RE.finditer(schedule_text or ""):
+        desde, hasta, tail = match.groups()
+        segments.append({"desde": desde, "hasta": hasta, "weekdays": parse_weekdays(tail)})
+    return segments
 
 
 def _fetch_page(page, tipo):
@@ -126,12 +140,7 @@ def _parse_panel(panel, raw_url, category):
     venue_body = sections.get("venue", {}).get("text", "")
     venue_name, venue_raw = _split_venue(venue_body)
     schedule_text = sections.get("schedule", {}).get("text", "")
-    desdes = _DESDE_RE.findall(schedule_text)
-    hastas = _HASTA_RE.findall(schedule_text)
-    ranges = [
-        {"desde": desde, "hasta": hastas[index] if index < len(hastas) else desde}
-        for index, desde in enumerate(desdes)
-    ]
+    ranges = parse_schedule_segments(schedule_text)
     photo_match = _PHOTO_RE.search(sections.get("photos", {}).get("html", ""))
     source_event_id = None
     image_url = None
@@ -139,7 +148,7 @@ def _parse_panel(panel, raw_url, category):
         source_event_id = photo_match.group(1)
         image_url = BASE + quote(f"/Fotos/eventos/{photo_match.group(1)}_{photo_match.group(2)}")
     else:
-        seed = f"{title}|{desdes[0] if desdes else ''}"
+        seed = f"{title}|{ranges[0]['desde'] if ranges else ''}"
         source_event_id = "mdp-" + hashlib.sha1(seed.encode("utf-8")).hexdigest()[:10]
     return {
         "source": SOURCE,
@@ -198,10 +207,15 @@ def normalize(records):
     events = []
     for record in records:
         is_free, price_min, seller = _parse_entry(record["entry_text"])
-        starts = [parse_ddmmyyyy(item["desde"]) for item in record["ranges"]]
-        ends = [parse_ddmmyyyy(item["hasta"]) for item in record["ranges"]]
-        starts = [value for value in starts if value]
-        ends = [value for value in ends if value]
+        segments = []
+        for item in record["ranges"]:
+            start = parse_ddmmyyyy(item["desde"])
+            end = parse_ddmmyyyy(item["hasta"]) or start
+            if start and end:
+                segments.append({"start": start, "end": end, "weekdays": item.get("weekdays") or set()})
+        starts = [segment["start"] for segment in segments]
+        ends = [segment["end"] for segment in segments]
+        occurrences, recurrence_unknown = expand_segments(segments)
         events.append(
             Event(
                 source=SOURCE,
@@ -211,6 +225,8 @@ def normalize(records):
                 venue_raw=record["venue_raw"],
                 date_start=to_iso(min(starts)) if starts else None,
                 date_end=to_iso(max(ends)) if ends else None,
+                occurrences=occurrences,
+                recurrence_unknown=recurrence_unknown,
                 time=extract_time(record["schedule_text"]),
                 is_free=is_free,
                 price_text=re.sub(r"\s+", " ", record["entry_text"]).strip() or None,

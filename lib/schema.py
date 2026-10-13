@@ -14,6 +14,10 @@ class Event:
 
     Dates are ISO-8601 strings (YYYY-MM-DD) so they sort and compare as
     plain strings; `time` is HH:MM when the source exposes a start time.
+    `occurrences` lists every known session date (the web layer renders one
+    row per date); it stays empty when the source only exposes a range with
+    no recurrence info (`recurrence_unknown`) or when a detail-page parse
+    failed (`multi_date_incomplete`).
     """
 
     source: str
@@ -23,6 +27,9 @@ class Event:
     venue_raw: str = ""
     date_start: str | None = None
     date_end: str | None = None
+    occurrences: list[str] = field(default_factory=list)
+    recurrence_unknown: bool = False
+    multi_date_incomplete: bool = False
     time: str | None = None
     is_free: bool | None = None
     price_text: str | None = None

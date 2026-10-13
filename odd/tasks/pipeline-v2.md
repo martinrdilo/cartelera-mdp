@@ -37,8 +37,8 @@ El spike dejó tres deudas: 38 nombres crudos ≈ 30 lugares reales (13 clusters
 
 - [x] **T1** — `data/venues.json` + `lib/venues.py` (normalización y resolución por alias) + tests.
 - [x] **T2** — Integrar registry al dedupe (migrar los 5 alias hardcodeados) + tests.
-- [ ] **T3** — `occurrences` en schema + expansión de rangos municipal (regla documentada) + tests.
-- [ ] **T4** — Enriquecer Articket multi-fecha desde la página de detalle (JSON-LD/HTML) + tests.
+- [x] **T3** — `occurrences` en schema + expansión de rangos municipal (regla documentada) + tests.
+- [x] **T4** — Enriquecer Articket multi-fecha desde la página de detalle (JSON-LD/HTML) + tests.
 - [ ] **T5** — Dedupe por ocurrencias + tests.
 - [ ] **T6** — Runner robusto (rename a `run_pipeline.py`) + `scripts/daily.sh` + README + test del camino de fallo parcial.
 - [ ] **T7** — Refresh de `data/` + REPORT.md v2 (números antes/después).
@@ -60,3 +60,5 @@ Heurística ~500–700 líneas autoradas. Sin UI.
 
 - **T1 (2026-10-13):** `data/venues.json` con 30 venues y los alias observados en `data/raw/*.json`; `lib/venues.py` (`normalize_name`, `resolve`, `venue_key`) + 23 tests en `tests/test_venues.py`. Cobertura sobre el corpus: 42 strings crudos distintos → 0 sin resolver. Sheraton: el hall "Auditorium Victoria Ocampo" (Alem 4221) mapea al Sheraton; Villa Victoria (Matheu 1851) queda como venue aparte.
 - **T2 (2026-10-13):** el dedupe usa `venue_key` (id canónico o nombre normalizado) y se eliminó el mapa hardcodeado de 5 alias. `pytest tests/ -q`: 68 verdes. Nuevo cluster habilitado por el registry: Sheraton municipal ↔ Articket (no resolvía con el mapa viejo).
+- **T3 (2026-10-13):** `occurrences` + `recurrence_unknown` en `lib/schema.py`; `lib/occurrences.py` (regla: expandir por día de semana listado; rango sin recurrencia → `occurrences: []` + flag; día único siempre es fecha exacta). `collectors/municipal.py` segmenta "desde/hasta + días" y expande. Dry-run sobre el corpus real: 101 eventos → 11 multi-fecha, 130 fechas en total, 0 rangos sin info de recurrencia. Tests: `tests/test_occurrences.py` + `tests/test_municipal.py`.
+- **T4 (2026-10-13):** `enrich_occurrences()` en `collectors/muchticket.py` baja el detalle de los 2 eventos `unica_fecha=false` (1 req/s). Fuente primaria: `<select name="fechas_evento">` (lista completa de funciones); fallback: JSON-LD `schema.org/Event` (solo startDate/endDate → primera fecha + `multi_date_incomplete`). Verificado en vivo: el JSON-LD de Articket NO trae todas las fechas (el select sí), documentado en `lib/occurrences.py`.
