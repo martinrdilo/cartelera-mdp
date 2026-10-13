@@ -1,6 +1,6 @@
 # Spike de extracción — eventos musicales Mar del Plata
 
-**Estado:** En curso · **Repo:** local (`cartelera-mdp`, sin remoto) · **Fecha:** 2026-10-13
+**Estado:** Completado (2026-10-13) · **Repo:** local (`cartelera-mdp`, sin remoto) · **Fecha:** 2026-10-13
 
 ## Objetivo
 
@@ -27,10 +27,10 @@ No existe una cartelera music-first de MDP con links de compra. Antes de inverti
 
 ## Criterios de aceptación
 
-- [ ] 100+ eventos reales extraídos entre las 3 fuentes (JSON normalizado).
-- [ ] Esquema único documentado (título, lugar, fecha, hora, precio, link de compra, fuente).
-- [ ] Dedupe con ejemplos verificables (evento presente en ≥2 fuentes detectado).
-- [ ] REPORT.md con cobertura, calidad de datos y limitaciones.
+- [x] 100+ eventos reales extraídos entre las 3 fuentes (JSON normalizado).
+- [x] Esquema único documentado (título, lugar, fecha, hora, precio, link de compra, fuente).
+- [x] Dedupe con ejemplos verificables (evento presente en ≥2 fuentes detectado).
+- [x] REPORT.md con cobertura, calidad de datos y limitaciones.
 
 ## Tareas
 
@@ -71,3 +71,8 @@ Heurística ~400–600 líneas autoradas, sin UI. Spike acotado.
 **T6 — Reporte + README.** `REPORT.md` con números reales (197 crudos/normalizados, 147 únicos, 41 clusters, inventario de 38 lugares crudos) y limitaciones (multi-fecha, precios nulos, horas discrepantes, fecha 2029 typo de la fuente). `README.md` con el camino rápido (venv → pytest → run_spike).
 
 **Verificación final:** `.venv/bin/python -m pytest tests/ -q` → `42 passed`; `.venv/bin/python run_spike.py` → `TOTAL normalized=197 unique=147` + `duplicate clusters: 41`.
+
+## Cierre
+
+- **Verificación independiente:** VERIFIED (2026-10-13). Conteos confirmados en vivo (articket 57/77 MDP; cultutickets 20/22 con typo "Mar de Plata"; títulos municipal presentes en página 1); 3 clusters triples confirmados contra artefactos; pytest 42 passed. Parent spot check: pytest re-ejecutado + inspección de data/*.json.
+- **Follow-up de robustez:** `run_spike.py` sobrescribe los JSON commiteados aunque un collector falle → en la próxima iteración no escribir salidas si hubo fallos (o marcar corrida parcial).
