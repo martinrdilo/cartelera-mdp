@@ -34,10 +34,10 @@ No existe una cartelera music-first de MDP con links de compra. Antes de inverti
 
 ## Tareas
 
-- [ ] **T1** — Collector municipal (`tipo` 11/16/19, ISO-8859-1, paginación, fechas dd/mm/yyyy).
-- [ ] **T2** — Collector MuchTicket (Articket + CultuTickets; filtro "Mar del Plata" en `lugar`).
-- [ ] **T3** — Collector ClubTri (HTML; "Mié 14 de Octubre" → ISO con inferencia de año).
-- [ ] **T4** — Normalizador + esquema común (tests primero en parsing de fechas).
+- [x] **T1** — Collector municipal (`tipo` 11/16/19, ISO-8859-1, paginación, fechas dd/mm/yyyy).
+- [x] **T2** — Collector MuchTicket (Articket + CultuTickets; filtro "Mar del Plata" en `lugar`).
+- [x] **T3** — Collector ClubTri (HTML; "Mié 14 de Octubre" → ISO con inferencia de año).
+- [x] **T4** — Normalizador + esquema común (tests primero en parsing de fechas).
 - [ ] **T5** — Dedupe (fingerprint venue+fecha + similitud de título / match por slug de compra).
 - [ ] **T6** — REPORT.md (cobertura, solapamientos, limitaciones) + README de uso.
 
@@ -56,4 +56,12 @@ Heurística ~400–600 líneas autoradas, sin UI. Spike acotado.
 
 ## Evidencia / Progreso
 
-_(se actualiza al cierre de cada tarea)_
+**T1 — Collector municipal.** `collectors/municipal.py` con `collect()`/`normalize()`. Corrida live: 101 eventos (música 93 en 11 páginas, festivales 8; cena/show/peña devolvió 0 eventos). ISO-8859-1 explícito, paginado hasta página vacía (tope 15), `desde/hasta` dd/mm/yyyy (min/max si hay varios rangos), precio/gratuidad y vendedor parseados del bloque Entrada, id desde la foto (28/101 sin foto → id por hash). Parser validado primero offline contra HTML guardado.
+
+**T2 — Collector MuchTicket.** `collectors/muchticket.py`: Articket 57 + CultuTickets 20 eventos en MDP (de 77 y 22 totales del JSON). Hallazgo: CultuTickets publica `"Mar de Plata"` (sin la "l") — sin contemplar el typo el filtro devolvía 0. Un host caído no aborta al otro. Limitación documentada: `unica_fecha=false` expone solo la primera fecha (2 casos).
+
+**T3 — Collector ClubTri.** `collectors/clubtri.py`: 19 eventos con hora, estado de precio y link externo; 11 links apuntan a slugs de Articket (señal de join exacto). Fechas "Mié 14 de Octubre" inferidas a ISO: rango resultante 2026-10-14 → 2026-12-12, sin rollovers falsos.
+
+**T4 — Normalizador + esquema.** `lib/schema.py` (`Event`, 18 campos) y `lib/dates.py` (dd/mm/yyyy, español sin año con inferencia, extracción de hora). TDD: tests primero (`tests/test_dates.py`) con RED observado (`ModuleNotFoundError`), luego implementación → GREEN. `tests/conftest.py` agrega el root al `sys.path`.
+
+**Verificación parcial (al cierre de T1–T4):** `.venv/bin/python -m pytest tests/ -q` → `42 passed`. Los collectors se validaron con la corrida live completa (ver T5/T6).
