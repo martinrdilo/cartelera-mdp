@@ -166,3 +166,82 @@ class TestClusterEvents:
         assert len(clusters[0]["events"]) == 3
         kinds = {p["kind"] for p in clusters[0]["pairs"]}
         assert "ticket_slug" in kinds
+
+
+class TestClusterEventsByOccurrences:
+    def test_occurrence_intersection_joins_multi_date_events(self):
+        # Tan Biónica: municipal expands 21+22/11; Articket lists 21/11 only.
+        a = make_event(
+            "municipal", "Tan Biónica", "Estadio Polideportivo Islas Malvinas", "2026-11-21",
+            occurrences=["2026-11-21", "2026-11-22"],
+        )
+        b = make_event(
+            "articket", "TAN BIONICA", "Polideportivo Islas Malvinas", "2026-11-21",
+            occurrences=["2026-11-21"],
+        )
+        assert len(cluster_events([a, b])) == 1
+
+    def test_occurrence_intersection_joins_when_start_dates_differ(self):
+        # Abel Pintos: municipal range 07-08/11; the seller lists the second
+        # date. The old date_start gate would miss this pair.
+        a = make_event(
+            "municipal", "Abel Pintos", "Teatro Tronador", "2026-11-07",
+            occurrences=["2026-11-07", "2026-11-08"],
+        )
+        b = make_event("articket", "ABEL PINTOS", "Teatro Tronador", "2026-11-08", occurrences=["2026-11-08"])
+        assert len(cluster_events([a, b])) == 1
+
+    def test_disjoint_occurrences_split_even_when_start_dates_match(self):
+        a = make_event(
+            "municipal", "Orquesta Municipal de Tango", "Teatro Municipal Colón", "2026-10-17",
+            occurrences=["2026-10-17"],
+        )
+        b = make_event(
+            "articket", "ORQUESTA MUNICIPAL DE TANGO", "Teatro Municipal Colón", "2026-10-17",
+            occurrences=["2026-10-31"],
+        )
+        assert cluster_events([a, b]) == []
+
+    def test_disjoint_occurrences_stay_split(self):
+        # Same venue and similar title, but different sessions of a cycle.
+        a = make_event(
+            "municipal", "Orquesta Municipal de Tango", "Teatro Municipal Colón", "2026-10-17",
+            occurrences=["2026-10-17"],
+        )
+        b = make_event(
+            "articket", "ORQUESTA MUNICIPAL DE TANGO", "Teatro Municipal Colon", "2026-10-31",
+            occurrences=["2026-10-31"],
+        )
+        assert cluster_events([a, b]) == []
+
+    def test_empty_occurrences_fall_back_to_date_start(self):
+        # A range without recurrence info (occurrences=[]) still matches by
+        # start date against a source that knows the exact date.
+        a = make_event("municipal", "Rey Garufa", "Brew House", "2026-12-05", occurrences=[])
+        b = make_event(
+            "cultutickets", "REY GARUFA", "Ciudad Cultural Brew House", "2026-12-05",
+            occurrences=["2026-12-05"],
+        )
+        assert len(cluster_events([a, b])) == 1
+
+    def test_empty_occurrences_different_start_dates_stay_split(self):
+        a = make_event("municipal", "Rey Garufa", "Brew House", "2026-12-05", occurrences=[])
+        b = make_event(
+            "cultutickets", "REY GARUFA", "Ciudad Cultural Brew House", "2026-12-06",
+            occurrences=["2026-12-06"],
+        )
+        assert cluster_events([a, b]) == []
+
+    def test_cluster_reports_canonical_venue_and_union_of_dates(self):
+        a = make_event(
+            "municipal", "Tan Biónica", "Estadio Polideportivo Islas Malvinas", "2026-11-21",
+            occurrences=["2026-11-21", "2026-11-22"],
+        )
+        b = make_event(
+            "articket", "TAN BIONICA", "Polideportivo Islas Malvinas", "2026-11-21",
+            occurrences=["2026-11-21"],
+        )
+        cluster = cluster_events([a, b])[0]
+        assert cluster["venue"] == "polideportivo-islas-malvinas"
+        assert cluster["venue_name"] == "Polideportivo Islas Malvinas"
+        assert cluster["dates"] == ["2026-11-21", "2026-11-22"]

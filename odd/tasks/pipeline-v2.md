@@ -39,7 +39,7 @@ El spike dejó tres deudas: 38 nombres crudos ≈ 30 lugares reales (13 clusters
 - [x] **T2** — Integrar registry al dedupe (migrar los 5 alias hardcodeados) + tests.
 - [x] **T3** — `occurrences` en schema + expansión de rangos municipal (regla documentada) + tests.
 - [x] **T4** — Enriquecer Articket multi-fecha desde la página de detalle (JSON-LD/HTML) + tests.
-- [ ] **T5** — Dedupe por ocurrencias + tests.
+- [x] **T5** — Dedupe por ocurrencias + tests.
 - [ ] **T6** — Runner robusto (rename a `run_pipeline.py`) + `scripts/daily.sh` + README + test del camino de fallo parcial.
 - [ ] **T7** — Refresh de `data/` + REPORT.md v2 (números antes/después).
 
@@ -62,3 +62,4 @@ Heurística ~500–700 líneas autoradas. Sin UI.
 - **T2 (2026-10-13):** el dedupe usa `venue_key` (id canónico o nombre normalizado) y se eliminó el mapa hardcodeado de 5 alias. `pytest tests/ -q`: 68 verdes. Nuevo cluster habilitado por el registry: Sheraton municipal ↔ Articket (no resolvía con el mapa viejo).
 - **T3 (2026-10-13):** `occurrences` + `recurrence_unknown` en `lib/schema.py`; `lib/occurrences.py` (regla: expandir por día de semana listado; rango sin recurrencia → `occurrences: []` + flag; día único siempre es fecha exacta). `collectors/municipal.py` segmenta "desde/hasta + días" y expande. Dry-run sobre el corpus real: 101 eventos → 11 multi-fecha, 130 fechas en total, 0 rangos sin info de recurrencia. Tests: `tests/test_occurrences.py` + `tests/test_municipal.py`.
 - **T4 (2026-10-13):** `enrich_occurrences()` en `collectors/muchticket.py` baja el detalle de los 2 eventos `unica_fecha=false` (1 req/s). Fuente primaria: `<select name="fechas_evento">` (lista completa de funciones); fallback: JSON-LD `schema.org/Event` (solo startDate/endDate → primera fecha + `multi_date_incomplete`). Verificado en vivo: el JSON-LD de Articket NO trae todas las fechas (el select sí), documentado en `lib/occurrences.py`.
+- **T5 (2026-10-13):** el dedupe agrupa por venue canónico y matchea por intersección de `occurrences` (fallback a `date_start` cuando algún lado no tiene fechas conocidas); el cluster expone `venue`, `venue_name` y `dates` (unión). Sin regresiones: sobre el dataset viejo (sin occurrences) reproduce exactos los 59 pares / 41 clusters del spike. Tests nuevos: intersección con starts distintos, disjunción con start igual, fallback. `pytest tests/ -q`: 101 verdes.

@@ -1,10 +1,13 @@
 """Cross-source dedupe.
 
 Strategy:
-1. Gate: events only compare inside the same (canonical venue, ISO date)
-   fingerprint, which keeps false positives out of fuzzy matching.
-2. Exact join: same ticket slug (host + slug) on both sides wins outright.
-3. Fuzzy fallback: rapidfuzz token_set_ratio over normalized titles,
+1. Gate: events only compare inside the same canonical venue (registry id,
+   normalized raw name fallback).
+2. Date match: occurrence sets must intersect; when either side has no
+   known occurrences (range without recurrence info, parse failure), fall
+   back to start-date equality.
+3. Exact join: same ticket slug (host + slug) on both sides wins outright.
+4. Fuzzy fallback: rapidfuzz token_set_ratio over normalized titles,
    threshold ~85 (tuned against the live corpus; see REPORT.md).
 
 Returns clusters of >= 2 events with per-pair evidence.
@@ -15,7 +18,7 @@ from urllib.parse import urlparse
 
 from rapidfuzz import fuzz
 
-from lib.venues import normalize_name, venue_key
+from lib.venues import normalize_name, resolve, venue_key
 
 # Hosts whose URL path ends in a stable event slug (exact join signal).
 TICKET_HOSTS = (
@@ -84,10 +87,32 @@ def title_similarity(title_a, title_b):
     )
 
 
-def venue_date_key(event):
-    """Fingerprint gate: canonical venue + ISO start date."""
-    venue = canonical_venue(event.venue_name or event.venue_raw)
-    return f"{venue}|{event.date_start or ''}"
+def venue_group_key(event):
+    """Grouping key: canonical venue fingerprint."""
+    return canonical_venue(event.venue_name or event.venue_raw)
+
+
+def occurrences_of(event):
+    """Known session dates; falls back to the start date when none are known."""
+    if event.occurrences:
+        return set(event.occurrences)
+    return {event.date_start} if event.date_start else set()
+
+
+def _dates_match(event_a, event_b):
+    """Occurrence sets must intersect; empty sets fall back to date_start."""
+    occurrences_a = set(event_a.occurrences or [])
+    occurrences_b = set(event_b.occurrences or [])
+    if occurrences_a and occurrences_b:
+        return bool(occurrences_a & occurrences_b)
+    return bool(event_a.date_start) and event_a.date_start == event_b.date_start
+
+
+def _display_venue(event):
+    """Registry display name when resolvable, else the source's own name."""
+    raw = event.venue_name or event.venue_raw
+    resolved = resolve(raw)
+    return resolved[1] if resolved else raw
 
 
 def _pair_evidence(event_a, event_b, threshold):
@@ -108,13 +133,15 @@ def _event_ref(event):
 def cluster_events(events, threshold=DEFAULT_THRESHOLD):
     """Cluster duplicate events; returns a list of clusters with evidence.
 
-    Each cluster: {"venue_date": key, "events": [...], "pairs": [...]}.
+    Each cluster: {"venue": canonical id or normalized name,
+    "venue_name": display name, "dates": known session dates (union of the
+    members), "events": [...], "pairs": [...]}.
     """
     groups = {}
     for event in events:
         if not event.date_start:
             continue
-        groups.setdefault(venue_date_key(event), []).append(event)
+        groups.setdefault(venue_group_key(event), []).append(event)
 
     clusters = []
     for key, group in groups.items():
@@ -136,6 +163,8 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
         pairs = []
         for i in range(len(group)):
             for j in range(i + 1, len(group)):
+                if not _dates_match(group[i], group[j]):
+                    continue
                 evidence = _pair_evidence(group[i], group[j], threshold)
                 if evidence is None:
                     continue
@@ -154,9 +183,12 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
             if len(members) < 2:
                 continue
             refs = {_event_ref(event) for event in members}
+            dates = sorted({date for event in members for date in occurrences_of(event)})
             clusters.append(
                 {
-                    "venue_date": key,
+                    "venue": key,
+                    "venue_name": _display_venue(members[0]),
+                    "dates": dates,
                     "events": [event.to_dict() for event in members],
                     "pairs": [p for p in pairs if p["a"] in refs and p["b"] in refs],
                 }
