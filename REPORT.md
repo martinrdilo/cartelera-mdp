@@ -1,6 +1,6 @@
-# Reporte del spike — extracción de eventos musicales MDP
+# Reporte — extracción de eventos musicales MDP (pipeline v2)
 
-Corrida real del 2026-10-13 (UTC), end-to-end con `run_spike.py`. Todo lo que sigue sale de `data/` (crudo por fuente, normalizado y clusters con evidencia). Fetches: ~18 requests en el run, ~1 req/s, solo lectura.
+Corrida real del 2026-10-13 (UTC), end-to-end con `run_pipeline.py` (rename del `run_spike.py` del spike). Todo lo que sigue sale de `data/` (crudo por fuente, normalizado, clusters y `last_run.json`). Fetches: ~18 requests en el run, ~1 req/s, solo lectura.
 
 ## 1. Números
 
@@ -10,14 +10,28 @@ Corrida real del 2026-10-13 (UTC), end-to-end con `run_spike.py`. Todo lo que si
 | Articket | 57 | 57 | De 77 eventos del JSON, 57 con lugar en MDP. |
 | CultuTickets | 20 | 20 | De 22 del JSON, 20 en MDP. |
 | Club TRI | 19 | 19 | Home = agenda completa. |
-| **Total** | **197** | **197** | **147 únicos post-dedupe** |
+| **Total** | **197** | **197** | **146 únicos post-dedupe** |
 
-**Dedupe:** 41 clusters de duplicados (91 eventos involucrados, 50 reducciones → 147 únicos).
+**Antes/después (spike → v2):**
 
-- 11 clusters con join exacto por slug de compra (ClubTri ↔ Articket), 48 pares por fuzzy.
-- 9 clusters triples (municipal + articket + clubtri).
-- Por par de fuentes: articket+municipal 15, cultutickets+municipal 13, triple 9, clubtri+municipal 2, articket+clubtri 2.
-- Umbral fuzzy: **85** (token_set_ratio sobre títulos normalizados). Justificación en la sección 3.
+| Métrica | Spike | v2 |
+|---|---:|---:|
+| Únicos post-dedupe | 147 | **146** |
+| Clusters de duplicados | 41 | 41 |
+| Pares en clusters | 59 | 60 |
+| Eventos multi-fecha (`occurrences` > 1) | 0 | **13** |
+| Fechas de ocurrencia totales | 197 | **234** |
+| Venues resueltos por registry | — | **197/197** (42 strings crudos → 30 venues) |
+| `recurrence_unknown` / `multi_date_incomplete` | — | 0 / 0 |
+
+**Dedupe v2:** 41 clusters (92 eventos involucrados, 51 reducciones → 146 únicos); 11 pares con join exacto por slug (ClubTri ↔ Articket) y 49 por fuzzy. Por fuentes: articket+municipal 15, cultutickets+municipal 13, triple 9, clubtri+municipal 2, articket+clubtri 2. 10 clusters tienen 3+ eventos.
+
+- **Match nuevo de v2:** `municipal:Tan Biónica` (rango 21–22/11) ↔ `articket:TAN-BIONICA-EN-MAR-DEL-PLATA-22-11` por intersección de `occurrences`. El vendedor publica una página por fecha y el gate viejo (fecha de inicio) no veía la segunda. El cluster quedó de 3 miembros (las dos páginas de Articket + municipal).
+- **Sin regresiones:** los 59 pares del spike siguen todos; el diff de pares da 0 perdidos y 1 agregado.
+
+**Multi-fecha v2:** 13 eventos → 37 fechas extra:
+- Municipal: 11 eventos expandidos a 130 fechas (rangos con días de semana).
+- Articket: 2 eventos `unica_fecha=false` enriquecidos a 10 fechas (MAR DEL ENCIENDE RECARGADO: 6 funciones; ZAMBAYONNY: 4).
 
 ## 2. Cobertura
 
@@ -35,10 +49,10 @@ Corrida real del 2026-10-13 (UTC), end-to-end con `run_spike.py`. Todo lo que si
 | Dante Spinetta @ Club TRI, 14/11 | municipal + articket + clubtri | slug `dante-spinetta-club-tri` + fuzzy 100 |
 | An Espil @ Club TRI, 20/11 | municipal + articket + clubtri | slug `an-espil-en-club-tri` + fuzzy 100 |
 | Rey Garufa @ Brew House, 05/12 | municipal + cultutickets | fuzzy 100 (alias de venue) |
-| Tan Biónica @ Polideportivo Islas Malvinas, 21/11 | municipal + articket | fuzzy 100 (alias de venue) |
+| Tan Biónica @ Polideportivo Islas Malvinas, 21–22/11 | municipal + articket (x2) | intersección de `occurrences` + fuzzy 100 |
 | Una Obra Redonda @ Brew House, 16/10 | municipal + cultutickets | fuzzy 100 (prefijo de fecha limpiado) |
 
-El patrón fuerte: la agenda municipal republica casi toda la grilla de los venues grandes, y el slug de compra de ClubTri/Articket permite join exacto. 13 clusters dependen de alias de venue (Brew House, Abbey Road, Polideportivo, Villa Victoria) — ver sección 4.
+El patrón fuerte se mantiene: la agenda municipal republica casi toda la grilla de los venues grandes, y el slug de compra de ClubTri/Articket permite join exacto. Los clusters que dependían de alias de venue (Brew House, Abbey Road, Polideportivo, Villa Victoria, Sheraton) ahora los sostiene el registry, sin parches hardcodeados.
 
 ## 3. Calidad de datos
 
@@ -47,66 +61,51 @@ El patrón fuerte: la agenda municipal republica casi toda la grilla de los venu
 - **Encoding:** el municipal se decodifica ISO-8859-1 explícito; acentos intactos ("Álex Ubago", "El Príncipe Idiota", "Rocío Quiroz").
 - **Años inferidos (ClubTri):** 19 fechas sin año, regla "año actual, rueda al próximo si está más de 1 día en el pasado". Resultado coherente: 2026-10-14 → 2026-12-12, sin rollovers falsos.
 - **CultuTickets publica "Mar de Plata"** (sin la "l") en `lugar`: sin contemplar el typo, el filtro MDP daba 0 eventos. Resuelto aceptando ambas grafías (20 eventos recuperados).
-- **Títulos de CultuTickets con prefijo de fecha** ("VIER 16 DE OKTUBRE MDP ..."): se limpian solo para comparar. Sin esto había 1 falso positivo ("Oktubre MdP" ↔ "VIER 16 DE OKTUBRE MDP UNA OBRA REDONDA") y 1 match perdido ("Una Obra Redonda").
+- **Títulos de CultuTickets con prefijo de fecha:** se limpian solo para comparar; sin esto había 1 falso positivo y 1 match perdido.
 - **Precios:** Articket/CultuTickets exponen `entradas_online_desde` (0 nulos); municipal parsea `$` del bloque Entrada (90/101) y gratuidad explícita (6 libres).
-- **Umbral 85 tuneado con datos:** con 85 el par "29 de OCT ZICA" vs "JUEV 29 DE OCT ARIEL EL TRAIDOR" (78.3, eventos distintos el mismo día) queda separado. Bajarlo a ~70 los fusionaría.
+- **Umbral 85 tuneado con datos:** el par "29 de OCT ZICA" vs "JUEV 29 DE OCT ARIEL EL TRAIDOR" (78.3, eventos distintos el mismo día) queda separado; bajarlo a ~70 los fusionaría.
+- **Multi-fecha municipal (v2):** regla en `lib/occurrences.py`: un segmento con días de semana listados expande una ocurrencia por día dentro del rango; un día único es fecha exacta; un rango multi-día sin días de semana no se inventa (`occurrences: []` + `recurrence_unknown: true`). En el corpus real los 11 eventos multi-fecha traen días de semana: 0 `recurrence_unknown`.
+- **Multi-fecha Articket (v2):** la página de detalle lista todas las funciones en el `<select name="fechas_evento">`; el JSON-LD `schema.org/Event` solo trae `startDate`/`endDate` (verificado en vivo: con `unica_fecha=false` igual expone una sola fecha). Se usa el select como fuente primaria y el JSON-LD como fallback (primera fecha + `multi_date_incomplete: true`). 2/2 eventos enriquecidos, 0 incompletos.
+- **Canónico de venues (v2):** `data/venues.json` (30 venues) + `lib/venues.py` resuelven los 42 strings crudos distintos del corpus (197/197 eventos). La normalización (casefold, sin acentos, sin puntuación) resuelve variantes como "Teatro Municipal Colon" sin alias extra.
 
 **Pendiente / conocido**
 
-- **Multi-fecha:** Articket expone solo la primera fecha cuando `unica_fecha=false` (2 casos en esta corrida); municipal con varios rangos guarda min/max (4 casos, ej. Coros Mardelcanto 23/10 → 13/12).
-- **Falsos negativos de fuzzy:** "Patricia Luca - Ahora Solo Faltas Tú." vs "Patricia Lucas" (municipal duplicado interno, 72.7) y "Sebastián Molina presenta Vivo Arjona" vs "VIVO ARJONA EN MAR DEL PLATA" (64.6). Quedan sin cluster; la solución es canónico de venues/títulos, no bajar el umbral.
+- **Falsos negativos de fuzzy:** "Patricia Luca - Ahora Solo Faltas Tú." vs "Patricia Lucas" (municipal duplicado interno, 72.7) y "Sebastián Molina presenta Vivo Arjona" vs "VIVO ARJONA EN MAR DEL PLATA" (64.6). Quedan sin cluster; la solución es canónico de títulos, no bajar el umbral.
+- **Fallback de fechas:** si un evento no tiene `occurrences` (rango sin recurrencia o detalle fallido), el dedupe vuelve a igualdad de `date_start`; un vendedor con una fecha distinta al inicio del rango podría no matchear. Es la regla conservadora documentada.
+- **Dependencia del select de Articket:** si cambia la estructura del detalle, el fallback JSON-LD deja solo la primera fecha (+ flag); la corrida no se rompe.
 - **Horas discrepantes en clusters:** 4 casos (ej. Cantamos Fatal 22:00 vs 23:30). Falta regla de precedencia (¿vendedor gana?).
 - **Municipal sin foto:** 28/101 eventos sin imagen → `source_event_id` por hash (mdp-<sha1>); el resto usa el id embebido en la foto.
 - **Sin hora:** 6 eventos municipal (el sitio lista solo el día).
 - **Precios nulos:** municipal 11 (texto de entrada vacío/ambiguo); Club TRI 19 (solo estado "Gratis"/"Sólo en puerta"/"Comprar"; el precio vive en el vendedor).
 - **Fecha basura en la fuente:** "Recital de Violin y Piano..." (municipal) cargado 29/01/2029 — con $16000 y miércoles 21:00 es casi seguro un typo de la fuente. No se corrige: se reporta.
-- **token_set_ratio es permisivo con subconjuntos** (títulos cortos municipal matchean títulos largos del vendedor); aceptable porque el gate lugar+fecha lo contiene.
+- **token_set_ratio es permisivo con subconjuntos** (títulos cortos municipal matchean títulos largos del vendedor); aceptable porque el gate venue+fecha lo contiene.
+- **Clusters multi-fecha son transitivos:** las dos páginas por fecha de un vendedor se unen al evento municipal vía union-find y quedan en un cluster de 3+ miembros; el consumidor decide con `dates` (unión) cómo renderizar una fila por fecha.
 
-## 4. Inventario de lugares (38 nombres crudos)
+## 4. Canónico de venues
 
-Insumo para el canónico de venues. Variantes del mismo lugar marcadas con →.
+`data/venues.json` tiene 30 venues con los alias observados en `data/raw/*.json` y la dirección cuando el corpus la expone. `lib/venues.py` resuelve por normalización exacta + alias, con fallback a la parte antes de la primera coma (los strings crudos traen dirección). Cobertura: 42 strings crudos distintos → 0 sin resolver; los no conocidos caen al nombre normalizado (nunca bloquean el dedupe).
 
-| Lugar | Eventos |
-|---|---:|
-| Club TRI | 42 |
-| Vorterix | 20 |
-| Ciudad Cultural Brew House → Brew House | 20 |
-| Brew House | 15 |
-| Teatro Municipal Colón (y "Teatro Municipal Colon") | 13 |
-| Arena Mar del Plata | 12 |
-| Abbey Road → "Abbey Road - Concert Bar" | 20 |
-| Centro de Arte Radio City - Roxy - Melany | 7 |
-| Centro Cultural Victoria Ocampo. Villa Victoria → Villa Victoria Ocampo | 6 |
-| Bendu | 4 |
-| Wolfgang Teatro Bar | 4 |
-| La Bancaria - Sala Arturo Jauretche | 3 |
-| Chauvin (y "Microteatro Chauvin") | 4 |
-| Vinoteca Perrier | 3 |
-| Polideportivo Islas Malvinas (y "Estadio Polideportivo Islas Malvinas") | 3 |
-| Club 39 Cervecería | 2 |
-| Espacio La Rosa | 2 |
-| Ogham diagonal | 2 |
-| Sheraton Mar del Plata (y "- Auditorium Victoria Ocampo") | 2 |
-| Teatro Auditorium - Sala Roberto J. Payró / Sala Gregorio Nachman | 2 |
-| Capilla del Divino Maestro - Pías Discípulas | 1 |
-| Teatro Tronador | 1 |
-| Casa de Madera | 1 |
-| Archivo Museo Histórico Municipal Don Roberto T. Barili. Villa Mitre | 1 |
-| José Hernandez | 1 |
-| Casa del Mar | 1 |
-| NH Gran Hotel Provincial | 1 |
-| CCAVE | 1 |
-| Teatro San Martin | 1 |
-| PLAZA DE LA MÚSICA | 1 |
-| Lo de Julio Cerveceria | 1 |
+Grupos de alias notables:
 
-Los alias usados hoy en `lib/dedupe.py` son un parche (5 entradas); el canónico real es una tabla con dueño, dirección y salas.
+| Venue | Variantes observadas |
+|---|---|
+| Ciudad Cultural Brew House | "Brew House", "Ciudad Cultural Brew House" |
+| Abbey Road | "Abbey Road", "Abbey Road - Concert Bar" |
+| Teatro Municipal Colón | "Teatro Municipal Colón" / "Colon" (los acentos los resuelve la normalización) |
+| Villa Victoria Ocampo | "Villa Victoria Ocampo", "Centro Cultural Victoria Ocampo. Villa Victoria" |
+| Polideportivo Islas Malvinas | "Polideportivo Islas Malvinas", "Estadio Polideportivo Islas Malvinas" |
+| Chauvin | "Chauvin", "Microteatro Chauvin" |
+| Teatro Auditorium | "Teatro Auditorium - Sala Roberto J. Payró" y "Sala Gregorio Nachman" comparten venue |
+| Sheraton Mar del Plata | "Sheraton Mar del Plata", "Sheraton Mar del Plata - Auditorium Victoria Ocampo" |
+
+**Oddity del Sheraton:** el municipal publica el hall como "Sheraton Mar del Plata - Auditorium Victoria Ocampo" (Alem 4221). Es el Sheraton, no Villa Victoria (Matheu 1851): el registry los mantiene separados y hay test de que no se cruzan.
 
 ## 5. Limitaciones y próximos pasos
 
-- **Canónico de venues** es el mayor lever de recall: 38 nombres crudos ≈ 30 lugares reales; recupera los 13 clusters que hoy dependen de alias manuales.
-- **Expansión multi-fecha** (Articket `unica_fecha=false`, rangos municipal): hoy 1 fecha por evento; el calendario real necesita una fila por fecha.
+- **Canónico de venues** quedó hecho: 42 strings → 30 venues, 100% resuelto, sin lista hardcodeada en el dedupe.
+- **Multi-fecha** quedó hecho para lo que las fuentes exponen (rangos municipal con días + detalle Articket). Si aparece un rango sin recurrencia, el sistema lo flagea en vez de inventar.
 - **Slug como join de primera clase:** solo ClubTri lo expone; sumar Plateanet/Ticketek daría joins exactos para municipal ↔ vendedores.
 - **Fuentes duras fuera de alcance:** Plateanet, Bandsintown, Bombo, Instagram (fases posteriores).
 - **Reglas de precedencia** por campo (título, hora, precio) cuando hay conflicto entre fuentes; hoy el cluster guarda todo y decide el consumidor.
 - **Cobertura del municipal:** 11 páginas de música son el tope práctico actual; verificar si el tope de 15 páginas alcanza en temporada alta (enero).
+- **Operación:** `scripts/daily.sh` + `data/last_run.json` dejan la corrida diaria lista para cron/systemd; falta decidir dónde corre (deploy) y sumar alerta si el exit code no es 0.

@@ -1,0 +1,41 @@
+{
+  "finished_at": "2026-10-13T23:59:49+00:00",
+  "duration_seconds": 36.5,
+  "sources": {
+    "articket": {
+      "raw": 57,
+      "normalized": 57
+    },
+    "clubtri": {
+      "raw": 19,
+      "normalized": 19
+    },
+    "cultutickets": {
+      "raw": 20,
+      "normalized": 20
+    },
+    "municipal": {
+      "raw": 101,
+      "normalized": 101
+    }
+  },
+  "totals": {
+    "raw": 197,
+    "normalized": 197,
+    "unique": 146
+  },
+  "duplicates": {
+    "clusters": 41,
+    "events_in_clusters": 92
+  },
+  "occurrences": {
+    "multi_date_events": 13,
+    "recurrence_unknown": 0,
+    "multi_date_incomplete": 0,
+    "enriched_from_detail": 2
+  },
+  "venues": {
+    "resolved": 197,
+    "unknown": 0
+  }
+}

@@ -1,6 +1,6 @@
 # Pipeline v2 — canónico de venues, multi-fecha y corrida diaria
 
-**Estado:** En curso · **Repo:** local (`cartelera-mdp`, sin remoto) · **Fecha:** 2026-10-13
+**Estado:** Completo (2026-10-13) · **Repo:** local (`cartelera-mdp`, sin remoto) · **Fecha:** 2026-10-13
 **Contexto:** Fase 1 del MVP (`docs/mvp.md`); extiende el spike (`odd/tasks/spike-extraccion.md`, `REPORT.md`).
 
 ## Objetivo
@@ -26,12 +26,12 @@ El spike dejó tres deudas: 38 nombres crudos ≈ 30 lugares reales (13 clusters
 
 ## Criterios de aceptación
 
-- [ ] Registry (~30 venues con alias) usado por el dedupe (sin lista hardcodeada).
-- [ ] Multi-fecha expandido a `occurrences` con reglas documentadas y tests.
-- [ ] Dedupe matchea por intersección de ocurrencias (fallback a fecha simple).
-- [ ] Fallo parcial → no pisa outputs, exit ≠ 0, evidencia en `data/`; éxito → `data/last_run.json`.
-- [ ] `scripts/daily.sh` + README con ejemplo de schedule.
-- [ ] Tests verdes + corrida live con números reportados (antes/después).
+- [x] Registry (~30 venues con alias) usado por el dedupe (sin lista hardcodeada).
+- [x] Multi-fecha expandido a `occurrences` con reglas documentadas y tests.
+- [x] Dedupe matchea por intersección de ocurrencias (fallback a fecha simple).
+- [x] Fallo parcial → no pisa outputs, exit ≠ 0, evidencia en `data/`; éxito → `data/last_run.json`.
+- [x] `scripts/daily.sh` + README con ejemplo de schedule.
+- [x] Tests verdes + corrida live con números reportados (antes/después).
 
 ## Tareas
 
@@ -41,7 +41,7 @@ El spike dejó tres deudas: 38 nombres crudos ≈ 30 lugares reales (13 clusters
 - [x] **T4** — Enriquecer Articket multi-fecha desde la página de detalle (JSON-LD/HTML) + tests.
 - [x] **T5** — Dedupe por ocurrencias + tests.
 - [x] **T6** — Runner robusto (rename a `run_pipeline.py`) + `scripts/daily.sh` + README + test del camino de fallo parcial.
-- [ ] **T7** — Refresh de `data/` + REPORT.md v2 (números antes/después).
+- [x] **T7** — Refresh de `data/` + REPORT.md v2 (números antes/después).
 
 ## Verificación
 
@@ -64,3 +64,4 @@ Heurística ~500–700 líneas autoradas. Sin UI.
 - **T4 (2026-10-13):** `enrich_occurrences()` en `collectors/muchticket.py` baja el detalle de los 2 eventos `unica_fecha=false` (1 req/s). Fuente primaria: `<select name="fechas_evento">` (lista completa de funciones); fallback: JSON-LD `schema.org/Event` (solo startDate/endDate → primera fecha + `multi_date_incomplete`). Verificado en vivo: el JSON-LD de Articket NO trae todas las fechas (el select sí), documentado en `lib/occurrences.py`.
 - **T5 (2026-10-13):** el dedupe agrupa por venue canónico y matchea por intersección de `occurrences` (fallback a `date_start` cuando algún lado no tiene fechas conocidas); el cluster expone `venue`, `venue_name` y `dates` (unión). Sin regresiones: sobre el dataset viejo (sin occurrences) reproduce exactos los 59 pares / 41 clusters del spike. Tests nuevos: intersección con starts distintos, disjunción con start igual, fallback. `pytest tests/ -q`: 101 verdes.
 - **T6 (2026-10-13):** `run_spike.py` → `run_pipeline.py`: colecta TODAS las fuentes antes de escribir; si alguna falla → `data/raw/<fuente>.error.json`, outputs intactos, exit ≠ 0. Éxito: escrituras atómicas (tmp+rename) + `data/last_run.json` (timestamp UTC, counts por fuente, totales, clusters, occurrences, venues, duración). `scripts/daily.sh` (log en `logs/daily.log`, `logs/` gitignoreado) + README con ejemplos cron/systemd (nada instalado). Tests: fallo parcial con collector inyectado (outputs intactos, exit ≠ 0) y éxito (last_run + sin `.tmp`); script verificado con venv falso (propaga exit code y appendea log). `pytest tests/ -q`: 103 verdes.
+- **T7 (2026-10-13):** corrida live con `run_pipeline.py`: 197 normalizados → **146 únicos** (antes 147), 41 clusters / 60 pares (antes 59), 13 multi-fecha → 234 fechas totales, 2 enriquecidos por detalle, 0 `recurrence_unknown` / 0 `multi_date_incomplete`, 197/197 venues resueltos, 36.5s, ~18 requests. Diff de pares vs spike: 0 perdidos, 1 agregado (Tan Biónica 22/11 por intersección de occurrences). `data/` refrescado + `REPORT.md` v2 con antes/después. Un bug real apareció en la primera corrida (weekdays no serializables en el raw) y se corrigió con test de regresión (`cd5e33e`): la política del runner dejó los outputs intactos y salió ≠ 0.
