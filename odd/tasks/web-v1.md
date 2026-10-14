@@ -1,6 +1,6 @@
 # Web v1 — "Este finde" + deploy (Fase 2)
 
-**Estado:** En curso · **Repo:** local + GitHub público (`cartelera-mdp`) · **Fecha:** 2026-10-14
+**Estado:** Completado (2026-10-14) · **Repo:** local + GitHub público (`cartelera-mdp`) · **Fecha:** 2026-10-14
 **Contexto:** Fase 2 del MVP (`docs/mvp.md`). Decisiones del usuario (2026-10-14): nombre placeholder "Cartelera MDP" · repo público en GitHub · subdominio gratis · deploy público sin promocionar.
 
 ## Objetivo
@@ -60,3 +60,8 @@ Heurística ~600–900 líneas (generador + HTML/CSS/JS + tests).
 - **T4** (commits `29b79bb`+`5448a1a`): `<html lang="es">`, title/meta/og/canonical, JSON-LD (WebSite + ItemList con los 27 del finde), landmarks con `aria-labelledby`, skip link, foco visible, dark mode, empty states (finde vacío server-side; filtro vacío client-side), footer con atribución + "Actualizado: 13/10/2026 21:14".
 - **T5** (commit `ba13958`): `.github/workflows/deploy.yml` — push a `main` + `workflow_dispatch` + cron `0 11 * * *` (08:00 ART); `contents: read`, `pages: write`, `id-token: write`; concurrency `pages`; build con pipeline best-effort (`continue-on-error: true`) → `build_site.py` → artifact `site`; deploy con environment `github-pages`. Sin push: el remoto lo maneja el parent.
 - **T6** (commit de docs): 154 tests verdes (107 previos + 47 nuevos). `python3 build_site.py` → 145 eventos, 27 finde, 30 venues, 4 archivos. Build determinista `--today 2026-10-14` en `/tmp/opencode/site-check`. `python -m http.server -d site` sirve index/assets/favicon con 200. README con "Web local" y "Deploy".
+
+## Cierre
+
+- **Verificación independiente:** VERIFIED en sitio/datos/tests (build determinista — hashes idénticos en dos corridas; 145 próximos / 27 finde / 30 venues reproducidos; filtros y tests auditados; sin cambios fuera de alcance). **Hallazgo corregido:** pins de GitHub Actions desactualizados (era node20; majors vigentes verificados contra GitHub: checkout v7, setup-python v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5) → actualizados antes del primer deploy.
+- **Deploy:** GitHub público `martinrdilo/cartelera-mdp` + Pages (`https://martinrdilo.github.io/cartelera-mdp/`), workflow con cron diario 11:00 UTC + push + dispatch; primer run disparado con el push de cierre.
