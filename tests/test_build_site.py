@@ -15,6 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO_ROOT / "data"
 SNAPSHOT_TODAY = date(2026, 10, 14)
 JSON_LD_RE = re.compile(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.DOTALL)
+DATA_RE = re.compile(r'<script id="events-data" type="application/json">(.*?)</script>', re.DOTALL)
 
 
 def make_member(source, **overrides):
@@ -259,8 +260,9 @@ class TestDeterministicBuild:
         stats, _ = self.build(tmp_path)
         assert (tmp_path / "index.html").exists()
         assert (tmp_path / "assets" / "style.css").exists()
+        assert (tmp_path / "assets" / "app.js").exists()
         assert (tmp_path / "favicon.svg").exists()
-        assert stats["files"] == ["index.html", "assets/style.css", "favicon.svg"]
+        assert stats["files"] == ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"]
 
     def test_counts_match_the_snapshot(self, tmp_path):
         stats, html = self.build(tmp_path)
@@ -306,3 +308,90 @@ class TestDeterministicBuild:
         assert first["name"]
         assert first["startDate"].startswith("2026-10-")
         assert first["location"]["name"]
+
+
+class TestFiltersAndHooks:
+    """Filter bar, card data attributes, inlined payload and outbound/share hooks."""
+
+    def build(self, tmp_path):
+        stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=SNAPSHOT_TODAY)
+        html = (tmp_path / "index.html").read_text(encoding="utf-8")
+        app_js = (tmp_path / "assets" / "app.js").read_text(encoding="utf-8")
+        payload = json.loads(DATA_RE.search(html).group(1))
+        return stats, html, app_js, payload
+
+    def test_filter_bar_markup(self, tmp_path):
+        _, html, _, _ = self.build(tmp_path)
+        for window in ("weekend", "7days", "all"):
+            assert f'data-window="{window}"' in html
+        assert 'id="venue-filter"' in html
+        assert 'id="free-filter"' in html
+        assert 'id="filter-count"' in html
+        assert 'id="empty-filter"' in html
+        assert "No hay eventos con esos filtros" in html
+
+    def test_venue_options_only_include_upcoming_venues(self, tmp_path):
+        stats, html, _, payload = self.build(tmp_path)
+        assert stats["venues"] == 30
+        assert html.count('<option value="') == stats["venues"] + 1  # + "Todos los lugares"
+        assert 'value="club-tri"' in html
+        assert stats["venues"] == len({event["venue_id"] for event in payload["events"]})
+
+    def test_cards_carry_filter_attributes(self, tmp_path):
+        _, html, _, _ = self.build(tmp_path)
+        assert 'data-venue="club-tri"' in html
+        assert 'data-free="1"' in html
+        assert 'data-dates="2026-11-20"' in html
+        cards = re.findall(r'<article class="card" [^>]*>', html)
+        assert len(cards) == 145 + 27
+        for card in cards:
+            for attribute in ("data-event-id=", "data-venue=", "data-free=", "data-dates=", "data-title="):
+                assert attribute in card
+
+    def test_share_button_on_every_card(self, tmp_path):
+        _, html, _, payload = self.build(tmp_path)
+        weekend_count = sum(
+            1 for event in payload["events"] if build_site.matches_window(event["dates"], "weekend", SNAPSHOT_TODAY)
+        )
+        assert html.count('class="btn btn--ghost js-share"') == len(payload["events"]) + weekend_count
+
+    def test_inlined_payload_is_parseable(self, tmp_path):
+        _, _, _, payload = self.build(tmp_path)
+        assert payload["today"] == "2026-10-14"
+        assert payload["site"]["name"] == "Cartelera MDP"
+        assert payload["windows"]["weekend"] == {"start": "2026-10-15", "end": "2026-10-18"}
+        assert payload["windows"]["7days"] == {"start": "2026-10-14", "end": "2026-10-20"}
+        assert len(payload["events"]) == 145
+        first = payload["events"][0]
+        for field in ("id", "title", "venue_id", "dates", "is_free", "price_label"):
+            assert field in first
+
+    def test_outbound_links_match_the_payload(self, tmp_path):
+        _, html, _, payload = self.build(tmp_path)
+        with_ticket = [event for event in payload["events"] if event["ticket_url"]]
+        weekend_with_ticket = [
+            event
+            for event in with_ticket
+            if build_site.matches_window(event["dates"], "weekend", SNAPSHOT_TODAY)
+        ]
+        expected = len(with_ticket) + len(weekend_with_ticket)
+        pattern = re.compile(
+            r'<a class="btn btn--primary" href="[^"]+" target="_blank" rel="noopener" '
+            r'data-outbound="ticket" data-event-id="[^"]+">Sacar entrada</a>'
+        )
+        assert len(pattern.findall(html)) == expected
+        assert "Sacar entrada" in html
+
+    def test_app_js_has_whatsapp_share_and_track_stub(self, tmp_path):
+        _, _, app_js, _ = self.build(tmp_path)
+        assert "https://wa.me/?text=" in app_js
+        assert "function track(" in app_js
+        assert "TODO(analytics)" in app_js
+        assert "location.href" in app_js
+        assert "filter_change" in app_js and "outbound_ticket" in app_js and "share_whatsapp" in app_js
+
+    def test_hidden_cards_have_a_display_rule(self, tmp_path):
+        # .card sets display:flex, which would override the hidden attribute.
+        self.build(tmp_path)
+        css = (tmp_path / "assets" / "style.css").read_text(encoding="utf-8")
+        assert ".card[hidden]" in css

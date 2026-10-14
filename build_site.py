@@ -411,7 +411,7 @@ def render_media(event: dict) -> str:
             "</div>"
         )
     initial = esc((event["title"] or "?").strip()[:1].upper())
-    return f'<div class="card__media card__media--empty" aria-hidden="true"><span>{initial}</span></div>'
+    return f'<div class="card__media card__media--empty" aria-hidden="true">{initial}</div>'
 
 
 def render_card(event: dict, scope: str) -> str:
@@ -424,27 +424,101 @@ def render_card(event: dict, scope: str) -> str:
         price_html = f'<p class="card__price{modifier}">{esc(price)}</p>'
     else:
         price_html = ""
+    actions = []
     if event.get("ticket_url"):
-        action = (
+        actions.append(
             f'<a class="btn btn--primary" href="{esc(event["ticket_url"])}" target="_blank" '
             'rel="noopener" data-outbound="ticket" '
             f'data-event-id="{esc(event["slug"])}">Sacar entrada</a>'
         )
     elif not event["is_free"]:
         # No online sale link in any source: say so instead of offering a dead button.
-        action = '<span class="btn btn--muted">Sin venta online</span>'
-    else:
-        action = ""
+        actions.append('<span class="btn btn--muted">Sin venta online</span>')
+    actions.append(
+        f'<button type="button" class="btn btn--ghost js-share" data-event-id="{esc(event["slug"])}">'
+        "Compartir</button>"
+    )
+    card_attrs = (
+        f'data-event-id="{esc(event["slug"])}" data-card-scope="{scope}" '
+        f'data-venue="{esc(event["venue_id"])}" data-free="{1 if event["is_free"] else 0}" '
+        f'data-dates="{esc(" ".join(event["dates"]))}" data-time="{esc(event["time"] or "")}" '
+        f'data-title="{esc(event["title"])}" data-venue-name="{esc(event["venue_name"])}"'
+    )
     return (
-        f'<article class="card" data-event-id="{esc(event["slug"])}" data-card-scope="{scope}">'
+        f'<article class="card" {card_attrs}>'
         f"{render_media(event)}"
         '<div class="card__body">'
         f'<h3 class="card__title">{esc(event["title"])}</h3>'
         f'<p class="card__venue">{venue_line}</p>'
         f'<p class="card__when">{esc(format_when(event["dates"], event["time"]))}</p>'
-        f'<div class="card__foot">{price_html}{action}</div>'
-        "</div></article>"
+        f'<div class="card__foot">{price_html}'
+        f'<div class="card__actions">{"".join(actions)}</div>'
+        "</div></div></article>"
     )
+
+
+def venue_options(events: list[dict]) -> list[tuple[str, str, int]]:
+    """(display name, venue id, upcoming count) for venues with events, A-Z."""
+    counts: dict[str, int] = {}
+    names: dict[str, str] = {}
+    for event in events:
+        counts[event["venue_id"]] = counts.get(event["venue_id"], 0) + 1
+        names[event["venue_id"]] = event["venue_name"]
+    return sorted(
+        ((names[venue_id], venue_id, count) for venue_id, count in counts.items()),
+        key=lambda row: row[0].casefold(),
+    )
+
+
+def render_filters(events: list[dict]) -> str:
+    options = "\n".join(
+        f'<option value="{esc(venue_id)}">{esc(name)} ({count})</option>'
+        for name, venue_id, count in venue_options(events)
+    )
+    return (
+        '<div class="filters">'
+        '<div class="filters__row" role="group" aria-label="Rango de fechas">'
+        '<button type="button" class="chip" data-window="weekend" aria-pressed="false">Este finde</button>'
+        '<button type="button" class="chip" data-window="7days" aria-pressed="false">Próximos 7 días</button>'
+        '<button type="button" class="chip is-active" data-window="all" aria-pressed="true">Todos</button>'
+        "</div>"
+        '<div class="filters__row">'
+        '<label class="filters__label" for="venue-filter">Lugar</label>'
+        f'<select id="venue-filter"><option value="">Todos los lugares</option>{options}</select>'
+        '<label class="filters__check"><input type="checkbox" id="free-filter"> Gratis</label>'
+        "</div>"
+        "</div>"
+    )
+
+
+def events_payload(events: list[dict], today: date) -> dict:
+    """Everything app.js needs, inlined so the page never fetches anything."""
+    start, end = weekend_window(today)
+    seven_start, seven_end = window_bounds("7days", today)
+    return {
+        "site": {"name": SITE_NAME, "url": SITE_URL},
+        "today": today.isoformat(),
+        "windows": {
+            "weekend": {"start": start.isoformat(), "end": end.isoformat()},
+            "7days": {"start": seven_start.isoformat(), "end": seven_end.isoformat()},
+        },
+        "events": [
+            {
+                "id": event["slug"],
+                "title": event["title"],
+                "venue_id": event["venue_id"],
+                "venue_name": event["venue_name"],
+                "address": event["address"],
+                "dates": event["dates"],
+                "time": event["time"],
+                "is_free": event["is_free"],
+                "price_label": event["price_label"],
+                "ticket_url": event["ticket_url"],
+                "image_url": event["image_url"],
+            }
+            for event in events
+        ],
+    }
 
 
 def render_cards(events: list[dict], scope: str) -> str:
@@ -510,12 +584,15 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
     weekend = [event for event in events if matches_window(event["dates"], "weekend", today)]
     if weekend:
         weekend_body = render_cards(weekend, "weekend")
+        hero_more = '<p class="hero__more"><a href="#todos">Ver todos los eventos</a></p>'
     else:
         weekend_body = (
             '<p class="empty">Todavía no hay shows cargados para este finde — '
             '<a href="#todos">mirá todos los eventos</a>.</p>'
         )
+        hero_more = ""
     hero_sub = f"{esc(format_range(start, end))} · {esc(plural(len(weekend), 'show', 'shows'))}"
+    payload = json.dumps(events_payload(events, today), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -550,16 +627,22 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 <div class="cards" id="weekend-list">
 {weekend_body}
 </div>
+{hero_more}
 </section>
 <section class="all" id="todos" aria-labelledby="todos-title">
 <h2 id="todos-title">Todos los eventos</h2>
 <p class="all__sub">{esc(plural(len(events), "evento", "eventos"))} con fecha a partir de hoy.</p>
+{render_filters(events)}
+<p class="filters__count" id="filter-count" aria-live="polite"></p>
+<p class="empty" id="empty-filter" hidden>No hay eventos con esos filtros — probá sacar alguno.</p>
 <div class="cards" id="all-list">
 {render_cards(events, "all")}
 </div>
 </section>
 </main>
 {render_footer(last_run)}
+<script id="events-data" type="application/json">{payload}</script>
+<script src="assets/app.js"></script>
 </body>
 </html>
 """
@@ -580,6 +663,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
     (out_dir / "assets").mkdir(exist_ok=True)
     (out_dir / "index.html").write_text(render_index(events, last_run, today), encoding="utf-8")
     shutil.copyfile(ASSETS_SRC / "style.css", out_dir / "assets" / "style.css")
+    shutil.copyfile(ASSETS_SRC / "app.js", out_dir / "assets" / "app.js")
     shutil.copyfile(ASSETS_SRC / "favicon.svg", out_dir / "favicon.svg")
 
     return {
@@ -587,7 +671,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         "upcoming": len(events),
         "weekend": weekend_count,
         "venues": len({event["venue_id"] for event in events}),
-        "files": ["index.html", "assets/style.css", "favicon.svg"],
+        "files": ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"],
     }
 
 
