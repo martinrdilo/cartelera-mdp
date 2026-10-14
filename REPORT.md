@@ -1,6 +1,6 @@
 # Reporte — extracción de eventos musicales MDP (pipeline v2)
 
-Corrida real del 2026-10-13 (UTC), end-to-end con `run_pipeline.py` (rename del `run_spike.py` del spike). Todo lo que sigue sale de `data/` (crudo por fuente, normalizado, clusters y `last_run.json`). Fetches: ~18 requests en el run, ~1 req/s, solo lectura.
+Corrida real del 2026-10-14 (UTC), end-to-end con `run_pipeline.py` (rename del `run_spike.py` del spike). Todo lo que sigue sale de `data/` (crudo por fuente, normalizado, clusters y `last_run.json`). Fetches: ~18 requests en el run, ~1 req/s, solo lectura.
 
 ## 1. Números
 
@@ -20,7 +20,7 @@ Corrida real del 2026-10-13 (UTC), end-to-end con `run_pipeline.py` (rename del 
 | Clusters de duplicados | 41 | 41 |
 | Pares en clusters | 59 | 60 |
 | Eventos multi-fecha (`occurrences` > 1) | 0 | **13** |
-| Fechas de ocurrencia totales | 197 | **234** |
+| Fechas de ocurrencia totales | 197 | **237** |
 | Venues resueltos por registry | — | **197/197** (42 strings crudos → 30 venues) |
 | `recurrence_unknown` / `multi_date_incomplete` | — | 0 / 0 |
 
@@ -29,8 +29,8 @@ Corrida real del 2026-10-13 (UTC), end-to-end con `run_pipeline.py` (rename del 
 - **Match nuevo de v2:** `municipal:Tan Biónica` (rango 21–22/11) ↔ `articket:TAN-BIONICA-EN-MAR-DEL-PLATA-22-11` por intersección de `occurrences`. El vendedor publica una página por fecha y el gate viejo (fecha de inicio) no veía la segunda. El cluster quedó de 3 miembros (las dos páginas de Articket + municipal).
 - **Sin regresiones:** los 59 pares del spike siguen todos; el diff de pares da 0 perdidos y 1 agregado.
 
-**Multi-fecha v2:** 13 eventos → 37 fechas extra:
-- Municipal: 11 eventos expandidos a 130 fechas (rangos con días de semana).
+**Multi-fecha v2:** 13 eventos → 40 fechas extra:
+- Municipal: 133 fechas de ocurrencia en total (11 eventos multi-fecha expandidos a 43, rangos con días de semana).
 - Articket: 2 eventos `unica_fecha=false` enriquecidos a 10 fechas (MAR DEL ENCIENDE RECARGADO: 6 funciones; ZAMBAYONNY: 4).
 
 ## 2. Cobertura
@@ -64,7 +64,7 @@ El patrón fuerte se mantiene: la agenda municipal republica casi toda la grilla
 - **Títulos de CultuTickets con prefijo de fecha:** se limpian solo para comparar; sin esto había 1 falso positivo y 1 match perdido.
 - **Precios:** Articket/CultuTickets exponen `entradas_online_desde` (0 nulos); municipal parsea `$` del bloque Entrada (90/101) y gratuidad explícita (6 libres).
 - **Umbral 85 tuneado con datos:** el par "29 de OCT ZICA" vs "JUEV 29 DE OCT ARIEL EL TRAIDOR" (78.3, eventos distintos el mismo día) queda separado; bajarlo a ~70 los fusionaría.
-- **Multi-fecha municipal (v2):** regla en `lib/occurrences.py`: un segmento con días de semana listados expande una ocurrencia por día dentro del rango; un día único es fecha exacta; un rango multi-día sin días de semana no se inventa (`occurrences: []` + `recurrence_unknown: true`). En el corpus real los 11 eventos multi-fecha traen días de semana: 0 `recurrence_unknown`.
+- **Multi-fecha municipal (v2):** regla en `lib/occurrences.py`: un segmento con días de semana listados expande una ocurrencia por día dentro del rango; un día único es fecha exacta y siempre rinde su fecha (la etiqueta de día de semana de la fuente se ignora porque no es confiable: 3 eventos del corpus con etiqueta inconsistente quedaban en `occurrences: []` silencioso; corregido, +3 fechas); un rango multi-día sin días de semana no se inventa (`occurrences: []` + `recurrence_unknown: true`), y una expansión multi-día sin fechas también queda flageada. En el corpus real los 11 eventos multi-fecha traen días de semana: 0 `recurrence_unknown`.
 - **Multi-fecha Articket (v2):** la página de detalle lista todas las funciones en el `<select name="fechas_evento">`; el JSON-LD `schema.org/Event` solo trae `startDate`/`endDate` (verificado en vivo: con `unica_fecha=false` igual expone una sola fecha). Se usa el select como fuente primaria y el JSON-LD como fallback (primera fecha + `multi_date_incomplete: true`). 2/2 eventos enriquecidos, 0 incompletos.
 - **Canónico de venues (v2):** `data/venues.json` (30 venues) + `lib/venues.py` resuelven los 42 strings crudos distintos del corpus (197/197 eventos). La normalización (casefold, sin acentos, sin puntuación) resuelve variantes como "Teatro Municipal Colon" sin alias extra.
 
