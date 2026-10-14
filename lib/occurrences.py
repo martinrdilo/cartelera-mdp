@@ -6,9 +6,12 @@ segments, each one a desde/hasta range plus the weekdays the event runs
 
 - a segment with weekdays expands to one occurrence per matching weekday
   inside its range;
-- a single-day segment is an exact date and is kept even without weekdays;
+- a single-day segment is an exact date and is always kept; the source
+  weekday label is ignored because it is unreliable (the corpus has days
+  whose label does not match the real weekday);
 - a multi-day segment without weekdays has no recurrence info: never invent
-  dates, keep the start/end range and flag `recurrence_unknown`.
+  dates, keep the start/end range and flag `recurrence_unknown`; the same
+  flag marks a multi-day weekday expansion that yields no dates.
 
 Articket detail pages list every dated session in the `fechas_evento`
 <select>; the JSON-LD block only exposes startDate/endDate, so the select is
@@ -73,15 +76,17 @@ def expand_segments(segments):
     for segment in segments:
         start, end = segment["start"], segment["end"]
         weekdays = segment.get("weekdays") or set()
-        if weekdays:
+        if start == end:
+            # Single day is an exact date: the source weekday label is
+            # unreliable (11/11/2026 is a Wednesday labeled "domingo").
+            occurrences.append(start)
+        elif weekdays:
             dates = expand_span(start, end, weekdays)
-            if start != end and not dates:
+            if not dates:
                 # The source lists weekdays but none falls inside the range:
                 # do not guess, flag the range instead.
                 recurrence_unknown = True
             occurrences.extend(dates)
-        elif start == end:
-            occurrences.append(start)
         else:
             recurrence_unknown = True
     return [value.isoformat() for value in sorted(set(occurrences))], recurrence_unknown

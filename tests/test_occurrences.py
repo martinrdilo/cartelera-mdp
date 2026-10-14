@@ -86,6 +86,27 @@ class TestExpandSegments:
         ]
         assert expand_segments(segments) == (["2026-12-05"], True)
 
+    def test_single_day_ignores_mismatched_weekday(self):
+        # Live corpus: 11/11/2026 is a Wednesday but the source labels it
+        # "domingo"; a single day must always yield its date.
+        segments = [{"start": date(2026, 11, 11), "end": date(2026, 11, 11), "weekdays": {6}}]
+        assert expand_segments(segments) == (["2026-11-11"], False)
+
+    def test_single_day_mismatched_weekdays_real_dates(self):
+        # Same shape in the corpus: 07/12/2026 (Monday, labeled "domingo")
+        # and 29/01/2029 (Monday, labeled "miércoles").
+        segments = [
+            {"start": date(2026, 12, 7), "end": date(2026, 12, 7), "weekdays": {6}},
+            {"start": date(2029, 1, 29), "end": date(2029, 1, 29), "weekdays": {2}},
+        ]
+        assert expand_segments(segments) == (["2026-12-07", "2029-01-29"], False)
+
+    def test_multi_day_weekdays_outside_range_flags_unknown(self):
+        # A multi-day range whose listed weekdays never fall inside it: no
+        # invented dates, and the empty expansion is flagged, never silent.
+        segments = [{"start": date(2026, 11, 21), "end": date(2026, 11, 22), "weekdays": {0}}]
+        assert expand_segments(segments) == ([], True)
+
 
 ARTICKET_SELECT_HTML = """
 <html><body>
