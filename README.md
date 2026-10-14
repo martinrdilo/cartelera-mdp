@@ -1,6 +1,6 @@
 # cartelera-mdp — pipeline de extracción
 
-Pipeline local que extrae eventos musicales reales de Mar del Plata desde 3 fuentes (agenda municipal EMTUR, Articket/CultuTickets y Club TRI), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto. Resultados: ver `REPORT.md`.
+Pipeline local que extrae eventos musicales reales de Mar del Plata desde 3 fuentes (agenda municipal EMTUR, Articket/CultuTickets y Club TRI), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto, y alimenta el sitio estático de la Fase 2 (`build_site.py`). Resultados: ver `REPORT.md`.
 
 ## Camino rápido
 
@@ -11,7 +11,7 @@ Pipeline local que extrae eventos musicales reales de Mar del Plata desde 3 fuen
    uv pip install --python .venv/bin/python -r requirements.txt
    ```
 
-2. Correr los tests de lógica pura (venues, fechas, ocurrencias, dedupe y runner):
+2. Correr los tests de lógica pura (venues, fechas, ocurrencias, dedupe, runner y sitio):
 
    ```bash
    .venv/bin/python -m pytest tests/ -q
@@ -39,6 +39,27 @@ El schedule no se instala solo; ejemplos:
 
 - systemd de usuario: `~/.config/systemd/user/cartelera-mdp.service` con `Type=oneshot` y `ExecStart=/home/martin/workspace/cartelera-mdp/scripts/daily.sh`, más un `cartelera-mdp.timer` con `OnCalendar=daily` y `systemctl --user enable --now cartelera-mdp.timer`.
 
+## Web local
+
+El sitio estático (Fase 2) se genera desde los datos del pipeline, sin red y solo con la stdlib:
+
+```bash
+.venv/bin/python build_site.py                      # escribe site/ (index.html + assets/ + favicon.svg)
+.venv/bin/python build_site.py --today 2026-10-14   # fecha fija, para probar ventanas y filtros
+python -m http.server -d site                       # http://localhost:8000
+```
+
+`site/` no se versiona: se regenera en cada corrida. El hero "Este finde" usa la ventana jueves–domingo (de lunes a miércoles, la del finde que viene); la lista completa filtra por fecha, lugar y gratis en el navegador, sin recargar.
+
+## Deploy
+
+`.github/workflows/deploy.yml` publica el sitio en GitHub Pages:
+
+- Se dispara con cada push a `main`, a mano (`workflow_dispatch`) y todos los días a las 08:00 de Mar del Plata (`0 11 * * *` en UTC).
+- Corre el pipeline con `continue-on-error: true`: si una fuente falla, el build usa los datos ya versionados en `data/` y el sitio se publica igual.
+- Genera `site/` con `build_site.py`, lo sube con `actions/upload-pages-artifact` y el job `deploy` lo publica con `actions/deploy-pages` en el environment `github-pages`.
+- URL: <https://martinrdilo.github.io/cartelera-mdp/> — requiere Pages con source "GitHub Actions" en Settings → Pages (una sola vez).
+
 ## Estructura
 
 | Archivo | Rol |
@@ -53,7 +74,10 @@ El schedule no se instala solo; ejemplos:
 | `lib/dedupe.py` | Dedupe por venue canónico + intersección de `occurrences`, join por slug y fuzzy de títulos (umbral 85). |
 | `run_pipeline.py` | Orquesta collect → normalize → enrich → dedupe y escribe `data/` (atómico; no pisa outputs si una fuente falla). |
 | `scripts/daily.sh` | Corrida diaria con log; insumo para cron/systemd. |
-| `tests/` | Pytest: venues, fechas, ocurrencias, municipal, dedupe y runner. |
+| `build_site.py` | Genera el sitio estático en `site/`: merge de clusters, ventana jue–dom, tarjetas, SEO y assets. |
+| `site_assets/` | Fuente del CSS, el JS (filtros, compartir, hooks) y el favicon; `build_site.py` los copia a `site/`. |
+| `.github/workflows/deploy.yml` | Deploy diario del sitio a GitHub Pages (pipeline best-effort + build + Pages). |
+| `tests/` | Pytest: venues, fechas, ocurrencias, municipal, dedupe, runner y sitio. |
 
 Cada collector expone `collect() -> list[dict]` (crudo) y `normalize(records) -> list[Event]`. Si una fuente falla en la colecta, el runner no escribe los outputs y sale distinto de cero.
 
