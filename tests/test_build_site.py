@@ -234,11 +234,11 @@ class TestEscaping:
             venue_name="Café Sábado",
         )
         event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
-        card = build_site.render_card(event, "all")
-        assert "&amp;" in card
-        assert "&quot;" in card
-        assert "<script>alert(1)</script>" not in card
-        assert "Café Sábado" in card
+        row = build_site.render_row(event, SNAPSHOT_TODAY)
+        assert "&amp;" in row
+        assert "&quot;" in row
+        assert "<script>alert(1)</script>" not in row
+        assert "Café Sábado" in row
 
     def test_format_when_shortens_long_date_lists(self):
         label = build_site.format_when(["2026-10-15", "2026-10-16", "2026-10-17", "2026-10-18", "2026-10-19"], "21:00")
@@ -246,6 +246,76 @@ class TestEscaping:
 
     def test_format_when_single_date(self):
         assert build_site.format_when(["2026-10-15"], "21:00") == "Jue 15/10 · 21:00"
+
+
+class TestDisplayHelpers:
+    """The agenda shows readable titles; the raw seller title stays in the data."""
+
+    def test_uppercase_title_gets_sentence_case(self):
+        assert build_site.title_case("THE BEATLES SINFONICO") == "The Beatles Sinfonico"
+
+    def test_small_words_stay_lowercase(self):
+        assert build_site.title_case("FALSO CASAMIENTO EN MAR DEL PLATA") == "Falso Casamiento en Mar del Plata"
+
+    def test_known_acronyms_keep_caps(self):
+        assert build_site.title_case("POST PUNK JUNK") == "Post Punk Junk"
+        assert build_site.title_case("DJ SET EN VIVO") == "DJ Set en Vivo"
+
+    def test_trailing_date_is_stripped(self):
+        assert build_site.clean_title("SANTO PECADO EN ABBEY ROAD 16-10") == "SANTO PECADO EN ABBEY ROAD"
+
+    def test_leading_weekday_date_is_stripped(self):
+        assert build_site.clean_title("SAB 17-10 LUCHO SSJ") == "LUCHO SSJ"
+
+    def test_well_cased_member_title_wins(self):
+        members = [
+            make_member("articket", title="SANTO PECADO EN ABBEY ROAD 16-10"),
+            make_member("municipal", title="Santo Pecado", source_event_id="municipal-2"),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["title"] == "SANTO PECADO EN ABBEY ROAD 16-10"
+        assert event["display_title"] == "Santo Pecado"
+
+    def test_display_title_falls_back_to_case_fix(self):
+        members = [make_member("clubtri", title="GEORGIE BOY EN WOLFGANG")]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["display_title"] == "Georgie Boy en Wolfgang"
+
+    def test_initials_and_thumb_variant_are_stable(self):
+        assert build_site.initials("Koino Yokan en Club TRI") == "KY"
+        assert build_site.initials("C4") == "C"
+        assert build_site.thumb_variant("club-tri") == build_site.thumb_variant("club-tri")
+        assert 0 <= build_site.thumb_variant("club-tri") < 4
+
+    def test_price_parts_splits_the_desde_note(self):
+        assert build_site.price_parts({"price_label": "Desde $20.000"}) == ("$20.000", "desde")
+        assert build_site.price_parts({"price_label": "$20.000"}) == ("$20.000", "entrada")
+        assert build_site.price_parts({"price_label": "Gratis"}) == ("Gratis", "")
+        assert build_site.price_parts({"price_label": None}) is None
+
+    def test_group_by_date_uses_the_primary_date(self):
+        first = build_site.merge_members(
+            [make_member("articket", occurrences=["2026-10-16", "2026-10-17"])], empty_index(), SNAPSHOT_TODAY
+        )
+        second = build_site.merge_members(
+            [make_member("municipal", occurrences=["2026-10-17"], source_event_id="m2")], empty_index(), SNAPSHOT_TODAY
+        )
+        groups = build_site.group_by_date([first, second])
+        assert [iso for iso, _ in groups] == ["2026-10-16", "2026-10-17"]
+        assert len(groups[1][1]) == 1
+        assert build_site.in_weekend("2026-10-17", SNAPSHOT_TODAY)
+        assert not build_site.in_weekend("2026-10-22", SNAPSHOT_TODAY)
+
+
+def day_groups(html):
+    """[(iso, in_weekend, row_count)] straight from the rendered page."""
+    blocks = re.split(r'<section class="daygroup"', html)[1:]
+    groups = []
+    for block in blocks:
+        match = re.match(r' data-date="([\d-]+)" data-in-weekend="([01])"', block)
+        assert match, "day group without date attributes"
+        groups.append((match.group(1), match.group(2) == "1", block.count("<article class=\"row\"")))
+    return groups
 
 
 class TestDeterministicBuild:
@@ -269,15 +339,30 @@ class TestDeterministicBuild:
         assert stats["today"] == "2026-10-14"
         assert stats["upcoming"] == 145  # 41 merged clusters + 104 upcoming singles
         assert stats["weekend"] == 27
-        assert html.count('data-card-scope="all"') == 145
-        assert html.count('data-card-scope="weekend"') == 27
+        assert html.count("<article class=\"row\"") == 145
+        assert sum(rows for _, weekend, rows in day_groups(html) if weekend) == 27
+
+    def test_each_event_is_listed_once_under_its_first_date(self, tmp_path):
+        _, html = self.build(tmp_path)
+        ids = re.findall(r'<article class="row" data-row data-id="([^"]+)"', html)
+        assert len(ids) == 145
+        assert len(set(ids)) == 145
+
+    def test_day_groups_are_sorted_and_dated(self, tmp_path):
+        _, html = self.build(tmp_path)
+        groups = day_groups(html)
+        assert len(groups) == 45
+        assert [iso for iso, _, _ in groups] == sorted(iso for iso, _, _ in groups)
+        for iso, weekend, rows in groups:
+            assert rows >= 1
+            assert weekend == build_site.in_weekend(iso, SNAPSHOT_TODAY)
 
     def test_hero_and_footer_copy(self, tmp_path):
         _, html = self.build(tmp_path)
-        assert "Este finde" in html
-        assert "Jue 15/10 – Dom 18/10 · 27 shows" in html
-        assert "Datos: agenda municipal EMTUR, Articket, CultuTickets, Club TRI." in html
-        assert "Actualizado: 13/10/2026 21:14" in html
+        assert "Qué hay este finde" in html
+        assert "Jueves 15 — Domingo 18 · Octubre 2026" in html
+        assert "Datos de <b>agenda municipal</b>, <b>Articket</b>, <b>CultuTickets</b> y <b>Club TRI</b>." in html
+        assert "Actualizado 13/10/2026 21:14" in html
 
     def test_past_event_is_dropped(self, tmp_path):
         _, html = self.build(tmp_path)
@@ -286,13 +371,13 @@ class TestDeterministicBuild:
     def test_singles_from_normalized_are_included(self, tmp_path):
         # The deduped file only exports clusters; singles must come from normalized.
         _, html = self.build(tmp_path)
-        assert "EL FUTURO IMPOSIBLE - PROYECCIÓN + CONVERSACIÓN" in html
+        assert "El Futuro Imposible - Proyección + Conversación" in html
 
     def test_known_ticket_url_is_linked(self, tmp_path):
         _, html = self.build(tmp_path)
         assert 'href="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"' in html
         assert html.count('data-outbound="ticket"') > 0
-        assert html.count('target="_blank" rel="noopener"') == html.count('data-outbound="ticket"')
+        assert html.count('target="_blank" rel="noopener"') >= html.count('data-outbound="ticket"')
 
     def test_json_ld_is_parseable_and_lists_the_weekend(self, tmp_path):
         _, html = self.build(tmp_path)
@@ -310,88 +395,144 @@ class TestDeterministicBuild:
         assert first["location"]["name"]
 
 
-class TestFiltersAndHooks:
-    """Filter bar, card data attributes, inlined payload and outbound/share hooks."""
+class TestRedesignMarkup:
+    """Agenda, day navigation, themes and the expandable detail row."""
 
     def build(self, tmp_path):
         stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=SNAPSHOT_TODAY)
         html = (tmp_path / "index.html").read_text(encoding="utf-8")
+        css = (tmp_path / "assets" / "style.css").read_text(encoding="utf-8")
         app_js = (tmp_path / "assets" / "app.js").read_text(encoding="utf-8")
         payload = json.loads(DATA_RE.search(html).group(1))
-        return stats, html, app_js, payload
+        return stats, html, css, app_js, payload
 
-    def test_filter_bar_markup(self, tmp_path):
-        _, html, _, _ = self.build(tmp_path)
-        for window in ("weekend", "7days", "all"):
-            assert f'data-window="{window}"' in html
-        assert 'id="venue-filter"' in html
-        assert 'id="free-filter"' in html
-        assert 'id="filter-count"' in html
-        assert 'id="empty-filter"' in html
-        assert "No hay eventos con esos filtros" in html
+    def test_day_navigation_markup(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        assert 'class="daynav"' in html
+        assert 'data-view="weekend"' in html
+        assert 'data-view="2026-10-15"' in html
+        assert 'data-view="2026-10-18"' in html
+        assert 'data-view="all"' in html
+        assert html.count('data-view=') == 6
+        # The finde view is the default when the weekend has events.
+        assert re.search(r'class="day is-on" data-view="weekend"', html)
 
-    def test_venue_options_only_include_upcoming_venues(self, tmp_path):
-        stats, html, _, payload = self.build(tmp_path)
-        assert stats["venues"] == 30
-        assert html.count('<option value="') == stats["venues"] + 1  # + "Todos los lugares"
-        assert 'value="club-tri"' in html
-        assert stats["venues"] == len({event["venue_id"] for event in payload["events"]})
+    def test_day_tab_counts_match_their_groups(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        tabs = dict(re.findall(r'data-view="([^"]+)"[^>]*>.*?<i>(\d+)</i>', html, re.DOTALL))
+        groups = day_groups(html)
+        for iso, _weekend, rows in groups:
+            if iso in tabs:
+                assert int(tabs[iso]) == rows
+        assert int(tabs["weekend"]) == 27
+        assert int(tabs["all"]) == 145
 
-    def test_cards_carry_filter_attributes(self, tmp_path):
-        _, html, _, _ = self.build(tmp_path)
-        assert 'data-venue="club-tri"' in html
-        assert 'data-free="1"' in html
-        assert 'data-dates="2026-11-20"' in html
-        cards = re.findall(r'<article class="card" [^>]*>', html)
-        assert len(cards) == 145 + 27
-        for card in cards:
-            for attribute in ("data-event-id=", "data-venue=", "data-free=", "data-dates=", "data-title="):
-                assert attribute in card
+    def test_rows_carry_filter_attributes(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        rows = re.findall(r'<article class="row" ([^>]*)>', html)
+        assert len(rows) == 145
+        for attrs in rows:
+            for attribute in ("data-row", "data-id=", "data-date=", "data-in-weekend=",
+                              "data-free=", "data-venue=", "data-search=", "data-initials=",
+                              "data-title=", "data-when="):
+                assert attribute in attrs
 
-    def test_share_button_on_every_card(self, tmp_path):
-        _, html, _, payload = self.build(tmp_path)
-        weekend_count = sum(
-            1 for event in payload["events"] if build_site.matches_window(event["dates"], "weekend", SNAPSHOT_TODAY)
+    def test_rows_have_an_expandable_detail(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        assert html.count('class="row__more js-disclose" aria-expanded="false"') == 145
+        controls = re.findall(r'aria-controls="(detail-[^"]+)"', html)
+        details = re.findall(r'class="row__details" id="(detail-[^"]+)" hidden', html)
+        assert len(controls) == 145
+        assert sorted(controls) == sorted(details)
+
+    def test_every_row_has_a_share_action(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        assert html.count('js-share') == 145 + html.count('class="feature"')
+        assert "Compartir" in html
+
+    def test_outbound_links_match_the_payload(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        with_ticket = [event for event in payload["events"] if event["ticket_url"]]
+        pattern = re.compile(
+            r'<a class="row__cta row__cta--buy" href="[^"]+" target="_blank" rel="noopener" '
+            r'data-outbound="ticket" data-event-id="[^"]+">Entradas</a>'
         )
-        assert html.count('class="btn btn--ghost js-share"') == len(payload["events"]) + weekend_count
+        assert len(pattern.findall(html)) == len(with_ticket)
+        assert "Entradas" in html
+
+    def test_events_without_poster_get_a_typographic_thumb(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        assert "row__thumb--type" in html
+        assert "feature__fallback" in html or "feature__poster" in html
+
+    def test_multi_date_events_show_the_extra_dates_tag(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        multi = [event for event in payload["events"] if len(event["dates"]) > 1]
+        assert multi, "the snapshot should contain multi-date events"
+        assert re.search(r'class="tag tag--more">\+\d+ fechas</span>', html)
+
+    def test_theme_boot_toggle_and_tokens(self, tmp_path):
+        _, html, css, app_js, _ = self.build(tmp_path)
+        assert 'name="color-scheme" content="dark light"' in html
+        assert 'id="theme-toggle"' in html
+        assert "cartelera-theme" in html and "prefers-color-scheme" in html
+        assert '[data-theme="light"]' in css
+        assert "--bg: #080d12" in css and "--bg: #f4f1e9" in css
+        assert "theme_change" in app_js
+
+    def test_search_and_filter_controls(self, tmp_path):
+        _, html, _, app_js, _ = self.build(tmp_path)
+        assert 'id="search"' in html
+        assert 'data-filter="free"' in html
+        assert 'data-filter="venue"' in html
+        assert 'id="filter-count"' in html
+        assert 'id="empty-state"' in html
+        assert 'id="clear-filters"' in html
+        assert "No hay eventos con esos filtros" in html
+        for hook in ("filter_change", "auto-todo", "outbound_ticket", "share_whatsapp"):
+            assert hook in app_js
+
+    def test_venue_chips_are_the_three_busiest_venues(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        expected = build_site.top_venues(payload["events"], 3)
+        chips = re.findall(r'class="chip" data-filter="venue" data-value="([^"]+)"', html)
+        assert chips == [venue_id for _, venue_id, _ in expected]
+        assert len(chips) == 3
+
+    def test_featured_band_uses_a_weekend_event_with_poster_and_ticket(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        featured = build_site.pick_featured(
+            [
+                build_site.merge_members([make_member("articket", image_url="https://x/p.jpg",
+                                                      ticket_url="https://x/t")], empty_index(), SNAPSHOT_TODAY)
+            ],
+            SNAPSHOT_TODAY,
+        )
+        assert featured is not None
+        assert 'class="feature"' in html and "<h2>" in html
+        assert "Destacado del finde" in html
+
+    def test_featured_is_absent_when_the_weekend_is_empty(self):
+        event = build_site.merge_members(
+            [make_member("articket", occurrences=["2026-11-20"], date_start="2026-11-20")],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        assert build_site.pick_featured([event], SNAPSHOT_TODAY) is None
+        assert build_site.render_featured(None) == ""
+
+    def test_hidden_rows_have_a_display_rule(self, tmp_path):
+        # .row sets display:grid, which would override the hidden attribute.
+        _, _, css, _, _ = self.build(tmp_path)
+        assert ".row[hidden]" in css
+        assert ".daygroup[hidden]" in css
 
     def test_inlined_payload_is_parseable(self, tmp_path):
-        _, _, _, payload = self.build(tmp_path)
+        _, _, _, _, payload = self.build(tmp_path)
         assert payload["today"] == "2026-10-14"
         assert payload["site"]["name"] == "Cartelera MDP"
         assert payload["windows"]["weekend"] == {"start": "2026-10-15", "end": "2026-10-18"}
-        assert payload["windows"]["7days"] == {"start": "2026-10-14", "end": "2026-10-20"}
         assert len(payload["events"]) == 145
         first = payload["events"][0]
         for field in ("id", "title", "venue_id", "dates", "is_free", "price_label"):
             assert field in first
-
-    def test_outbound_links_match_the_payload(self, tmp_path):
-        _, html, _, payload = self.build(tmp_path)
-        with_ticket = [event for event in payload["events"] if event["ticket_url"]]
-        weekend_with_ticket = [
-            event
-            for event in with_ticket
-            if build_site.matches_window(event["dates"], "weekend", SNAPSHOT_TODAY)
-        ]
-        expected = len(with_ticket) + len(weekend_with_ticket)
-        pattern = re.compile(
-            r'<a class="btn btn--primary" href="[^"]+" target="_blank" rel="noopener" '
-            r'data-outbound="ticket" data-event-id="[^"]+">Sacar entrada</a>'
-        )
-        assert len(pattern.findall(html)) == expected
-        assert "Sacar entrada" in html
-
-    def test_app_js_has_whatsapp_share_and_track_stub(self, tmp_path):
-        _, _, app_js, _ = self.build(tmp_path)
-        assert "https://wa.me/?text=" in app_js
-        assert "function track(" in app_js
-        assert "TODO(analytics)" in app_js
-        assert "location.href" in app_js
-        assert "filter_change" in app_js and "outbound_ticket" in app_js and "share_whatsapp" in app_js
-
-    def test_hidden_cards_have_a_display_rule(self, tmp_path):
-        # .card sets display:flex, which would override the hidden attribute.
-        self.build(tmp_path)
-        css = (tmp_path / "assets" / "style.css").read_text(encoding="utf-8")
-        assert ".card[hidden]" in css

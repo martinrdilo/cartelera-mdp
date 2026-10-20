@@ -1,98 +1,293 @@
-/* Cartelera MDP — client-side filters, sharing and outbound hooks.
-   Reads the inlined JSON payload (#events-data); no network, no dependencies. */
+/* Cartelera MDP — temas, agenda por día, filtros, búsqueda y detalle.
+   Sin dependencias: lee el DOM generado y el payload inline (#events-data). */
 (function () {
   "use strict";
 
   var payloadElement = document.getElementById("events-data");
-  if (!payloadElement) return;
-  var data = JSON.parse(payloadElement.textContent);
+  var data = payloadElement ? JSON.parse(payloadElement.textContent) : { site: { name: "Cartelera MDP" } };
 
-  var cards = Array.prototype.slice.call(document.querySelectorAll("#all-list .card"));
-  var chips = Array.prototype.slice.call(document.querySelectorAll(".filters .chip"));
-  var venueSelect = document.getElementById("venue-filter");
-  var freeCheckbox = document.getElementById("free-filter");
+  /* ---------------------------------------------------------------- theme */
+
+  var root = document.documentElement;
+  var THEME_KEY = "cartelera-theme";
+  var themeButton = document.getElementById("theme-toggle");
+  var systemLight = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+
+  function storedTheme() {
+    try {
+      var value = localStorage.getItem(THEME_KEY);
+      return value === "light" || value === "dark" ? value : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function applyTheme(theme, remember) {
+    root.setAttribute("data-theme", theme);
+    if (remember) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (error) {
+        /* private mode: the choice lasts for this visit only */
+      }
+    }
+    if (themeButton) {
+      themeButton.setAttribute("aria-label", theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+      themeButton.setAttribute("title", theme === "dark" ? "Modo claro" : "Modo oscuro");
+    }
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", theme === "dark" ? "#080d12" : "#f4f1e9");
+  }
+
+  applyTheme(root.getAttribute("data-theme") === "light" ? "light" : "dark", false);
+
+  if (themeButton) {
+    themeButton.addEventListener("click", function () {
+      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(next, true);
+      track("theme_change", { theme: next });
+    });
+  }
+
+  if (systemLight && systemLight.addEventListener) {
+    systemLight.addEventListener("change", function (event) {
+      if (!storedTheme()) applyTheme(event.matches ? "light" : "dark", false);
+    });
+  }
+
+  /* ---------------------------------------------------------------- state */
+
+  var rows = Array.prototype.slice.call(document.querySelectorAll("[data-row]"));
+  var groups = Array.prototype.slice.call(document.querySelectorAll(".daygroup"));
+  var dayButtons = Array.prototype.slice.call(document.querySelectorAll(".day"));
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  var searchInput = document.getElementById("search");
   var countLabel = document.getElementById("filter-count");
-  var emptyMessage = document.getElementById("empty-filter");
+  var emptyState = document.getElementById("empty-state");
+  var clearButton = document.getElementById("clear-filters");
+  var feature = document.querySelector(".feature");
 
-  var state = { window: "all", venue: "", freeOnly: false };
+  var defaultView = "all";
+  dayButtons.forEach(function (button) {
+    if (button.classList.contains("is-on")) defaultView = button.dataset.view;
+  });
 
-  /* Analytics hook. TODO(analytics): forward to GoatCounter (or the provider we
-     pick in Fase 3); for now it only names the events worth measuring. */
-  function track(name, details) {
-    void name;
-    void details;
+  var state = { view: defaultView, free: false, venue: null, query: "" };
+  var autoSwitched = false;
+
+  function normalize(value) {
+    return (value || "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
   }
 
-  function inWindow(dates) {
-    if (state.window === "all") return true;
-    var bounds = data.windows[state.window];
-    if (!bounds) return true;
-    return dates.some(function (iso) {
-      return iso >= bounds.start && iso <= bounds.end;
+  function matches(row) {
+    if (state.free && row.dataset.free !== "1") return false;
+    if (state.venue && row.dataset.venue !== state.venue) return false;
+    if (state.query && (row.dataset.search || "").indexOf(state.query) === -1) return false;
+    return true;
+  }
+
+  function inView(row, view) {
+    if (view === "all") return true;
+    if (view === "weekend") return row.dataset.inWeekend === "1";
+    return row.dataset.date === view;
+  }
+
+  function activeFilters() {
+    return state.free || Boolean(state.venue) || Boolean(state.query);
+  }
+
+  function updateTabCounts() {
+    dayButtons.forEach(function (button) {
+      var view = button.dataset.view;
+      var count = rows.filter(function (row) {
+        return matches(row) && inView(row, view);
+      }).length;
+      var badge = button.querySelector("i");
+      if (badge) badge.textContent = count;
+      button.classList.toggle("is-empty", count === 0);
+      button.classList.toggle("is-on", state.view === view);
+      button.setAttribute("aria-pressed", String(state.view === view));
     });
   }
 
-  function matches(card) {
-    if (state.venue && card.dataset.venue !== state.venue) return false;
-    if (state.freeOnly && card.dataset.free !== "1") return false;
-    return inWindow((card.dataset.dates || "").split(" ").filter(Boolean));
-  }
-
-  function apply(reason) {
+  function render(reason) {
     var visible = 0;
-    cards.forEach(function (card) {
-      var show = matches(card);
-      card.hidden = !show;
-      if (show) visible += 1;
+
+    groups.forEach(function (group) {
+      var groupRows = Array.prototype.slice.call(group.querySelectorAll("[data-row]"));
+      var shown = 0;
+      groupRows.forEach(function (row) {
+        var show = matches(row);
+        row.hidden = !show;
+        if (show) shown += 1;
+      });
+      var groupInView =
+        state.view === "all" ||
+        (state.view === "weekend" && group.dataset.inWeekend === "1") ||
+        group.dataset.date === state.view;
+      group.hidden = !groupInView || shown === 0;
+      var label = group.querySelector(".daygroup__head span");
+      if (label) label.textContent = shown + (shown === 1 ? " evento" : " eventos");
+      if (groupInView) visible += shown;
     });
-    countLabel.textContent = visible + (visible === 1 ? " evento" : " eventos");
-    emptyMessage.hidden = visible !== 0;
+
+    updateTabCounts();
+
+    if (countLabel) {
+      countLabel.textContent = visible + (visible === 1 ? " evento" : " eventos");
+    }
+
+    /* Filters can empty the current day while matches exist elsewhere: land on
+       "Todo" instead of a dead end. Runs once per user action. */
+    if (activeFilters() && visible === 0 && !autoSwitched) {
+      var elsewhere = rows.filter(matches).length;
+      if (elsewhere > 0) {
+        autoSwitched = true;
+        state.view = "all";
+        render("auto-todo");
+        autoSwitched = false;
+        return;
+      }
+    }
+
+    if (emptyState) emptyState.hidden = visible !== 0;
+    if (feature) feature.hidden = activeFilters();
+
     track("filter_change", {
       reason: reason,
-      window: state.window,
+      view: state.view,
+      free: state.free,
       venue: state.venue,
-      free: state.freeOnly,
+      query: state.query,
       visible: visible
     });
   }
 
-  chips.forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      state.window = chip.dataset.window;
-      chips.forEach(function (other) {
-        var active = other === chip;
-        other.classList.toggle("is-active", active);
-        other.setAttribute("aria-pressed", String(active));
-      });
-      apply("window");
+  dayButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      state.view = button.dataset.view;
+      render("view");
+      var agenda = document.getElementById("agenda-start");
+      if (agenda && window.scrollY > agenda.offsetTop) {
+        agenda.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 
-  if (venueSelect) {
-    venueSelect.addEventListener("change", function () {
-      state.venue = venueSelect.value;
-      apply("venue");
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      if (chip.dataset.filter === "free") {
+        state.free = !state.free;
+        chip.classList.toggle("is-on", state.free);
+        chip.setAttribute("aria-pressed", String(state.free));
+      } else {
+        var already = chip.classList.contains("is-on");
+        chips.forEach(function (other) {
+          if (other.dataset.filter === "venue") {
+            other.classList.remove("is-on");
+            other.setAttribute("aria-pressed", "false");
+          }
+        });
+        state.venue = already ? null : chip.dataset.value;
+        if (!already) {
+          chip.classList.add("is-on");
+          chip.setAttribute("aria-pressed", "true");
+        }
+      }
+      render("chip");
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener("input", function () {
+      state.query = normalize(searchInput.value);
+      render("search");
+    });
+    searchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        searchInput.value = "";
+        state.query = "";
+        render("search");
+      }
     });
   }
 
-  if (freeCheckbox) {
-    freeCheckbox.addEventListener("change", function () {
-      state.freeOnly = freeCheckbox.checked;
-      apply("free");
+  if (clearButton) {
+    clearButton.addEventListener("click", function () {
+      state.free = false;
+      state.venue = null;
+      state.query = "";
+      state.view = "all";
+      if (searchInput) searchInput.value = "";
+      chips.forEach(function (chip) {
+        chip.classList.remove("is-on");
+        chip.setAttribute("aria-pressed", "false");
+      });
+      render("clear");
     });
   }
 
-  /* Share and outbound tracking live on the document so both card scopes work. */
+  /* -------------------------------------------------------------- details */
+
+  function setRowOpen(row, open) {
+    row.classList.toggle("is-open", open);
+    var button = row.querySelector(".js-disclose");
+    var details = row.querySelector(".row__details");
+    if (button) button.setAttribute("aria-expanded", String(open));
+    if (details) details.hidden = !open;
+  }
+
+  rows.forEach(function (row) {
+    var button = row.querySelector(".js-disclose");
+    if (button) {
+      button.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setRowOpen(row, !row.classList.contains("is-open"));
+      });
+    }
+    row.addEventListener("click", function (event) {
+      if (event.target.closest("a, button, input, label")) return;
+      setRowOpen(row, !row.classList.contains("is-open"));
+    });
+  });
+
+  /* ---------------------------------------------------------- share + out */
+
   document.addEventListener("click", function (event) {
     var shareButton = event.target.closest(".js-share");
     if (shareButton) {
-      var card = shareButton.closest(".card");
-      var when = card.querySelector(".card__when").textContent;
-      var url = location.href.split("#")[0] + "#" + card.dataset.eventId;
-      var text =
-        card.dataset.title + " — " + card.dataset.venueName + ", " + when +
-        " · Entradas en " + data.site.name + ": " + url;
-      track("share_whatsapp", { event_id: card.dataset.eventId });
+      var row = shareButton.closest("[data-row]");
+      var title = shareButton.dataset.title;
+      var venue = shareButton.dataset.venueName;
+      var when = shareButton.dataset.when;
+      var id = shareButton.dataset.eventId;
+      if (row) {
+        title = row.dataset.title;
+        venue = row.dataset.venueName;
+        when = row.dataset.when;
+        id = row.dataset.id;
+      }
+      var featureTitle = document.querySelector(".feature h2");
+      if (!row && featureTitle) {
+        title = featureTitle.textContent;
+        var featureMeta = document.querySelector(".feature__meta");
+        when = featureMeta ? featureMeta.textContent.replace(/\s+/g, " ").trim() : "";
+        venue = "";
+      }
+      var url = location.href.split("#")[0] + "#" + (id || "");
+      var lines = [title, when, venue].filter(Boolean).join(" · ");
+      var text = lines + " — Entradas en " + (data.site && data.site.name ? data.site.name : "Cartelera MDP") + ": " + url;
+      track("share_whatsapp", { event_id: id });
       window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
       return;
     }
@@ -102,15 +297,41 @@
     }
   });
 
-  /* Posters come from the sources: a broken URL falls back to the placeholder. */
-  Array.prototype.forEach.call(document.querySelectorAll(".card__media img"), function (img) {
-    img.addEventListener("error", function () {
-      var media = img.parentElement;
-      var card = media.closest(".card");
-      media.classList.add("card__media--empty");
-      media.textContent = (card.dataset.title || "?").trim().charAt(0).toUpperCase();
-    });
+  /* Fallbacks: a poster that fails to load becomes a typographic tile. */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-thumb]"), function (image) {
+    function fallback() {
+      var row = image.closest("[data-row]");
+      var holder = image.parentElement;
+      if (!holder) return;
+      var initials = (row && row.dataset.initials) || "?";
+      if (holder.classList.contains("feature__poster")) {
+        if (holder.querySelector(".feature__fallback")) return;
+        var block = document.createElement("div");
+        block.className = "feature__fallback";
+        var label = document.createElement("b");
+        label.textContent = initials;
+        block.appendChild(label);
+        holder.insertBefore(block, holder.firstChild);
+      } else {
+        holder.classList.add("row__thumb--type");
+        holder.textContent = initials;
+      }
+      image.remove();
+    }
+    /* The error can fire before this script runs: check the already-failed state. */
+    if (image.complete && image.naturalWidth === 0) {
+      fallback();
+    } else {
+      image.addEventListener("error", fallback);
+    }
   });
 
-  apply("init");
+  /* Analytics hook. TODO(analytics): forward to GoatCounter (or the provider we
+     pick in Fase 3); for now it only names the events worth measuring. */
+  function track(name, details) {
+    void name;
+    void details;
+  }
+
+  render("init");
 })();

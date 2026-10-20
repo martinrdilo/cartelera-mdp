@@ -33,6 +33,7 @@ import shutil
 import unicodedata
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from urllib.parse import urlparse, quote
 from zoneinfo import ZoneInfo
 
 # ---------------------------------------------------------------------------
@@ -153,9 +154,6 @@ def format_when(dates: list[str], time: str | None) -> str:
     return label
 
 
-def format_range(start: date, end: date) -> str:
-    """'Jue 15/10 – Dom 18/10'."""
-    return f"{format_date_short(start.isoformat())} – {format_date_short(end.isoformat())}"
 
 
 def format_updated(last_run: dict) -> str | None:
@@ -351,6 +349,7 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
         "sources": sorted({member.get("source", "") for member in members}),
     }
     event["price_label"] = price_label(event)
+    event["display_title"] = choose_display_title(members, event["title"])
     event["slug"] = f"{slugify(event['title'])}-{dates[0]}" if dates else slugify(event["title"])
     return event
 
@@ -389,6 +388,155 @@ def collect_site_events(data_dir: Path, today: date) -> tuple[list[dict], list[d
     return events, registry, last_run
 
 
+
+# Titles from the ticketeras arrive in shouty, date-stamped shapes
+# ("SANTO PECADO EN ABBEY ROAD 16-10"). The data stays untouched; the display
+# title prefers a member title that is already well cased and strips the date.
+DATE_SUFFIX_RE = re.compile(r"[,\s-]*\b\d{1,2}[-/]\d{1,2}\b\s*$")
+WEEKDAY_PREFIX_RE = re.compile(
+    r"^\s*(?:lun|mar|mi[eé]|jue|vie|s[áa]b|dom)[a-záéíóú]*\.?\s+\d{1,2}[-/]\d{1,2}\s+",
+    re.IGNORECASE,
+)
+SMALL_WORDS = {
+    "a", "al", "and", "con", "de", "del", "el", "en", "la", "las", "lo", "los",
+    "o", "of", "para", "por", "the", "u", "vs", "y",
+}
+KEEP_CAPS = {"dj", "vj", "mc", "ii", "iii", "iv", "led", "mdp", "tv", "uv"}
+
+
+def clean_title(text: str | None) -> str:
+    """Drop a leading weekday+date and a trailing date token."""
+    value = WEEKDAY_PREFIX_RE.sub("", text or "")
+    value = DATE_SUFFIX_RE.sub("", value)
+    return " ".join(value.split()).strip(" ,")
+
+
+def looks_clean(text: str) -> bool:
+    """True when the title is not shouted and carries no embedded date."""
+    return any(char.islower() for char in text) and not re.search(r"\b\d{1,2}[-/]\d{1,2}\b", text)
+
+
+def title_case(text: str) -> str:
+    """'THE BEATLES SINFONICO' -> 'The Beatles Sinfonico'."""
+    words = []
+    for position, word in enumerate(text.split()):
+        lowered = word.lower()
+        if lowered in KEEP_CAPS:
+            words.append(word.upper())
+        elif position > 0 and lowered in SMALL_WORDS:
+            words.append(lowered)
+        else:
+            words.append(word[:1].upper() + word[1:].lower())
+    return " ".join(words)
+
+
+def choose_display_title(members: list[dict], fallback: str) -> str:
+    """Prefer a well-cased member title (seller order), else fix the fallback."""
+    ranked = sorted(
+        members,
+        key=lambda member: SOURCE_ORDER.index(member["source"]) if member.get("source") in SOURCE_ORDER else len(SOURCE_ORDER),
+    )
+    candidates = [clean_title(member.get("title")) for member in ranked]
+    candidates = [candidate for candidate in candidates if candidate]
+    for candidate in candidates:
+        if looks_clean(candidate):
+            return candidate
+    if candidates:
+        return title_case(candidates[0])
+    return clean_title(fallback) or fallback
+
+
+# ---------------------------------------------------------------------------
+# Display helpers
+# ---------------------------------------------------------------------------
+
+MONTHS_ES = (
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+)
+WEEKDAY_FULL = ("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+SOURCE_LABELS = {
+    "municipal": "Municipal",
+    "articket": "Articket",
+    "cultutickets": "CultuTickets",
+    "clubtri": "Club TRI",
+}
+THUMB_VARIANTS = 4
+
+
+def primary_date(event: dict) -> str:
+    """The date a row sits under: the first upcoming occurrence."""
+    return event["dates"][0]
+
+
+def in_weekend(iso: str, today: date) -> bool:
+    start, end = weekend_window(today)
+    return start <= date.fromisoformat(iso) <= end
+
+
+def format_day_long(iso: str) -> str:
+    """'2026-10-23' -> 'Viernes 23 de octubre'."""
+    parsed = date.fromisoformat(iso)
+    return f"{WEEKDAY_FULL[parsed.weekday()]} {parsed.day} de {MONTHS_ES[parsed.month - 1]}"
+
+
+def format_month_year(day: date) -> str:
+    """'Octubre 2026'."""
+    return f"{MONTHS_ES[day.month - 1].capitalize()} {day.year}"
+
+
+def format_weekend_kicker(today: date) -> str:
+    """'Jueves 22 — Domingo 25 · Octubre 2026' (single day collapses)."""
+    start, end = weekend_window(today)
+    month = format_month_year(start)
+    if start == end:
+        return f"{WEEKDAY_FULL[start.weekday()]} {start.day} · {month}"
+    return f"{WEEKDAY_FULL[start.weekday()]} {start.day} — {WEEKDAY_FULL[end.weekday()]} {end.day} · {month}"
+
+
+def initials(title: str) -> str:
+    """'Koino Yokan en Club TRI' -> 'KY'; falls back to the first character."""
+    words = [word for word in re.findall(r"[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+", title or "") if len(word) > 2]
+    if not words:
+        return (title or "?").strip()[:1].upper() or "?"
+    return "".join(word[0].upper() for word in words[:2])
+
+
+def thumb_variant(seed: str) -> int:
+    """Stable 0..3 bucket so typographic thumbnails vary by venue."""
+    return sum(ord(char) for char in (seed or "")) % THUMB_VARIANTS
+
+
+def maps_url(address: str) -> str:
+    return "https://www.google.com/maps/search/?api=1&query=" + quote(f"{address}, Mar del Plata, Argentina")
+
+
+def search_blob(event: dict) -> str:
+    """Normalized haystack for the client-side search box."""
+    parts = [event.get("title") or "", event.get("venue_name") or "", event.get("address") or ""]
+    return normalize_key(" ".join(parts))
+
+
+def price_parts(event: dict) -> tuple[str, str] | None:
+    """('$20.000', 'desde') / ('Gratis', '') / None."""
+    label = event.get("price_label")
+    if not label:
+        return None
+    if label == "Gratis":
+        return ("Gratis", "")
+    if label.startswith("Desde "):
+        return (label[len("Desde "):], "desde")
+    return (label, "entrada")
+
+
+def group_by_date(events: list[dict]) -> list[tuple[str, list[dict]]]:
+    """Date -> events, ordered by date (events keep their date/time order)."""
+    groups: dict[str, list[dict]] = {}
+    for event in events:
+        groups.setdefault(primary_date(event), []).append(event)
+    return sorted(groups.items())
+
+
 # ---------------------------------------------------------------------------
 # HTML rendering
 # ---------------------------------------------------------------------------
@@ -402,127 +550,329 @@ def plural(count: int, singular: str, plural_form: str) -> str:
     return f"{count} {singular if count == 1 else plural_form}"
 
 
-def render_media(event: dict) -> str:
-    """Poster when available, a quiet placeholder with the initial otherwise."""
-    if event.get("image_url"):
-        return (
-            '<div class="card__media">'
-            f'<img src="{esc(event["image_url"])}" alt="" loading="lazy" decoding="async">'
-            "</div>"
-        )
-    initial = esc((event["title"] or "?").strip()[:1].upper())
-    return f'<div class="card__media card__media--empty" aria-hidden="true">{initial}</div>'
-
-
-def render_card(event: dict, scope: str) -> str:
-    venue_line = esc(event["venue_name"])
-    if event.get("address"):
-        venue_line += f' <span class="card__address">{esc(event["address"])}</span>'
-    price = event.get("price_label")
-    if price:
-        modifier = " card__price--free" if price == "Gratis" else ""
-        price_html = f'<p class="card__price{modifier}">{esc(price)}</p>'
-    else:
-        price_html = ""
-    actions = []
-    if event.get("ticket_url"):
-        actions.append(
-            f'<a class="btn btn--primary" href="{esc(event["ticket_url"])}" target="_blank" '
-            'rel="noopener" data-outbound="ticket" '
-            f'data-event-id="{esc(event["slug"])}">Sacar entrada</a>'
-        )
-    elif not event["is_free"]:
-        # No online sale link in any source: say so instead of offering a dead button.
-        actions.append('<span class="btn btn--muted">Sin venta online</span>')
-    actions.append(
-        f'<button type="button" class="btn btn--ghost js-share" data-event-id="{esc(event["slug"])}">'
-        "Compartir</button>"
-    )
-    card_attrs = (
-        f'data-event-id="{esc(event["slug"])}" data-card-scope="{scope}" '
-        f'data-venue="{esc(event["venue_id"])}" data-free="{1 if event["is_free"] else 0}" '
-        f'data-dates="{esc(" ".join(event["dates"]))}" data-time="{esc(event["time"] or "")}" '
-        f'data-title="{esc(event["title"])}" data-venue-name="{esc(event["venue_name"])}"'
-    )
+def render_theme_boot() -> str:
+    """Applies the stored (or system) theme before the stylesheet paints."""
     return (
-        f'<article class="card" {card_attrs}>'
-        f"{render_media(event)}"
-        '<div class="card__body">'
-        f'<h3 class="card__title">{esc(event["title"])}</h3>'
-        f'<p class="card__venue">{venue_line}</p>'
-        f'<p class="card__when">{esc(format_when(event["dates"], event["time"]))}</p>'
-        f'<div class="card__foot">{price_html}'
-        f'<div class="card__actions">{"".join(actions)}</div>'
-        "</div></div></article>"
+        "<script>(function(){try{var k='cartelera-theme';"
+        "var s=localStorage.getItem(k);"
+        "var d=s==='light'||s==='dark'?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');"
+        "document.documentElement.setAttribute('data-theme',d);"
+        "}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>"
     )
 
 
-def venue_options(events: list[dict]) -> list[tuple[str, str, int]]:
-    """(display name, venue id, upcoming count) for venues with events, A-Z."""
+def render_header() -> str:
+    return (
+        '<header class="topbar">'
+        '<div class="topbar__in">'
+        '<a class="brand" href="#top" aria-label="Cartelera MDP, inicio">'
+        '<span class="brand__mark" aria-hidden="true">MDP</span>'
+        '<span class="brand__name">Cartelera<s>.</s></span>'
+        '<span class="brand__city">Mar del Plata</span>'
+        "</a>"
+        '<label class="search">'
+        '<span class="search__icon" aria-hidden="true">⌕</span>'
+        '<input type="search" id="search" placeholder="Buscar banda o sala" '
+        'aria-label="Buscar por banda, sala o dirección" autocomplete="off">'
+        "</label>"
+        '<button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">'
+        '<svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>'
+        "</svg>"
+        '<svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>'
+        "</svg>"
+        "</button>"
+        "</div>"
+        "</header>"
+    )
+
+
+def render_intro(events: list[dict], today: date) -> str:
+    venues = len({event["venue_id"] for event in events})
+    free = sum(1 for event in events if event["is_free"])
+    return (
+        '<section class="intro" id="top">'
+        "<div>"
+        f'<p class="kicker">{esc(format_weekend_kicker(today))}</p>'
+        '<h1>Qué hay este finde<br>en <em>Mar del Plata</em></h1>'
+        "</div>"
+        '<div class="intro__stats">'
+        f'<span data-label="Eventos"><b>{len(events)}</b></span>'
+        f'<span data-label="Salas"><b>{venues}</b></span>'
+        f'<span data-label="Gratis"><b>{free}</b></span>'
+        "</div>"
+        "</section>"
+    )
+
+
+def render_day_nav(groups: list[tuple[str, list[dict]]], today: date) -> str:
+    """Finde + one tab per weekend day with events + Todo."""
+    start, end = weekend_window(today)
+    weekend_dates = [(start + timedelta(days=offset)).isoformat() for offset in range((end - start).days + 1)]
+    by_date = dict(groups)
+    weekend_count = sum(len(by_date.get(iso, [])) for iso in weekend_dates)
+    buttons: list[str] = []
+    if weekend_count:
+        buttons.append(
+            f'<button type="button" class="day is-on" data-view="weekend" aria-pressed="true">'
+            f"<b>Finde</b><i>{weekend_count}</i></button>"
+        )
+    for iso in weekend_dates:
+        day_events = by_date.get(iso)
+        if not day_events:
+            continue
+        parsed = date.fromisoformat(iso)
+        buttons.append(
+            f'<button type="button" class="day" data-view="{iso}" aria-pressed="false">'
+            f"<b>{WEEKDAY_ABBR[parsed.weekday()]}</b><span>{parsed.day:02d}</span>"
+            f"<i>{len(day_events)}</i></button>"
+        )
+    total = sum(len(day_events) for _, day_events in groups)
+    all_active = " is-on" if not weekend_count else ""
+    buttons.append(
+        f'<button type="button" class="day day--all{all_active}" data-view="all" '
+        f'aria-pressed="{"true" if not weekend_count else "false"}"><b>Todo</b><i>{total}</i></button>'
+    )
+    return f'<nav class="daynav" aria-label="Filtrar por día">{"".join(buttons)}</nav>'
+
+
+def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]:
     counts: dict[str, int] = {}
     names: dict[str, str] = {}
     for event in events:
         counts[event["venue_id"]] = counts.get(event["venue_id"], 0) + 1
         names[event["venue_id"]] = event["venue_name"]
-    return sorted(
+    ranked = sorted(
         ((names[venue_id], venue_id, count) for venue_id, count in counts.items()),
-        key=lambda row: row[0].casefold(),
+        key=lambda row: (-row[2], row[0].casefold()),
+    )
+    return ranked[:limit]
+
+
+def render_toolbar(events: list[dict]) -> str:
+    free = sum(1 for event in events if event["is_free"])
+    chips = [
+        f'<button type="button" class="chip" data-filter="free" aria-pressed="false">'
+        f"Gratis <em>{free}</em></button>"
+    ]
+    for name, venue_id, count in top_venues(events):
+        chips.append(
+            f'<button type="button" class="chip" data-filter="venue" data-value="{esc(venue_id)}" '
+            f'aria-pressed="false">{esc(name)} <em>{count}</em></button>'
+        )
+    return (
+        '<div class="toolbar" role="group" aria-label="Filtros de la agenda">'
+        f'{"".join(chips)}'
+        '<p class="toolbar__count" id="filter-count" aria-live="polite"></p>'
+        "</div>"
     )
 
 
-def render_filters(events: list[dict]) -> str:
-    options = "\n".join(
-        f'<option value="{esc(venue_id)}">{esc(name)} ({count})</option>'
-        for name, venue_id, count in venue_options(events)
+def pick_featured(events: list[dict], today: date) -> dict | None:
+    """S8: earliest weekend event with poster and ticket, then with poster, then any.
+
+    "Weekend" means the row's primary date (the day it is listed under), so the
+    featured event always appears in the weekend agenda.
+    """
+    weekend = [event for event in events if in_weekend(primary_date(event), today)]
+    for pool in (
+        [event for event in weekend if event.get("image_url") and event.get("ticket_url")],
+        [event for event in weekend if event.get("image_url")],
+        weekend,
+    ):
+        if pool:
+            return pool[0]
+    return None
+
+
+def ticket_host(url: str | None) -> str | None:
+    if not url:
+        return None
+    host = urlparse(url).netloc
+    return host[4:] if host.startswith("www.") else host
+
+
+def render_featured(event: dict | None) -> str:
+    if not event:
+        return ""
+    parsed = date.fromisoformat(primary_date(event))
+    price = price_parts(event)
+    price_html = ""
+    if price:
+        value, note = price
+        suffix = f"<small>{esc(note)}</small>" if note else ""
+        price_html = f'<div class="feature__price">{esc(value)}{suffix}</div>'
+    ticket = event.get("ticket_url")
+    host = ticket_host(ticket)
+    actions = []
+    if ticket:
+        actions.append(
+            f'<a class="btn btn--primary" href="{esc(ticket)}" target="_blank" rel="noopener" '
+            f'data-outbound="ticket" data-event-id="{esc(event["slug"])}">Sacar entrada</a>'
+        )
+    actions.append(
+        f'<button type="button" class="btn btn--ghost js-share" data-event-id="{esc(event["slug"])}">'
+        "Compartir</button>"
+    )
+    where = esc(event["venue_name"])
+    if event.get("address"):
+        where += f" · {esc(event['address'])}"
+    meta_bits = [
+        f"<b>{esc(format_day_long(primary_date(event)))}</b>",
+    ]
+    if event.get("time"):
+        meta_bits.append(esc(event["time"]))
+    meta_bits.append(where)
+    if host:
+        meta_bits.append(f"Venta en {esc(host)}")
+    meta = '<i>·</i>'.join(meta_bits[:1]) + "".join(f"<i>·</i>{bit}" for bit in meta_bits[1:])
+    poster = (
+        f'<img src="{esc(event["image_url"])}" alt="" loading="lazy" decoding="async" data-thumb>'
+        if event.get("image_url")
+        else f'<div class="feature__fallback" aria-hidden="true"><b>{esc(initials(event["title"]))}</b></div>'
     )
     return (
-        '<div class="filters">'
-        '<div class="filters__row" role="group" aria-label="Rango de fechas">'
-        '<button type="button" class="chip" data-window="weekend" aria-pressed="false">Este finde</button>'
-        '<button type="button" class="chip" data-window="7days" aria-pressed="false">Próximos 7 días</button>'
-        '<button type="button" class="chip is-active" data-window="all" aria-pressed="true">Todos</button>'
+        '<section class="feature" aria-label="Destacado del finde">'
+        '<div class="feature__poster">'
+        f"{poster}"
+        f'<div class="feature__badge"><b>{WEEKDAY_ABBR[parsed.weekday()].upper()}</b><span>{parsed.day:02d}</span></div>'
         "</div>"
-        '<div class="filters__row">'
-        '<label class="filters__label" for="venue-filter">Lugar</label>'
-        f'<select id="venue-filter"><option value="">Todos los lugares</option>{options}</select>'
-        '<label class="filters__check"><input type="checkbox" id="free-filter"> Gratis</label>'
+        '<div class="feature__body">'
+        '<p class="kicker">Destacado del finde</p>'
+        f"<h2>{esc(event['display_title'])}</h2>"
+        f'<p class="feature__meta">{meta}</p>'
+        f'<div class="feature__actions">{"".join(actions)}{price_html}</div>'
         "</div>"
+        "</section>"
+    )
+
+
+def render_thumb(event: dict) -> str:
+    if event.get("image_url"):
+        return (
+            '<div class="row__thumb">'
+            f'<img src="{esc(event["image_url"])}" alt="" loading="lazy" decoding="async" data-thumb>'
+            "</div>"
+        )
+    return (
+        f'<div class="row__thumb row__thumb--type t{thumb_variant(event["venue_id"])}" aria-hidden="true">'
+        f"{esc(initials(event['display_title']))}</div>"
+    )
+
+
+def render_tags(event: dict) -> str:
+    tags = []
+    extra = len(event["dates"]) - 1
+    if extra > 0:
+        tags.append(f'<span class="tag tag--more">+{extra} fechas</span>')
+    if not tags:
+        return ""
+    return " " + "".join(tags)
+
+
+def render_row_details(event: dict) -> str:
+    dates = " · ".join(format_day_long(iso) for iso in event["dates"])
+    facts = [f"<p><b>Fechas:</b> {esc(dates)}</p>"]
+    if event.get("address"):
+        facts.append(f"<p><b>Dónde:</b> {esc(event['address'])}</p>")
+    sources = [SOURCE_LABELS.get(source, source) for source in event.get("sources") or []]
+    if sources:
+        facts.append(f"<p><b>Datos:</b> {esc(' + '.join(sources))}</p>")
+    actions = []
+    if event.get("ticket_url"):
+        host = ticket_host(event["ticket_url"])
+        label = f"Comprar en {host}" if host else "Comprar"
+        actions.append(
+            f'<a class="btn btn--primary" href="{esc(event["ticket_url"])}" target="_blank" rel="noopener" '
+            f'data-outbound="ticket" data-event-id="{esc(event["slug"])}">{esc(label)} ↗</a>'
+        )
+    if event.get("address"):
+        actions.append(
+            f'<a class="btn btn--ghost" href="{esc(maps_url(event["address"]))}" target="_blank" rel="noopener">'
+            "Cómo llegar</a>"
+        )
+    actions.append(
+        f'<button type="button" class="btn btn--ghost js-share" data-event-id="{esc(event["slug"])}">'
+        "Compartir</button>"
+    )
+    return (
+        f'<div class="row__details" id="detail-{esc(event["slug"])}" hidden>'
+        f'<div class="row__facts">{"".join(facts)}</div>'
+        f'<div class="row__actions">{"".join(actions)}</div>'
         "</div>"
     )
 
 
-def events_payload(events: list[dict], today: date) -> dict:
-    """Everything app.js needs, inlined so the page never fetches anything."""
-    start, end = weekend_window(today)
-    seven_start, seven_end = window_bounds("7days", today)
-    return {
-        "site": {"name": SITE_NAME, "url": SITE_URL},
-        "today": today.isoformat(),
-        "windows": {
-            "weekend": {"start": start.isoformat(), "end": end.isoformat()},
-            "7days": {"start": seven_start.isoformat(), "end": seven_end.isoformat()},
-        },
-        "events": [
-            {
-                "id": event["slug"],
-                "title": event["title"],
-                "venue_id": event["venue_id"],
-                "venue_name": event["venue_name"],
-                "address": event["address"],
-                "dates": event["dates"],
-                "time": event["time"],
-                "is_free": event["is_free"],
-                "price_label": event["price_label"],
-                "ticket_url": event["ticket_url"],
-                "image_url": event["image_url"],
-            }
-            for event in events
-        ],
-    }
+def render_row(event: dict, today: date) -> str:
+    slug = esc(event["slug"])
+    primary = primary_date(event)
+    price = price_parts(event)
+    if event["is_free"]:
+        price_html = '<span class="row__price row__price--free">Gratis<small>sin entrada</small></span>'
+    elif price:
+        value, note = price
+        note_html = f"<small>{esc(note)}</small>" if note else ""
+        price_html = f'<span class="row__price">{esc(value)}{note_html}</span>'
+    else:
+        price_html = '<span class="row__price row__price--dim">Consultar<small>en puerta</small></span>'
+
+    if event.get("ticket_url"):
+        cta = (
+            f'<a class="row__cta row__cta--buy" href="{esc(event["ticket_url"])}" target="_blank" '
+            f'rel="noopener" data-outbound="ticket" data-event-id="{slug}">Entradas</a>'
+        )
+    else:
+        cta = ""
+
+    time_html = f'{esc(event["time"])}<small>hs</small>' if event.get("time") else "—"
+    venue = esc(event["venue_name"])
+    address = f'<i>·</i>{esc(event["address"])}' if event.get("address") else ""
+    attrs = (
+        f'data-row data-id="{slug}" data-date="{primary}" '
+        f'data-in-weekend="{1 if in_weekend(primary, today) else 0}" '
+        f'data-free="{1 if event["is_free"] else 0}" data-venue="{esc(event["venue_id"])}" '
+        f'data-search="{esc(search_blob(event))}" data-initials="{esc(initials(event["display_title"]))}" '
+        f'data-title="{esc(event["display_title"])}" data-venue-name="{esc(event["venue_name"])}" '
+        f'data-when="{esc(format_when(event["dates"], event["time"]))}" '
+        f'data-dates="{esc(" ".join(event["dates"]))}"'
+    )
+    return (
+        f'<article class="row" {attrs}>'
+        f'<div class="row__time">{time_html}</div>'
+        f"{render_thumb(event)}"
+        '<div class="row__main">'
+        f'<h3 class="row__title">{esc(event["display_title"])}</h3>'
+        f'<p class="row__meta"><span class="row__venue">{venue}</span>{address}{render_tags(event)}</p>'
+        "</div>"
+        f'<div class="row__side">{price_html}{cta}</div>'
+        f'<button type="button" class="row__more js-disclose" aria-expanded="false" '
+        f'aria-controls="detail-{slug}" aria-label="Ver detalle de {esc(event["display_title"])}">'
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>'
+        "</button>"
+        f"{render_row_details(event)}"
+        "</article>"
+    )
 
 
-def render_cards(events: list[dict], scope: str) -> str:
-    return "\n".join(render_card(event, scope) for event in events)
+def render_agenda(groups: list[tuple[str, list[dict]]], today: date, default_view: str) -> str:
+    blocks = []
+    for iso, day_events in groups:
+        weekend = in_weekend(iso, today)
+        hidden = "" if default_view in {"weekend", "all"} and (default_view == "all" or weekend) else " hidden"
+        parsed = date.fromisoformat(iso)
+        rows = "\n".join(render_row(event, today) for event in day_events)
+        blocks.append(
+            f'<section class="daygroup" data-date="{iso}" data-in-weekend="{1 if weekend else 0}"'
+            f'{hidden} aria-label="{esc(format_day_long(iso))}">'
+            '<div class="daygroup__head">'
+            f"<h2><b>{WEEKDAY_FULL[parsed.weekday()]}</b> <em>{parsed.day} de {MONTHS_ES[parsed.month - 1]}</em></h2>"
+            f'<span>{plural(len(day_events), "evento", "eventos")}</span>'
+            "</div>"
+            f"{rows}"
+            "</section>"
+        )
+    return f'<div class="agenda" id="agenda">{"".join(blocks)}</div>'
 
 
 def render_json_ld(weekend: list[dict]) -> str:
@@ -534,7 +884,7 @@ def render_json_ld(weekend: list[dict]) -> str:
             address["streetAddress"] = event["address"]
         item = {
             "@type": "Event",
-            "name": event["title"],
+            "name": event["display_title"],
             "startDate": start_date,
             "location": {"@type": "Place", "name": event["venue_name"], "address": address},
             "url": event["ticket_url"] or SITE_URL,
@@ -569,78 +919,92 @@ def render_json_ld(weekend: list[dict]) -> str:
 
 def render_footer(last_run: dict) -> str:
     updated = format_updated(last_run)
-    updated_html = f'<p class="site-foot__updated">Actualizado: {esc(updated)}</p>' if updated else ""
+    updated_html = f'<span>Actualizado {esc(updated)}</span>' if updated else ""
     return (
-        "<footer class=\"site-foot\">"
-        "<p>Datos: agenda municipal EMTUR, Articket, CultuTickets, Club TRI. "
+        '<footer class="foot">'
+        "<p>Datos de <b>agenda municipal</b>, <b>Articket</b>, <b>CultuTickets</b> y <b>Club TRI</b>. "
         "La compra se hace en el sitio oficial de cada ticketera.</p>"
         f"{updated_html}"
         "</footer>"
     )
 
 
+def events_payload(events: list[dict], today: date) -> dict:
+    """Everything app.js needs, inlined so the page never fetches anything."""
+    start, end = weekend_window(today)
+    seven_start, seven_end = window_bounds("7days", today)
+    return {
+        "site": {"name": SITE_NAME, "url": SITE_URL},
+        "today": today.isoformat(),
+        "windows": {
+            "weekend": {"start": start.isoformat(), "end": end.isoformat()},
+            "7days": {"start": seven_start.isoformat(), "end": seven_end.isoformat()},
+        },
+        "events": [
+            {
+                "id": event["slug"],
+                "title": event["display_title"],
+                "venue_id": event["venue_id"],
+                "venue_name": event["venue_name"],
+                "address": event["address"],
+                "dates": event["dates"],
+                "time": event["time"],
+                "is_free": event["is_free"],
+                "price_label": event["price_label"],
+                "ticket_url": event["ticket_url"],
+                "image_url": event["image_url"],
+            }
+            for event in events
+        ],
+    }
+
+
 def render_index(events: list[dict], last_run: dict, today: date) -> str:
+    groups = group_by_date(events)
     start, end = weekend_window(today)
     weekend = [event for event in events if matches_window(event["dates"], "weekend", today)]
-    if weekend:
-        weekend_body = render_cards(weekend, "weekend")
-        hero_more = '<p class="hero__more"><a href="#todos">Ver todos los eventos</a></p>'
-    else:
-        weekend_body = (
-            '<p class="empty">Todavía no hay shows cargados para este finde — '
-            '<a href="#todos">mirá todos los eventos</a>.</p>'
-        )
-        hero_more = ""
-    hero_sub = f"{esc(format_range(start, end))} · {esc(plural(len(weekend), 'show', 'shows'))}"
+    has_weekend = bool(weekend)
+    default_view = "weekend" if has_weekend else "all"
+    featured = render_featured(pick_featured(events, today))
     payload = json.dumps(events_payload(events, today), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    title = f"{SITE_NAME} — Qué hay este finde en Mar del Plata"
     return f"""<!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{esc(SITE_NAME)} — Qué hay este finde en Mar del Plata</title>
+<title>{esc(title)}</title>
 <meta name="description" content="{esc(SITE_DESCRIPTION)}">
+<meta name="color-scheme" content="dark light">
 <link rel="canonical" href="{esc(SITE_URL)}">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{esc(SITE_NAME)}">
 <meta property="og:locale" content="es_AR">
-<meta property="og:title" content="{esc(SITE_NAME)} — Qué hay este finde en Mar del Plata">
+<meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(SITE_DESCRIPTION)}">
 <meta property="og:url" content="{esc(SITE_URL)}">
 <meta name="twitter:card" content="summary">
+{render_theme_boot()}
 <link rel="stylesheet" href="assets/style.css">
 <script type="application/ld+json">
 {render_json_ld(weekend)}
 </script>
 </head>
 <body>
-<a class="skip-link" href="#todos">Saltar a la lista de eventos</a>
-<header class="site-head">
-<p class="site-head__brand">{esc(SITE_NAME)}</p>
-<p class="site-head__tagline">{esc(SITE_TAGLINE)}</p>
-</header>
-<main>
-<section class="hero" aria-labelledby="finde-title">
-<h1 id="finde-title">Este finde</h1>
-<p class="hero__sub">{hero_sub}</p>
-<div class="cards" id="weekend-list">
-{weekend_body}
-</div>
-{hero_more}
-</section>
-<section class="all" id="todos" aria-labelledby="todos-title">
-<h2 id="todos-title">Todos los eventos</h2>
-<p class="all__sub">{esc(plural(len(events), "evento", "eventos"))} con fecha a partir de hoy.</p>
-{render_filters(events)}
-<p class="filters__count" id="filter-count" aria-live="polite"></p>
-<p class="empty" id="empty-filter" hidden>No hay eventos con esos filtros — probá sacar alguno.</p>
-<div class="cards" id="all-list">
-{render_cards(events, "all")}
-</div>
-</section>
-</main>
+<a class="skip-link" href="#agenda">Saltar a la agenda</a>
+{render_header()}
+<main class="shell">
+{render_intro(events, today)}
+{render_day_nav(groups, today)}
+{render_toolbar(events)}
+{featured}
+{render_agenda(groups, today, default_view)}
+<p class="empty-state" id="empty-state" hidden>
+No hay eventos con esos filtros. <button type="button" id="clear-filters">Limpiar filtros</button>
+</p>
 {render_footer(last_run)}
+</main>
 <script id="events-data" type="application/json">{payload}</script>
 <script src="assets/app.js"></script>
 </body>
