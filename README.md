@@ -49,7 +49,15 @@ El sitio estático (Fase 2) se genera desde los datos del pipeline, sin red y so
 python -m http.server -d site                       # http://localhost:8000
 ```
 
-`site/` no se versiona: se regenera en cada corrida. El hero "Este finde" usa la ventana jueves–domingo (de lunes a miércoles, la del finde que viene); la lista completa filtra por fecha, lugar y gratis en el navegador, sin recargar.
+La página es una agenda agrupada por fecha, no una grilla de tarjetas:
+
+- **Temas claro y oscuro.** El botón del encabezado alterna el tema y recuerda la elección en `localStorage`; sin elección previa se respeta la preferencia del sistema. Los tokens de ambos temas viven en `site_assets/style.css`.
+- **Navegación por día.** Las pestañas muestran "Finde" (jueves–domingo), cada día del finde con eventos y "Todo". Cada pestaña trae su cantidad y los contadores se recalculan al filtrar.
+- **Filtros y búsqueda.** Chips de gratis y de las tres salas con más eventos, más búsqueda por banda, sala o dirección, todo en el navegador y sin recargar.
+- **Detalle en la fila.** Cada evento expande sus fechas completas, la dirección con link a mapas, el origen de los datos y las acciones de compra y de compartir.
+- **Flyers reales.** El destacado usa 4:5 y las miniaturas son cuadradas; si falta el flyer o falla la carga, se muestra una miniatura tipográfica con las iniciales.
+- **Títulos legibles.** La ticketera suele mandar títulos en mayúsculas con la fecha pegada ("SANTO PECADO EN ABBEY ROAD 16-10"); el sitio muestra una versión legible y conserva el título crudo en los datos.
+
 
 ## Deploy
 
@@ -74,8 +82,8 @@ python -m http.server -d site                       # http://localhost:8000
 | `lib/dedupe.py` | Dedupe por venue canónico + intersección de `occurrences`, join por slug y fuzzy de títulos (umbral 85). |
 | `run_pipeline.py` | Orquesta collect → normalize → enrich → dedupe y escribe `data/` (atómico; no pisa outputs si una fuente falla). |
 | `scripts/daily.sh` | Corrida diaria con log; insumo para cron/systemd. |
-| `build_site.py` | Genera el sitio estático en `site/`: merge de clusters, ventana jue–dom, tarjetas, SEO y assets. |
-| `site_assets/` | Fuente del CSS, el JS (filtros, compartir, hooks) y el favicon; `build_site.py` los copia a `site/`. |
+| `build_site.py` | Genera el sitio estático en `site/`: merge de clusters, agenda por día, destacado, títulos legibles, SEO y assets. |
+| `site_assets/` | Fuente del CSS (temas claro/oscuro), el JS (pestañas de día, filtros, búsqueda, detalle, compartir) y el favicon; `build_site.py` los copia a `site/`. |
 | `.github/workflows/deploy.yml` | Deploy diario del sitio a GitHub Pages (pipeline best-effort + build + Pages). |
 | `tests/` | Pytest: venues, fechas, ocurrencias, municipal, dedupe, runner y sitio. |
 
