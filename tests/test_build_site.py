@@ -521,6 +521,24 @@ class TestRedesignMarkup:
         assert build_site.pick_featured([event], SNAPSHOT_TODAY) is None
         assert build_site.render_featured(None) == ""
 
+    def test_intro_adapts_when_the_weekend_is_empty(self):
+        empty_intro = build_site.render_intro([], SNAPSHOT_TODAY)
+        assert "Próximos eventos" in empty_intro
+        assert "este finde" not in empty_intro
+
+        event = build_site.merge_members(
+            [make_member("articket", occurrences=["2026-10-16"], date_start="2026-10-16")],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        weekend_intro = build_site.render_intro([event], SNAPSHOT_TODAY)
+        assert "este finde" in weekend_intro
+
+    def test_empty_dataset_still_explains_the_page(self):
+        page = build_site.render_index([], {}, SNAPSHOT_TODAY)
+        assert "No hay eventos cargados todavía." in page
+        assert 'id="empty-state">' in page
+
     def test_hidden_rows_have_a_display_rule(self, tmp_path):
         # .row sets display:grid, which would override the hidden attribute.
         _, _, css, _, _ = self.build(tmp_path)

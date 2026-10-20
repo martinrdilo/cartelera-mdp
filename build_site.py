@@ -591,11 +591,18 @@ def render_header() -> str:
 def render_intro(events: list[dict], today: date) -> str:
     venues = len({event["venue_id"] for event in events})
     free = sum(1 for event in events if event["is_free"])
+    has_weekend = any(in_weekend(primary_date(event), today) for event in events)
+    if has_weekend:
+        kicker = format_weekend_kicker(today)
+        heading = "Qué hay este finde<br>en <em>Mar del Plata</em>"
+    else:
+        kicker = "Próximos eventos"
+        heading = "Qué hay<br>en <em>Mar del Plata</em>"
     return (
         '<section class="intro" id="top">'
         "<div>"
-        f'<p class="kicker">{esc(format_weekend_kicker(today))}</p>'
-        '<h1>Qué hay este finde<br>en <em>Mar del Plata</em></h1>'
+        f'<p class="kicker">{esc(kicker)}</p>'
+        f"<h1>{heading}</h1>"
         "</div>"
         '<div class="intro__stats">'
         f'<span data-label="Eventos"><b>{len(events)}</b></span>'
@@ -966,6 +973,15 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
     has_weekend = bool(weekend)
     default_view = "weekend" if has_weekend else "all"
     featured = render_featured(pick_featured(events, today))
+    if events:
+        empty_html = (
+            '<p class="empty-state" id="empty-state" hidden>'
+            "No hay eventos con esos filtros. "
+            '<button type="button" id="clear-filters">Limpiar filtros</button>'
+            "</p>"
+        )
+    else:
+        empty_html = '<p class="empty-state" id="empty-state">No hay eventos cargados todavía.</p>'
     payload = json.dumps(events_payload(events, today), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     title = f"{SITE_NAME} — Qué hay este finde en Mar del Plata"
     return f"""<!DOCTYPE html>
@@ -1000,9 +1016,7 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 {render_toolbar(events)}
 {featured}
 {render_agenda(groups, today, default_view)}
-<p class="empty-state" id="empty-state" hidden>
-No hay eventos con esos filtros. <button type="button" id="clear-filters">Limpiar filtros</button>
-</p>
+{empty_html}
 {render_footer(last_run)}
 </main>
 <script id="events-data" type="application/json">{payload}</script>
