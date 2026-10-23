@@ -1,6 +1,6 @@
 # cartelera-mdp — pipeline de extracción
 
-Pipeline local que extrae eventos musicales reales de Mar del Plata desde 3 fuentes (agenda municipal EMTUR, Articket/CultuTickets y Club TRI), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto, y alimenta el sitio estático de la Fase 2 (`build_site.py`). Resultados: ver `REPORT.md`.
+Pipeline local que extrae eventos musicales reales de Mar del Plata desde 8 feeds (agenda municipal EMTUR, Articket, CultuTickets, Club TRI, Venti, Ticketek, Bombo y Punto Mar del Plata), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto, y alimenta el sitio estático de la Fase 2 (`build_site.py`). Resultados: ver `REPORT.md`.
 
 ## Camino rápido
 
@@ -17,7 +17,7 @@ Pipeline local que extrae eventos musicales reales de Mar del Plata desde 3 fuen
    .venv/bin/python -m pytest tests/ -q
    ```
 
-3. Correr el pipeline completo (fetch real, ~1 req/s, tarda ~30 segundos):
+3. Correr el pipeline completo (fetch real, ~1 req/s; tarda varios minutos porque Punto enriquece cada ficha con su detalle):
 
    ```bash
    .venv/bin/python run_pipeline.py
@@ -75,11 +75,15 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 | `collectors/municipal.py` | Agenda EMTUR: HTML ISO-8859-1, `tipo` 11/16/19, paginado hasta página vacía (tope 15); segmenta cada rango con sus días de semana. |
 | `collectors/muchticket.py` | Articket + CultuTickets: JSON `GET /obtener_eventos/?cantidad_eventos=500`, filtro Mar del Plata; enriquece multi-fecha desde la página de detalle. |
 | `collectors/clubtri.py` | Home de clubtri.com = agenda; fechas "Mié 14 de Octubre" con inferencia de año. |
+| `collectors/venti.py` | API JSON de Venti (Arena/La Vin/Quba/electrónica); filtra MDP por coordenadas del venue y convierte UTC a hora local. |
+| `collectors/ticketek.py` | Búsqueda JSON de Ticketek + nodo CMS por show; fechas y precios desde `google_structured_data` (Bendu Arena, Tronador, Radio City). |
+| `collectors/bombo.py` | Búsqueda JSON de Bombo + detalle JSON-LD para electrónica (Mute, The County); descarta pases y bundles. |
+| `collectors/punto.py` | Agenda JSON de Punto Mar del Plata (`categoria=1`, música) + detalle JSON-LD para el link de venta. |
 | `lib/schema.py` | `Event`: esquema normalizado único (fuente, título, lugar, fechas ISO, `occurrences`, hora, precio, link de compra, etc.). |
 | `lib/dates.py` | Parsing de `dd/mm/yyyy` y fechas en español sin año; extracción de hora. |
 | `lib/occurrences.py` | Expansión multi-fecha: rangos municipal por día de semana y detalle Articket (select `fechas_evento` / JSON-LD). |
 | `lib/venues.py` | Registry de venues: normalización y resolución por alias (`data/venues.json`). |
-| `lib/dedupe.py` | Dedupe por venue canónico + intersección de `occurrences`, join por slug y fuzzy de títulos (umbral 85). |
+| `lib/dedupe.py` | Dedupe por venue canónico + intersección de `occurrences`: slug, fuzzy de títulos, contención de tokens y prefijo de artista. |
 | `run_pipeline.py` | Orquesta collect → normalize → enrich → dedupe y escribe `data/` (atómico; no pisa outputs si una fuente falla). |
 | `scripts/daily.sh` | Corrida diaria con log; insumo para cron/systemd. |
 | `build_site.py` | Genera el sitio estático en `site/`: merge de clusters, agenda por día, destacado, títulos legibles, SEO y assets. |
@@ -93,4 +97,6 @@ Cada collector expone `collect() -> list[dict]` (crudo) y `normalize(records) ->
 
 - Solo lectura sobre sitios externos; UA `cartelera-mdp-pipeline/0.2 (local research)` y ~1 req/s.
 - `.venv/`, `data/raw/` y `logs/` no se versionan; los JSON normalizados/dedupeados y `data/last_run.json` sí, como evidencia.
+- **Dedupe:** un cluster por venue canónico + intersección de fechas + slug o título (fuzzy, contención de tokens y prefijo de artista). El sitio aplica además un guard final: mismo venue + título normalizado + fecha compartida nunca se renderiza dos veces.
+- **Fuentes de la ola 1:** Venti, Ticketek, Bombo y Punto MDP. La ola 2 (Auditorium, Teatro Colón, TuEntrada) y la ola 3 (Plateanet, medios/redes) quedan pendientes.
 - Decisiones de tuning y limitaciones conocidas: ver `REPORT.md`.

@@ -14,13 +14,21 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from collectors import clubtri, muchticket, municipal
+from collectors import bombo, clubtri, muchticket, municipal, punto, ticketek, venti
 from lib.dedupe import cluster_events
 from lib.venues import resolve
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
-MODULES = (("municipal", municipal), ("muchticket", muchticket), ("clubtri", clubtri))
+MODULES = (
+    ("municipal", municipal),
+    ("muchticket", muchticket),
+    ("clubtri", clubtri),
+    ("venti", venti),
+    ("ticketek", ticketek),
+    ("bombo", bombo),
+    ("punto", punto),
+)
 
 
 def _write_json_atomic(path, payload):

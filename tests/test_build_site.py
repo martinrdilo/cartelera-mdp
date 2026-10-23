@@ -405,6 +405,16 @@ class TestDeterministicBuild:
         assert ids
         assert len(set(ids)) == len(ids)
 
+    def test_snapshot_has_no_exact_duplicate_rows(self):
+        events, _, _ = build_site.collect_site_events(DATA_DIR, BUILD_TODAY)
+        triples = [
+            (event["venue_id"], build_site.normalize_key(event["title"]), day)
+            for event in events
+            for day in event["dates"]
+        ]
+        assert triples
+        assert len(set(triples)) == len(triples)
+
     def test_day_groups_are_sorted_and_dated(self, tmp_path):
         _, html = self.build(tmp_path)
         groups = day_groups(html)

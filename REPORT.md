@@ -83,7 +83,7 @@ El patrón fuerte se mantiene: la agenda municipal republica casi toda la grilla
 
 ## 4. Canónico de venues
 
-`data/venues.json` tiene 30 venues con los alias observados en `data/raw/*.json` y la dirección cuando el corpus la expone. `lib/venues.py` resuelve por normalización exacta + alias, con fallback a la parte antes de la primera coma (los strings crudos traen dirección). Cobertura: 42 strings crudos distintos → 0 sin resolver; los no conocidos caen al nombre normalizado (nunca bloquean el dedupe).
+En v2 `data/venues.json` tenía 30 venues con los alias observados en `data/raw/*.json` y la dirección cuando el corpus la expone. `lib/venues.py` resuelve por normalización exacta + alias, con fallback a la parte antes de la primera coma (los strings crudos traen dirección). Cobertura: 42 strings crudos distintos → 0 sin resolver; los no conocidos caen al nombre normalizado (nunca bloquean el dedupe).
 
 Grupos de alias notables:
 
@@ -105,7 +105,29 @@ Grupos de alias notables:
 - **Canónico de venues** quedó hecho: 42 strings → 30 venues, 100% resuelto, sin lista hardcodeada en el dedupe.
 - **Multi-fecha** quedó hecho para lo que las fuentes exponen (rangos municipal con días + detalle Articket). Si aparece un rango sin recurrencia, el sistema lo flagea en vez de inventar.
 - **Slug como join de primera clase:** solo ClubTri lo expone; sumar Plateanet/Ticketek daría joins exactos para municipal ↔ vendedores.
-- **Fuentes duras fuera de alcance:** Plateanet, Bandsintown, Bombo, Instagram (fases posteriores).
+- **Fuentes duras fuera de alcance:** Plateanet, Bandsintown, Instagram (fases posteriores). Bombo quedó cubierto en la ola 1 (v3).
 - **Reglas de precedencia** por campo (título, hora, precio) cuando hay conflicto entre fuentes; hoy el cluster guarda todo y decide el consumidor.
 - **Cobertura del municipal:** 11 páginas de música son el tope práctico actual; verificar si el tope de 15 páginas alcanza en temporada alta (enero).
 - **Operación:** `scripts/daily.sh` + `data/last_run.json` dejan la corrida diaria lista para cron/systemd; falta decidir dónde corre (deploy) y sumar alerta si el exit code no es 0.
+
+## 6. Ola 1 de fuentes (v3)
+
+Corrida real del 2026-10-23T00:26Z, end-to-end con `run_pipeline.py` (482 s; el enriquecimiento de Punto con una ficha por evento es la parte lenta). Fetch real, solo lectura, ~1 req/s.
+
+| Fuente | Crudos | Normalizados | Notas |
+|---|---:|---:|---|
+| Municipal (EMTUR) | 80 | 80 | Música + festivales; la agenda municipal cambió respecto de v2 |
+| Articket | 67 | 67 | Vendedor dominante; 9 funciones nuevas de Ticketek se solapan con éste |
+| CultuTickets | 19 | 19 | Brew House |
+| Club TRI | 19 | 19 | Detalle de sala |
+| Venti | 13 | 13 | Quba, Sheraton/La Vin, Zwan, Casinos; filtro por coordenadas |
+| Ticketek | 9 | 9 | Bendu Arena, Teatro Tronador, Radio City |
+| Bombo | 7 | 7 | Mute Club de Mar y The County; se descartó el "Poker Pass" (bundle, no evento) |
+| Punto Mar del Plata | 84 | 84 | Agenda local de música; link de venta desde el JSON-LD de cada ficha |
+| **Total** | **298** | **298** | **187 únicos post-dedupe** |
+
+- **81 clusters** de duplicados (192 eventos involucrados, 111 reducciones → 187 únicos). Los clusters nuevos incluyen tripletes municipal+punto+ticketek (Dillom, Divididos, Abel Pintos, La Delio Valdez/La K'onga) y municipal+punto+venti (La Vin, Vinmusic).
+- **Cobertura nueva:** Arena Mardel Plata (Venti/Ticketek/Punto), Bendu Arena (Ticketek/Punto), Mute Club de Mar y The County (Bombo), Quba/Zwan/Casinos (Venti), y 84 eventos de música de Punto con salas chicas que la agenda municipal no publica.
+- **Dedupe v3:** hosts nuevos (`venti.live`, `wearebombo.com`, `tuentrada.com`, `plateanet.com`, `unica-cartelera.com.ar`), limpieza de fechas embebidas en títulos ("22.10", "31/10"), contención de tokens significativos y prefijo de artista. Casos que antes quedaban duplicados y ahora cierran: Diego Torres, Sergio Dalma, Baglietto Vital, Patricia Luca/Lucas, Cruzando el Charco, Martín Masiello. El sitio agrega un guard final (mismo venue + título normalizado + fecha compartida) y la corrida real verifica **0 tripletas duplicadas**.
+- **Venues:** `data/venues.json` pasa de 30 a 40 venues (Arena, Bendu Arena, Mute, The County, Quba, Zwan, Casinos, Auditorium Laureti Puerto, Mole Club, etc.). Resolución: 295/298; los 3 restantes son nombres de productora de Bombo (`SINERGIA`, `Antesala`), que se muestran tal cual y no bloquean el dedupe.
+- **Pendiente:** 16 buckets venue+fecha tienen más de una fila; la mayoría son funciones distintas (dos shows en Club TRI, dos en Colón, dos Candlelight). Quedan falsos negativos difíciles por títulos de artistas con spelling muy distinto. La ola 2 (Auditorium, Colón, TuEntrada) y la ola 3 (Plateanet, medios/redes) siguen pendientes.
