@@ -1,10 +1,14 @@
 {
-  "finished_at": "2026-10-23T00:26:15+00:00",
-  "duration_seconds": 482.3,
+  "finished_at": "2026-10-23T03:37:30+00:00",
+  "duration_seconds": 333.7,
   "sources": {
     "articket": {
       "raw": 67,
       "normalized": 67
+    },
+    "auditorium": {
+      "raw": 37,
+      "normalized": 37
     },
     "bombo": {
       "raw": 7,
@@ -13,6 +17,10 @@
     "clubtri": {
       "raw": 19,
       "normalized": 19
+    },
+    "colon": {
+      "raw": 28,
+      "normalized": 28
     },
     "cultutickets": {
       "raw": 19,
@@ -23,12 +31,16 @@
       "normalized": 80
     },
     "punto": {
-      "raw": 84,
-      "normalized": 84
+      "raw": 83,
+      "normalized": 83
     },
     "ticketek": {
       "raw": 9,
       "normalized": 9
+    },
+    "tuentrada": {
+      "raw": 1,
+      "normalized": 1
     },
     "venti": {
       "raw": 13,
@@ -36,22 +48,22 @@
     }
   },
   "totals": {
-    "raw": 298,
-    "normalized": 298,
-    "unique": 187
+    "raw": 363,
+    "normalized": 363,
+    "unique": 245
   },
   "duplicates": {
-    "clusters": 81,
-    "events_in_clusters": 192
+    "clusters": 87,
+    "events_in_clusters": 205
   },
   "occurrences": {
-    "multi_date_events": 12,
+    "multi_date_events": 16,
     "recurrence_unknown": 6,
     "multi_date_incomplete": 0,
     "enriched_from_detail": 2
   },
   "venues": {
-    "resolved": 295,
+    "resolved": 360,
     "unknown": 3
   }
 }

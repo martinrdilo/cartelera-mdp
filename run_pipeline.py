@@ -14,7 +14,18 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from collectors import bombo, clubtri, muchticket, municipal, punto, ticketek, venti
+from collectors import (
+    auditorium,
+    bombo,
+    clubtri,
+    colon,
+    muchticket,
+    municipal,
+    punto,
+    ticketek,
+    tuentrada,
+    venti,
+)
 from lib.dedupe import cluster_events
 from lib.venues import resolve
 
@@ -28,6 +39,9 @@ MODULES = (
     ("ticketek", ticketek),
     ("bombo", bombo),
     ("punto", punto),
+    ("auditorium", auditorium),
+    ("colon", colon),
+    ("tuentrada", tuentrada),
 )
 
 

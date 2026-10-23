@@ -430,7 +430,8 @@ class TestDeterministicBuild:
         assert "Jueves 22 — Domingo 25 · Octubre 2026" in html
         for label in ("agenda municipal", "Articket", "CultuTickets", "Club TRI", "Venti", "Ticketek", "Bombo", "Punto MDP"):
             assert label in html
-        assert "Actualizado 22/10/2026" in html
+        last_run = json.loads((DATA_DIR / "last_run.json").read_text(encoding="utf-8"))
+        assert f"Actualizado {build_site.format_updated(last_run)}" in html
 
     def test_past_event_is_dropped(self, tmp_path):
         _, html = self.build(tmp_path)
@@ -623,3 +624,17 @@ class TestRedesignMarkup:
         first = payload["events"][0]
         for field in ("id", "title", "venue_id", "dates", "is_free", "price_label"):
             assert field in first
+
+
+class TestWave2Sources:
+    def test_new_sources_have_labels(self):
+        assert build_site.SOURCE_LABELS["auditorium"] == "Auditorium"
+        assert build_site.SOURCE_LABELS["colon"] == "Teatro Colón"
+        assert build_site.SOURCE_LABELS["tuentrada"] == "TuEntrada"
+
+    def test_new_source_priority(self):
+        order = build_site.SOURCE_ORDER
+        assert order.index("tuentrada") < order.index("auditorium")
+        assert order.index("auditorium") < order.index("punto")
+        assert order.index("colon") < order.index("punto")
+        assert order.index("punto") < order.index("municipal")

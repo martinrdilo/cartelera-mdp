@@ -81,6 +81,23 @@ class TestResolve:
         assert resolve("Teatro Auditorium Laureti Puerto")[0] == "auditorium-laureti-puerto"
         assert resolve("Teatro Auditorium - Sala Roberto J. Payró")[0] == "teatro-auditorium"
 
+    def test_ola2_aliases_resolve(self):
+        assert resolve("Sala Astor Piazzolla") == ("teatro-auditorium", "Teatro Auditorium")
+        assert resolve("Sala Roberto J. Payró") == ("teatro-auditorium", "Teatro Auditorium")
+        assert resolve("Café Teatral Emilio Alfaro") == ("teatro-auditorium", "Teatro Auditorium")
+        assert resolve("Sala Jorge Laureti - Puerto") == (
+            "auditorium-laureti-puerto",
+            "Teatro Auditorium Laureti Puerto",
+        )
+        assert resolve("Polideportivo Mar De Plata") == (
+            "polideportivo-islas-malvinas",
+            "Polideportivo Islas Malvinas",
+        )
+        assert resolve("Teatro Enrique Carreras") == (
+            "teatro-enrique-carreras",
+            "Teatro Enrique Carreras",
+        )
+
     def test_unknown_venue_returns_none(self):
         assert resolve("Bolichito de la esquina") is None
 

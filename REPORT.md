@@ -105,7 +105,7 @@ Grupos de alias notables:
 - **Canónico de venues** quedó hecho: 42 strings → 30 venues, 100% resuelto, sin lista hardcodeada en el dedupe.
 - **Multi-fecha** quedó hecho para lo que las fuentes exponen (rangos municipal con días + detalle Articket). Si aparece un rango sin recurrencia, el sistema lo flagea en vez de inventar.
 - **Slug como join de primera clase:** solo ClubTri lo expone; sumar Plateanet/Ticketek daría joins exactos para municipal ↔ vendedores.
-- **Fuentes duras fuera de alcance:** Plateanet, Bandsintown, Instagram (fases posteriores). Bombo quedó cubierto en la ola 1 (v3).
+- **Fuentes duras fuera de alcance:** Plateanet sigue fuera de alcance (Incapsula/hCaptcha; ola 3 con estrategia manual o acuerdo). Bandsintown e Instagram quedan para fases posteriores. Bombo quedó cubierto en la ola 1 y Auditorium, Colón y TuEntrada en la ola 2.
 - **Reglas de precedencia** por campo (título, hora, precio) cuando hay conflicto entre fuentes; hoy el cluster guarda todo y decide el consumidor.
 - **Cobertura del municipal:** 11 páginas de música son el tope práctico actual; verificar si el tope de 15 páginas alcanza en temporada alta (enero).
 - **Operación:** `scripts/daily.sh` + `data/last_run.json` dejan la corrida diaria lista para cron/systemd; falta decidir dónde corre (deploy) y sumar alerta si el exit code no es 0.
@@ -130,4 +130,32 @@ Corrida real del 2026-10-23T00:26Z, end-to-end con `run_pipeline.py` (482 s; el 
 - **Cobertura nueva:** Arena Mardel Plata (Venti/Ticketek/Punto), Bendu Arena (Ticketek/Punto), Mute Club de Mar y The County (Bombo), Quba/Zwan/Casinos (Venti), y 84 eventos de música de Punto con salas chicas que la agenda municipal no publica.
 - **Dedupe v3:** hosts nuevos (`venti.live`, `wearebombo.com`, `tuentrada.com`, `plateanet.com`, `unica-cartelera.com.ar`), limpieza de fechas embebidas en títulos ("22.10", "31/10"), contención de tokens significativos y prefijo de artista. Casos que antes quedaban duplicados y ahora cierran: Diego Torres, Sergio Dalma, Baglietto Vital, Patricia Luca/Lucas, Cruzando el Charco, Martín Masiello. El sitio agrega un guard final (mismo venue + título normalizado + fecha compartida) y la corrida real verifica **0 tripletas duplicadas**.
 - **Venues:** `data/venues.json` pasa de 30 a 40 venues (Arena, Bendu Arena, Mute, The County, Quba, Zwan, Casinos, Auditorium Laureti Puerto, Mole Club, etc.). Resolución: 295/298; los 3 restantes son nombres de productora de Bombo (`SINERGIA`, `Antesala`), que se muestran tal cual y no bloquean el dedupe.
-- **Pendiente:** 16 buckets venue+fecha tienen más de una fila; la mayoría son funciones distintas (dos shows en Club TRI, dos en Colón, dos Candlelight). Quedan falsos negativos difíciles por títulos de artistas con spelling muy distinto. La ola 2 (Auditorium, Colón, TuEntrada) y la ola 3 (Plateanet, medios/redes) siguen pendientes.
+- **Pendiente:** 16 buckets venue+fecha tienen más de una fila; la mayoría son funciones distintas (dos shows en Club TRI, dos en Colón, dos Candlelight). Quedan falsos negativos difíciles por títulos de artistas con spelling muy distinto. La ola 2 quedó cubierta en la sección 7; la ola 3 (Plateanet, medios/redes) sigue pendiente.
+
+## 7. Ola 2 de fuentes (v4)
+
+Corrida real del 2026-10-23T03:37Z, end-to-end con `run_pipeline.py` (334 s). Fetch real, solo lectura, ~1 req/s.
+
+| Fuente | Crudos | Normalizados | Notas |
+|---|---:|---:|---|
+| Municipal (EMTUR) | 80 | 80 | Música + festivales |
+| Articket | 67 | 67 | Vendedor dominante |
+| CultuTickets | 19 | 19 | Brew House |
+| Club TRI | 19 | 19 | Detalle de sala |
+| Venti | 13 | 13 | Quba, Sheraton/La Vin, Zwan, Casinos |
+| Ticketek | 9 | 9 | Bendu Arena, Teatro Tronador, Radio City |
+| Bombo | 7 | 7 | Mute Club de Mar y The County |
+| Punto Mar del Plata | 83 | 83 | Agenda local de música con link de venta |
+| **Auditorium** | **37** | **37** | 7 páginas de programación + una ficha por actividad; salas mapeadas al venue canónico |
+| **Teatro Colón** | **28** | **28** | Página mensual de octubre; precios es-AR, gratis y año inferido |
+| **TuEntrada** | **1** | **1** | PAREN LA MANO en el Polideportivo Islas Malvinas (07/11 21:00) |
+| **Total** | **363** | **363** | **245 únicos post-dedupe** |
+
+- **Auditorium:** 7 páginas de `/programacion?page=N` (37 actividades) más una ficha por evento. Las salas se mapean a dos venues canónicos (Teatro Auditorium y Teatro Auditorium Laureti Puerto); además se sumó Teatro Enrique Carreras para TuEntrada. El detalle solo aporta vendedor (Plateanet) y gratis/pago: no publica precios.
+- **Teatro Colón:** la página mensual trae 28 eventos. La línea "Viernes 16 a las 19 y 21:30 hs" se toma como un evento con hora 19:00 (dos funciones el mismo día, una fila por fecha). Precio mínimo en es-AR, entrada libre y vendedor Fever cuando la ficha lo indica.
+- **TuEntrada:** hoy publica 1 evento MDP. La búsqueda server-rendered se filtra por ciudad y las sesiones salen del payload RSC de la ficha; si el detalle falla, la tarjeta aporta fecha y venue.
+- **Dedupe:** 87 clusters (205 eventos involucrados, 118 reducciones → 245 únicos). Los clusters nuevos incluyen Auditorium+municipal (Todas en ella), Auditorium+punto (Amniótika), Colón+municipal (Banda Sinfónica, Orquesta Sinfónica, Orquesta de Tango, Una Mujer Todo el Tango, Arte vs Arte) y Colón+punto (Tango Furia).
+- **Corrección de falsos positivos:** la primera corrida agrupó 7 clusters del festival de cine del Auditorium (películas distintas con el prefijo "41° Festival Internacional de Cine:") y un par de listados de Venti. El fuzzy ahora solo une eventos de fuentes distintas; dentro de una misma fuente exige slug de ticketera o título normalizado exacto. Resultado: **0 clusters same-source**, las 23 películas del festival quedan como filas separadas y el sitio sigue con **0 tripletas duplicadas**.
+- **Sitio:** build con `--today 2026-10-23`: 225 filas próximas, 36 del finde, 42 venues; las etiquetas Auditorium, Teatro Colón y TuEntrada aparecen en la página.
+- **Venues:** `data/venues.json` suma las salas del Auditorium, `Teatro Enrique Carreras` y el alias `Polideportivo Mar De Plata` → Islas Malvinas. Resolución 360/363; los 3 sin resolver siguen siendo nombres de productora de Bombo (`SINERGIA`, `Antesala`).
+- **Pendiente:** Plateanet para la ola 3 (Incapsula/hCaptcha; estrategia manual o acuerdo). TuEntrada hoy tiene volumen bajo; conviene volver a medirlo en temporada.

@@ -132,7 +132,9 @@
       "name": "Polideportivo Islas Malvinas",
       "aliases": [
         "Polideportivo Islas Malvinas",
-        "Estadio Polideportivo Islas Malvinas"
+        "Estadio Polideportivo Islas Malvinas",
+        "Polideportivo Mar De Plata",
+        "Polideportivo Mar del Plata"
       ],
       "address": "Av. Juan B. Justo 3600"
     },
@@ -174,9 +176,24 @@
       "aliases": [
         "Teatro Auditorium",
         "Teatro Auditorium - Sala Roberto J. Payró",
-        "Teatro Auditorium - Sala Gregorio Nachman"
+        "Teatro Auditorium - Sala Gregorio Nachman",
+        "Teatro Auditorium - Sala Astor Piazzolla",
+        "Teatro Auditorium - Café Teatral Emilio Alfaro",
+        "Sala Roberto J. Payró",
+        "Sala Gregorio Nachman",
+        "Sala Astor Piazzolla",
+        "Café Teatral Emilio Alfaro"
       ],
       "address": "Bv. Marítimo Patricio Peralta Ramos 2282"
+    },
+    {
+      "id": "teatro-enrique-carreras",
+      "name": "Teatro Enrique Carreras",
+      "aliases": [
+        "Teatro Enrique Carreras",
+        "Teatro Carreras"
+      ],
+      "address": "Entre Ríos 1824"
     },
     {
       "id": "capilla-divino-maestro",
@@ -322,7 +339,10 @@
       "aliases": [
         "Teatro Auditorium Laureti Puerto",
         "Auditorium Laureti Puerto",
-        "Auditorium Puerto"
+        "Auditorium Puerto",
+        "Sala Jorge Laureti - Puerto",
+        "Sala Jorge Laureti",
+        "Teatro Auditorium - Sala Jorge Laureti"
       ]
     },
     {

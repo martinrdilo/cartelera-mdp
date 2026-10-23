@@ -57,8 +57,16 @@ ASSETS_SRC = ROOT / "site_assets"
 
 # Seller sources win over agendas for event-level fields. Punto is a local
 # agenda with ticket links, so it outranks the municipal tourism agenda.
-SELLER_SOURCES = ("articket", "cultutickets", "clubtri", "venti", "ticketek", "bombo")
-SOURCE_ORDER = SELLER_SOURCES + ("punto", "municipal")
+SELLER_SOURCES = (
+    "articket",
+    "cultutickets",
+    "clubtri",
+    "venti",
+    "ticketek",
+    "bombo",
+    "tuentrada",
+)
+SOURCE_ORDER = SELLER_SOURCES + ("auditorium", "colon", "punto", "municipal")
 
 WEEKDAY_ABBR = ("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -513,6 +521,9 @@ SOURCE_LABELS = {
     "ticketek": "Ticketek",
     "bombo": "Bombo",
     "punto": "Punto MDP",
+    "auditorium": "Auditorium",
+    "colon": "Teatro Colón",
+    "tuentrada": "TuEntrada",
 }
 THUMB_VARIANTS = 4
 
