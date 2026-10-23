@@ -1,0 +1,132 @@
+{
+  "status": "ok",
+  "events": [
+    {
+      "id": 11783,
+      "name": "CLUB QUBA | 22.10 QUEVES",
+      "placeName": "",
+      "startDate": "2026-10-23T02:00:00.000Z",
+      "bannerImg": "https://images.venti.live/user-images/1792453535323-lg.jpg",
+      "promoImg": "https://images.venti.live/user-images/1792453538304-lg.jpg",
+      "urlName": "club-quba-22-10-queves",
+      "venue": {
+        "id": 26,
+        "googleMapsPlaceId": "ChIJh8cjScjdhJURoWA_wHOnk0g",
+        "mapsUrl": "https://maps.google.com/?cid=5229707707895734433",
+        "readableAddress": "Escollera Norte, Mar del Plata",
+        "placeName": "Quba, café de mar",
+        "latitude": -38.0312385559082,
+        "longitude": -57.53220748901367,
+        "cityId": 5,
+        "mapImage": "https://images.venti.live/map-images/Quba, café de mar-1750369687489.png",
+        "createdAt": "2024-10-28T20:34:59.000Z",
+        "updatedAt": "2025-06-19T21:48:07.000Z",
+        "city": {
+          "id": 5,
+          "name": "Costa Argentina",
+          "country": "AR",
+          "latitude": null,
+          "longitude": null,
+          "createdAt": "2024-10-28T17:33:57.000Z",
+          "updatedAt": "2024-10-28T17:33:57.000Z"
+        }
+      }
+    },
+    {
+      "id": 11347,
+      "name": "FIEBRE FIESTA en MAR DEL PLATA 23/10",
+      "placeName": "",
+      "startDate": "2026-10-24T02:59:00.000Z",
+      "bannerImg": "https://images.venti.live/user-images/1789679294699-lg.jpg",
+      "promoImg": "https://images.venti.live/user-images/1789679301082-lg.jpg",
+      "urlName": "fiebre-fiesta-en-mar-del-plata-23-10",
+      "venue": {
+        "id": 64,
+        "googleMapsPlaceId": "ChIJk93XQgDdhJURqD-B4dD3uBk",
+        "mapsUrl": "https://maps.google.com/?cid=1853503723171561384",
+        "readableAddress": "Avenida Patricio Peralta Ramos 5050, Mar del Plata",
+        "placeName": "El Calamar Loco PG",
+        "latitude": -38.0260851,
+        "longitude": -57.5303208,
+        "cityId": 5,
+        "mapImage": "https://images.venti.live/map-images/El Calamar Loco PG-1765483220622.png",
+        "createdAt": "2024-11-22T17:53:48.000Z",
+        "updatedAt": "2025-12-11T20:00:20.000Z",
+        "city": {
+          "id": 5,
+          "name": "Costa Argentina",
+          "country": "AR",
+          "latitude": null,
+          "longitude": null,
+          "createdAt": "2024-10-28T17:33:57.000Z",
+          "updatedAt": "2024-10-28T17:33:57.000Z"
+        }
+      }
+    },
+    {
+      "id": 11023,
+      "name": "LA VIN - LOS TOTORA TOUR",
+      "placeName": "",
+      "startDate": "2026-10-24T21:00:00.000Z",
+      "bannerImg": "https://images.venti.live/user-images/1788782986347-lg.jpg",
+      "promoImg": "https://images.venti.live/user-images/1788784029388-lg.jpg",
+      "urlName": "vinmusic-mdq-la-vin-tour",
+      "venue": {
+        "id": 481,
+        "googleMapsPlaceId": "ChIJv4LtX87dhJURMdesXbvwrpI",
+        "mapsUrl": "https://maps.google.com/?cid=10569650063006291761",
+        "readableAddress": "Leandro N. Alem 4221, Mar del Plata",
+        "placeName": "Sheraton Mar del Plata Hotel",
+        "latitude": -38.0318296,
+        "longitude": -57.53971310000001,
+        "cityId": 5,
+        "mapImage": "https://images.venti.live/map-images/Sheraton Mar del Plata Hotel-1771522080643.png",
+        "createdAt": "2026-02-19T17:28:00.000Z",
+        "updatedAt": "2026-02-19T17:28:00.000Z",
+        "city": {
+          "id": 5,
+          "name": "Costa Argentina",
+          "country": "AR",
+          "latitude": null,
+          "longitude": null,
+          "createdAt": "2024-10-28T17:33:57.000Z",
+          "updatedAt": "2024-10-28T17:33:57.000Z"
+        }
+      }
+    },
+    {
+      "id": 10546,
+      "name": "ÇANTAMARTA en Niceto Club (+18 años)",
+      "placeName": "",
+      "startDate": "2026-10-22T22:00:00.000Z",
+      "bannerImg": "https://images.venti.live/user-images/1784723872266-lg.jpg",
+      "promoImg": "https://images.venti.live/user-images/1784723861015-lg.jpg",
+      "urlName": "antamarta-en-niceto-club-18-a-os",
+      "venue": {
+        "id": 339,
+        "googleMapsPlaceId": "ChIJ9VO96Yy1vJURI4ALY8b1Xqc",
+        "mapsUrl": "https://maps.google.com/?cid=12060347084558794787",
+        "readableAddress": "Cnel. Niceto Vega 5510",
+        "placeName": "Niceto Club",
+        "latitude": -34.5872682,
+        "longitude": -58.43876030000001,
+        "cityId": 1,
+        "mapImage": "https://images.venti.live/map-images/Niceto Club-1759270572228.png",
+        "createdAt": "2025-09-30T22:16:12.000Z",
+        "updatedAt": "2025-09-30T22:16:12.000Z",
+        "city": {
+          "id": 1,
+          "name": "Buenos Aires",
+          "country": "AR",
+          "latitude": null,
+          "longitude": null,
+          "createdAt": "2024-10-17T17:08:05.000Z",
+          "updatedAt": "2024-10-17T17:08:05.000Z"
+        }
+      }
+    }
+  ],
+  "totalItems": 4,
+  "totalPages": 1,
+  "currentPage": 1
+}
