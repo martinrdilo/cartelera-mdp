@@ -1,0 +1,74 @@
+{
+  "resultados_total": 3,
+  "resultados_por_pagina": 12,
+  "pagina_actual": 0,
+  "resultados": [
+    {
+      "id": "26389",
+      "titulo": "HAIRSPRAY",
+      "url": "hairspray",
+      "imagenURI": "public://images/artist/440x600_generica.png",
+      "imagen": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artist/public/images/artist/440x600_generica.png",
+      "imagenHorizontal": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/960x400_generica_0.png",
+      "shows": [
+        {
+          "estado": "buy",
+          "id": 27618,
+          "showcode": "HAIRS26TT",
+          "mobile": false,
+          "lugar": "Mar del Plata",
+          "venue": "Teatro Tronador"
+        },
+        {
+          "estado": "buy",
+          "id": 27014,
+          "showcode": "HAIR27COLI",
+          "mobile": false,
+          "lugar": "Centro",
+          "venue": "Teatro Coliseo"
+        }
+      ],
+      "date": ""
+    },
+    {
+      "id": "27659",
+      "titulo": "Dillom",
+      "url": "dillom/bendu-arena",
+      "imagenURI": "public://images/artist/dillom_a27.png",
+      "imagen": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artist/public/images/artist/dillom_a27.png",
+      "imagenHorizontal": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/dillom_s27.png",
+      "shows": [
+        {
+          "estado": "buy",
+          "id": 27660,
+          "showcode": "DILLOM27MDQ",
+          "mobile": false,
+          "lugar": "Mar del Plata",
+          "venue": "Bendu Arena"
+        }
+      ],
+      "date": ""
+    },
+    {
+      "id": "13637",
+      "titulo": "Fiesta Bresh",
+      "url": "fiesta-bresh/arena-maipu",
+      "imagenURI": "public://images/artist/bresh_a26.png",
+      "imagen": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artist/public/images/artist/bresh_a26.png",
+      "imagenHorizontal": "//prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/bresh_s26am.png",
+      "shows": [
+        {
+          "estado": "buy",
+          "id": 25554,
+          "showcode": "BRESH26AM",
+          "mobile": false,
+          "lugar": "Maipu",
+          "venue": "Arena Maipu"
+        }
+      ],
+      "date": ""
+    }
+  ],
+  "error": 0,
+  "error_message": null
+}

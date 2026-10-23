@@ -1,0 +1,36 @@
+{
+  "title": "Dillom",
+  "showcode": "DILLOM27MDQ",
+  "google_structured_data": [
+    {
+      "@context": "http://schema.org",
+      "@type": "MusicEvent",
+      "name": "Dillom",
+      "image": "https://prod-cms-static.ticketek.com.ar/sites/default/files/images/artist/dillom_a27.png",
+      "description": "Dillom se presentará en Bendu Arena el día 30/01/2027 a las 21:00hs.",
+      "startDate": "2027-01-30T21:00:00-03:00",
+      "endDate": "2027-01-30T21:00:00-03:00",
+      "eventStatus": "http://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "Bendu Arena",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Juan B. Justo y Av. de los Trabajadores",
+          "addressRegion": "Buenos Aires"
+        }
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.ticketek.com.ar/dillom/bendu-arena",
+        "availability": "http://schema.org/InStock",
+        "price": "69000",
+        "priceCurrency": "ARS"
+      },
+      "performer": {
+        "@type": "PerformingGroup",
+        "name": "Dillom"
+      }
+    }
+  ]
+}

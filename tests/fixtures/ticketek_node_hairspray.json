@@ -1,0 +1,66 @@
+{
+  "title": "HAIRSPRAY",
+  "showcode": "HAIRS26TT",
+  "google_structured_data": [
+    {
+      "@context": "http://schema.org",
+      "@type": "MusicEvent",
+      "name": "HAIRSPRAY",
+      "image": "https://prod-cms-static.ticketek.com.ar/sites/default/files/images/artist/440x600_generica.png",
+      "description": "HAIRSPRAY se presenta en Teatro Tronador del 12/12/2026 al 13/12/2026.",
+      "startDate": "2026-12-12T21:00:00-03:00",
+      "endDate": "2026-12-13T20:00:00-03:00",
+      "eventStatus": "http://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "Teatro Tronador",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Santiago del Estero 1746",
+          "addressRegion": "Buenos Aires"
+        }
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.ticketek.com.ar/hairspray/teatro-tronador",
+        "availability": "http://schema.org/InStock",
+        "price": "69000",
+        "priceCurrency": "ARS"
+      },
+      "performer": {
+        "@type": "PerformingGroup",
+        "name": "HAIRSPRAY"
+      }
+    },
+    {
+      "@context": "http://schema.org",
+      "@type": "MusicEvent",
+      "name": "HAIRSPRAY",
+      "image": "https://prod-cms-static.ticketek.com.ar/sites/default/files/images/artist/440x600_generica.png",
+      "description": "HAIRSPRAY se presenta en Teatro Tronador del 12/12/2026 al 13/12/2026.",
+      "startDate": "2026-12-13T20:00:00-03:00",
+      "endDate": "2026-12-13T22:00:00-03:00",
+      "eventStatus": "http://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "Teatro Tronador",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Santiago del Estero 1746",
+          "addressRegion": "Buenos Aires"
+        }
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.ticketek.com.ar/hairspray/teatro-tronador",
+        "availability": "http://schema.org/InStock",
+        "price": "69000",
+        "priceCurrency": "ARS"
+      },
+      "performer": {
+        "@type": "PerformingGroup",
+        "name": "HAIRSPRAY"
+      }
+    }
+  ]
+}
