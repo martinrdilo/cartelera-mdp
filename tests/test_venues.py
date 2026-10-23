@@ -68,6 +68,19 @@ class TestResolve:
             "Polideportivo Islas Malvinas",
         )
 
+    def test_ola1_aliases_resolve(self):
+        assert resolve("Teatro Colón") == ("teatro-municipal-colon", "Teatro Municipal Colón")
+        assert resolve("Arena Mardel Plata") == ("arena-mar-del-plata", "Arena Mar del Plata")
+        assert resolve("Bendu Arena") == ("bendu", "Bendu")
+        assert resolve("Mute Club de Mar") == ("mute-club-de-mar", "Mute Club de Mar")
+        assert resolve("Teatro Radio City") == ("radio-city", "Centro de Arte Radio City - Roxy - Melany")
+        assert resolve("Vorterix Mar del Plata") == ("vorterix", "Vorterix")
+        assert resolve("Teatro Club El Tri") == ("club-tri", "Club TRI")
+
+    def test_auditorium_puerto_is_not_the_auditorium(self):
+        assert resolve("Teatro Auditorium Laureti Puerto")[0] == "auditorium-laureti-puerto"
+        assert resolve("Teatro Auditorium - Sala Roberto J. Payró")[0] == "teatro-auditorium"
+
     def test_unknown_venue_returns_none(self):
         assert resolve("Bolichito de la esquina") is None
 

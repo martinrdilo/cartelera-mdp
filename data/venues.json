@@ -3,43 +3,72 @@
     {
       "id": "club-tri",
       "name": "Club TRI",
-      "aliases": ["Club TRI", "ClubTri"],
+      "aliases": [
+        "Club TRI",
+        "ClubTri",
+        "Teatro Club El Tri",
+        "El Tri"
+      ],
       "address": "20 de Septiembre 2650"
     },
     {
       "id": "vorterix",
       "name": "Vorterix",
-      "aliases": ["Vorterix"],
+      "aliases": [
+        "Vorterix",
+        "Vorterix Mar del Plata"
+      ],
       "address": "Diag. Pueyrredón 3338"
     },
     {
       "id": "brew-house",
       "name": "Ciudad Cultural Brew House",
-      "aliases": ["Brew House", "Ciudad Cultural Brew House"],
+      "aliases": [
+        "Brew House",
+        "Ciudad Cultural Brew House"
+      ],
       "address": "Diag. Garibaldi 4830"
     },
     {
       "id": "teatro-municipal-colon",
       "name": "Teatro Municipal Colón",
-      "aliases": ["Teatro Municipal Colón", "Teatro Municipal Colon"],
+      "aliases": [
+        "Teatro Municipal Colón",
+        "Teatro Municipal Colon",
+        "Teatro Colón",
+        "Teatro Colon"
+      ],
       "address": "H. Yrigoyen 1665"
     },
     {
       "id": "arena-mar-del-plata",
       "name": "Arena Mar del Plata",
-      "aliases": ["Arena Mar del Plata"],
+      "aliases": [
+        "Arena Mar del Plata",
+        "Arena Mardel Plata",
+        "Arena MDP"
+      ],
       "address": "Av. Luro 4220"
     },
     {
       "id": "abbey-road",
       "name": "Abbey Road",
-      "aliases": ["Abbey Road", "Abbey Road - Concert Bar"],
+      "aliases": [
+        "Abbey Road",
+        "Abbey Road - Concert Bar"
+      ],
       "address": "Av. Juan B. Justo 620"
     },
     {
       "id": "radio-city",
       "name": "Centro de Arte Radio City - Roxy - Melany",
-      "aliases": ["Centro de Arte Radio City - Roxy - Melany"],
+      "aliases": [
+        "Centro de Arte Radio City - Roxy - Melany",
+        "Radio City",
+        "Teatro Radio City",
+        "Teatro Roxy",
+        "Roxy"
+      ],
       "address": "San Luis 1752"
     },
     {
@@ -55,57 +84,88 @@
     {
       "id": "bendu",
       "name": "Bendu",
-      "aliases": ["Bendu"],
+      "aliases": [
+        "Bendu",
+        "Bendu Arena"
+      ],
       "address": "Av. de los Trabajadores 150"
     },
     {
       "id": "wolfgang-teatro-bar",
       "name": "Wolfgang Teatro Bar",
-      "aliases": ["Wolfgang Teatro Bar"]
+      "aliases": [
+        "Wolfgang Teatro Bar",
+        "Wolfgang Teatro",
+        "Wolfgang"
+      ]
     },
     {
       "id": "la-bancaria-jauretche",
       "name": "La Bancaria - Sala Arturo Jauretche",
-      "aliases": ["La Bancaria - Sala Arturo Jauretche", "La Bancaria"],
+      "aliases": [
+        "La Bancaria - Sala Arturo Jauretche",
+        "La Bancaria"
+      ],
       "address": "San Luis 2069"
     },
     {
       "id": "chauvin",
       "name": "Chauvin",
-      "aliases": ["Chauvin", "Microteatro Chauvin"],
+      "aliases": [
+        "Chauvin",
+        "Microteatro Chauvin",
+        "Chauvin Centro de recreación",
+        "Chauvin Centro de Recreacion"
+      ],
       "address": "San Luis 2849"
     },
     {
       "id": "vinoteca-perrier",
       "name": "Vinoteca Perrier",
-      "aliases": ["Vinoteca Perrier"],
+      "aliases": [
+        "Vinoteca Perrier"
+      ],
       "address": "España 2051"
     },
     {
       "id": "polideportivo-islas-malvinas",
       "name": "Polideportivo Islas Malvinas",
-      "aliases": ["Polideportivo Islas Malvinas", "Estadio Polideportivo Islas Malvinas"],
+      "aliases": [
+        "Polideportivo Islas Malvinas",
+        "Estadio Polideportivo Islas Malvinas"
+      ],
       "address": "Av. Juan B. Justo 3600"
     },
     {
       "id": "club-39",
       "name": "Club 39 Cervecería",
-      "aliases": ["Club 39 Cervecería"]
+      "aliases": [
+        "Club 39 Cervecería",
+        "Club 39"
+      ]
     },
     {
       "id": "espacio-la-rosa",
       "name": "Espacio La Rosa",
-      "aliases": ["Espacio La Rosa"]
+      "aliases": [
+        "Espacio La Rosa"
+      ]
     },
     {
       "id": "ogham-diagonal",
       "name": "Ogham diagonal",
-      "aliases": ["Ogham diagonal"]
+      "aliases": [
+        "Ogham diagonal"
+      ]
     },
     {
       "id": "sheraton-mar-del-plata",
       "name": "Sheraton Mar del Plata",
-      "aliases": ["Sheraton Mar del Plata", "Sheraton Mar del Plata - Auditorium Victoria Ocampo"],
+      "aliases": [
+        "Sheraton Mar del Plata",
+        "Sheraton Mar del Plata - Auditorium Victoria Ocampo",
+        "Sheraton Mar del Plata Hotel"
+      ],
       "address": "Alem 4221"
     },
     {
@@ -121,19 +181,25 @@
     {
       "id": "capilla-divino-maestro",
       "name": "Capilla del Divino Maestro - Pías Discípulas",
-      "aliases": ["Capilla del Divino Maestro - Pías Discípulas"],
+      "aliases": [
+        "Capilla del Divino Maestro - Pías Discípulas"
+      ],
       "address": "Alberti 2179"
     },
     {
       "id": "teatro-tronador",
       "name": "Teatro Tronador",
-      "aliases": ["Teatro Tronador"],
+      "aliases": [
+        "Teatro Tronador"
+      ],
       "address": "Santiago del Estero 1746"
     },
     {
       "id": "casa-de-madera",
       "name": "Casa de Madera",
-      "aliases": ["Casa de Madera"],
+      "aliases": [
+        "Casa de Madera"
+      ],
       "address": "Rawson 2250"
     },
     {
@@ -141,45 +207,146 @@
       "name": "Archivo Museo Histórico Municipal Don Roberto T. Barili. Villa Mitre",
       "aliases": [
         "Archivo Museo Histórico Municipal Don Roberto T. Barili. Villa Mitre",
-        "Villa Mitre"
+        "Villa Mitre",
+        "Archivo Museo Histórico Municipal Roberto T. Barili"
       ],
       "address": "Lamadrid 3870"
     },
     {
       "id": "jose-hernandez",
       "name": "José Hernandez",
-      "aliases": ["José Hernandez"],
+      "aliases": [
+        "José Hernandez"
+      ],
       "address": "Magallanes 11742"
     },
     {
       "id": "casa-del-mar",
       "name": "Casa del Mar",
-      "aliases": ["Casa del Mar"]
+      "aliases": [
+        "Casa del Mar"
+      ]
     },
     {
       "id": "nh-gran-hotel-provincial",
       "name": "NH Gran Hotel Provincial",
-      "aliases": ["NH Gran Hotel Provincial"]
+      "aliases": [
+        "NH Gran Hotel Provincial"
+      ]
     },
     {
       "id": "ccave",
       "name": "CCAVE",
-      "aliases": ["CCAVE"]
+      "aliases": [
+        "CCAVE",
+        "CCAVE - Colectivo Cultural a la Vuelta de la Esquina"
+      ]
     },
     {
       "id": "teatro-san-martin",
       "name": "Teatro San Martin",
-      "aliases": ["Teatro San Martin"]
+      "aliases": [
+        "Teatro San Martin"
+      ]
     },
     {
       "id": "plaza-de-la-musica",
       "name": "PLAZA DE LA MÚSICA",
-      "aliases": ["PLAZA DE LA MÚSICA"]
+      "aliases": [
+        "PLAZA DE LA MÚSICA",
+        "Plaza de la Música"
+      ]
     },
     {
       "id": "lo-de-julio",
       "name": "Lo de Julio Cerveceria",
-      "aliases": ["Lo de Julio Cerveceria"]
+      "aliases": [
+        "Lo de Julio Cerveceria"
+      ]
+    },
+    {
+      "id": "mute-club-de-mar",
+      "name": "Mute Club de Mar",
+      "aliases": [
+        "Mute Club de Mar",
+        "MUTE",
+        "Mute",
+        "Mute, Club de Mar"
+      ],
+      "address": "Ruta 11, Alfar"
+    },
+    {
+      "id": "the-county-music",
+      "name": "The County Music",
+      "aliases": [
+        "The County Music",
+        "The County",
+        "The County Music en Jones"
+      ]
+    },
+    {
+      "id": "quba",
+      "name": "Quba",
+      "aliases": [
+        "Quba",
+        "Quba, café de mar",
+        "Club Quba"
+      ],
+      "address": "Escollera Norte"
+    },
+    {
+      "id": "zwan",
+      "name": "Zwan",
+      "aliases": [
+        "Zwan"
+      ]
+    },
+    {
+      "id": "casinos-de-la-provincia",
+      "name": "Casinos de la Provincia",
+      "aliases": [
+        "Casinos de la Provincia",
+        "Casino Central Mar del Plata"
+      ]
+    },
+    {
+      "id": "el-calamar-loco-pg",
+      "name": "El Calamar Loco PG",
+      "aliases": [
+        "El Calamar Loco PG"
+      ]
+    },
+    {
+      "id": "auditorium-laureti-puerto",
+      "name": "Teatro Auditorium Laureti Puerto",
+      "aliases": [
+        "Teatro Auditorium Laureti Puerto",
+        "Auditorium Laureti Puerto",
+        "Auditorium Puerto"
+      ]
+    },
+    {
+      "id": "mole-club",
+      "name": "Mole Club",
+      "aliases": [
+        "Mole Club"
+      ]
+    },
+    {
+      "id": "cuatro-elementos",
+      "name": "Cuatro Elementos Espacio Teatral",
+      "aliases": [
+        "Cuatro Elementos Espacio Teatral",
+        "Cuatro Elementos"
+      ]
+    },
+    {
+      "id": "el-septimo-fuego",
+      "name": "El Séptimo Fuego",
+      "aliases": [
+        "El Séptimo Fuego",
+        "El Septimo Fuego"
+      ]
     }
   ]
 }

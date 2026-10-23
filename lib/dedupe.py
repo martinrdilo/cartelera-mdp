@@ -27,6 +27,11 @@ TICKET_HOSTS = (
     "passline.com",
     "ticketmas.ar",
     "ticketek.com.ar",
+    "venti.live",
+    "wearebombo.com",
+    "tuentrada.com",
+    "plateanet.com",
+    "unica-cartelera.com.ar",
 )
 
 DEFAULT_THRESHOLD = 85
@@ -74,9 +79,18 @@ def extract_slug(url):
     return f"{host}:{path.split('/')[-1].lower()}"
 
 
+# Standalone numeric date tokens ("22.10", "31/10", "16-10-2026") appear in
+# Bombo/Venti/Articket titles. Remove them anywhere in the title for matching;
+# the source title itself stays untouched in the output.
+_DATE_TOKEN_RE = re.compile(r"(?<!\d)\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?(?!\d)")
+
+
 def strip_title_noise(title):
-    """Remove a leading date/city prefix (CultuTickets style) before matching."""
-    return _TITLE_DATE_PREFIX_RE.sub("", title or "").strip()
+    """Remove date/city noise (prefix, standalone dates, separators) before matching."""
+    cleaned = _TITLE_DATE_PREFIX_RE.sub("", title or "")
+    cleaned = _DATE_TOKEN_RE.sub(" ", cleaned)
+    cleaned = re.sub(r"[|]+", " ", cleaned)
+    return " ".join(cleaned.split()).strip(" -–,:|")
 
 
 def title_similarity(title_a, title_b):
@@ -85,6 +99,64 @@ def title_similarity(title_a, title_b):
         normalize_text(strip_title_noise(title_a)),
         normalize_text(strip_title_noise(title_b)),
     )
+
+
+# Connectors and venue words do not identify an event. Removing them lets
+# "Diego Torres - Mi Norte y Mi Sur" match "Diego Torres en Arena Mardel Plata"
+# once the venue+date gate already holds.
+_TITLE_STOPWORDS = {
+    "a", "al", "and", "con", "de", "del", "el", "en", "la", "las", "lo",
+    "los", "o", "para", "por", "presenta", "presentan", "the", "u", "un",
+    "una", "y", "vs", "mar", "plata", "mardel", "mdp",
+}
+
+
+def _venue_tokens(event):
+    raw = event.venue_name or event.venue_raw or ""
+    if "," in raw:
+        raw = raw.split(",", 1)[0]
+    return set(normalize_text(raw).split())
+
+
+def _significant_tokens(event):
+    """Title tokens with connectors and the event's own venue removed."""
+    tokens = normalize_text(strip_title_noise(event.title)).split()
+    venue = _venue_tokens(event)
+    return [token for token in tokens if token not in _TITLE_STOPWORDS and token not in venue]
+
+
+def _all_tokens_match(shorter, longer, threshold=85.0):
+    """True when every token of `shorter` has a close token in `longer`."""
+    if len(shorter) < 2 or len(longer) < 2:
+        return None
+    scores = []
+    for token in shorter:
+        score = max(fuzz.ratio(token, other) for other in longer)
+        if score < threshold:
+            return None
+        scores.append(score)
+    return round(float(min(scores)), 1)
+
+
+def _core_title_match(event_a, event_b):
+    """One title's significant tokens are contained in the other's."""
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    if len(tokens_a) <= len(tokens_b):
+        return _all_tokens_match(tokens_a, tokens_b)
+    return _all_tokens_match(tokens_b, tokens_a)
+
+
+def _prefix_title_match(event_a, event_b):
+    """The first two significant tokens (usually the artist) fuzzy-match."""
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    if len(tokens_a) < 2 or len(tokens_b) < 2:
+        return None
+    scores = [fuzz.ratio(tokens_a[index], tokens_b[index]) for index in range(2)]
+    if min(scores) < 88:
+        return None
+    return round(float(min(scores)), 1)
 
 
 def venue_group_key(event):
@@ -123,6 +195,12 @@ def _pair_evidence(event_a, event_b, threshold):
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
         return {"kind": "title_fuzzy", "score": round(float(score), 1)}
+    core_score = _core_title_match(event_a, event_b)
+    if core_score is not None:
+        return {"kind": "title_core", "score": core_score}
+    prefix_score = _prefix_title_match(event_a, event_b)
+    if prefix_score is not None:
+        return {"kind": "title_prefix", "score": prefix_score}
     return None
 
 

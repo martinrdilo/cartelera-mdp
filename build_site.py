@@ -55,9 +55,10 @@ DEFAULT_DATA_DIR = ROOT / "data"
 DEFAULT_OUT_DIR = ROOT / "site"
 ASSETS_SRC = ROOT / "site_assets"
 
-# Seller sources win over the municipal agenda for event-level fields.
-SELLER_SOURCES = ("articket", "cultutickets", "clubtri")
-SOURCE_ORDER = SELLER_SOURCES + ("municipal",)
+# Seller sources win over agendas for event-level fields. Punto is a local
+# agenda with ticket links, so it outranks the municipal tourism agenda.
+SELLER_SOURCES = ("articket", "cultutickets", "clubtri", "venti", "ticketek", "bombo")
+SOURCE_ORDER = SELLER_SOURCES + ("punto", "municipal")
 
 WEEKDAY_ABBR = ("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -354,6 +355,53 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
     return event
 
 
+def _same_site_event(left: dict, right: dict) -> bool:
+    """Exact duplicate guard: same venue + normalized title + shared date."""
+    if left["venue_id"] != right["venue_id"]:
+        return False
+    if normalize_key(left["title"]) != normalize_key(right["title"]):
+        return False
+    return bool(set(left["dates"]) & set(right["dates"]))
+
+
+def merge_site_duplicates(left: dict, right: dict) -> dict:
+    """Merge two exact duplicate site rows, filling gaps from either side."""
+    merged = dict(left)
+    merged["dates"] = sorted(set(left["dates"]) | set(right["dates"]))
+    merged["sources"] = sorted(set(left.get("sources") or []) | set(right.get("sources") or []))
+    merged["is_free"] = bool(left.get("is_free") or right.get("is_free"))
+    for field in ("time", "price_min", "price_text", "ticket_url", "image_url", "address"):
+        if not is_usable(merged.get(field)) and is_usable(right.get(field)):
+            merged[field] = right[field]
+    merged["price_label"] = price_label(merged)
+    merged["slug"] = f"{slugify(merged['title'])}-{merged['dates'][0]}"
+    return merged
+
+
+def collapse_exact_duplicates(events: list[dict]) -> list[dict]:
+    """Last line of defense: never render the same event twice.
+
+    Dedupe already clusters fuzzy/slug matches. This guard only merges rows
+    that still share the same canonical venue, normalized title and at least
+    one date after that pass.
+    """
+    buckets: dict[tuple[str, str], list[dict]] = {}
+    for event in events:
+        buckets.setdefault((event["venue_id"], normalize_key(event["title"])), []).append(event)
+    collapsed: list[dict] = []
+    for bucket in buckets.values():
+        merged: list[dict] = []
+        for event in bucket:
+            for index, existing in enumerate(merged):
+                if _same_site_event(existing, event):
+                    merged[index] = merge_site_duplicates(existing, event)
+                    break
+            else:
+                merged.append(event)
+        collapsed.extend(merged)
+    return collapsed
+
+
 def load_json(path: Path):
     with path.open(encoding="utf-8") as handle:
         return json.load(handle)
@@ -377,6 +425,7 @@ def collect_site_events(data_dir: Path, today: date) -> tuple[list[dict], list[d
     events += [merge_members([event], index, today) for event in normalized if event_ref(event) not in clustered]
 
     events = [event for event in events if event["dates"]]
+    events = collapse_exact_duplicates(events)
     events.sort(key=lambda event: (event["dates"][0], event["time"] or "99:99", event["title"].casefold()))
     seen: dict[str, int] = {}
     for event in events:
@@ -460,6 +509,10 @@ SOURCE_LABELS = {
     "articket": "Articket",
     "cultutickets": "CultuTickets",
     "clubtri": "Club TRI",
+    "venti": "Venti",
+    "ticketek": "Ticketek",
+    "bombo": "Bombo",
+    "punto": "Punto MDP",
 }
 THUMB_VARIANTS = 4
 

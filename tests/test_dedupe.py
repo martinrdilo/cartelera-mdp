@@ -245,3 +245,76 @@ class TestClusterEventsByOccurrences:
         assert cluster["venue"] == "polideportivo-islas-malvinas"
         assert cluster["venue_name"] == "Polideportivo Islas Malvinas"
         assert cluster["dates"] == ["2026-11-21", "2026-11-22"]
+
+
+class TestOla1Sources:
+    """New wave-1 sources must join the same event, not duplicate it."""
+
+    def test_venti_and_punto_la_vin_join(self):
+        a = make_event("venti", "LA VIN - LOS TOTORA TOUR", "Sheraton Mar del Plata Hotel", "2026-10-24")
+        b = make_event("punto", "La Vin - Los Totora Tour", "Sheraton Mar del Plata Hotel", "2026-10-24")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_ticketek_and_punto_dillom_join(self):
+        a = make_event("ticketek", "Dillom", "Bendu Arena", "2027-01-30")
+        b = make_event("punto", "Dillom", "Bendu Arena", "2027-01-30")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_venti_ticket_slug_joins_its_event_page(self):
+        a = make_event(
+            "venti", "CLUB QUBA | 22.10 QUEVES", "Quba, café de mar", "2026-10-22",
+            ticket_url="https://venti.live/evento/club-quba-22-10-queves",
+        )
+        b = make_event(
+            "punto", "CLUB QUBA | 22.10 QUEVES", "Quba, café de mar", "2026-10-22",
+            ticket_url="https://venti.live/evento/club-quba-22-10-queves/",
+        )
+        cluster = cluster_events([a, b])[0]
+        assert cluster["pairs"][0]["kind"] == "ticket_slug"
+
+    def test_bombo_and_punto_mute_join(self):
+        a = make_event("bombo", "SOLOMUN - MUTE", "Mute Club de Mar", "2027-01-02")
+        b = make_event("punto", "Solomun", "Mute Club de Mar", "2027-01-02")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_date_token_in_the_middle_does_not_block_a_match(self):
+        a = make_event("bombo", "CLUB QUBA | 22.10 QUEVES", "Quba, café de mar", "2026-10-22")
+        b = make_event("punto", "Queves", "Quba", "2026-10-22")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_artist_plus_album_title_joins(self):
+        a = make_event("municipal", "Diego Torres - Mi Norte y Mi Sur", "Arena Mar del Plata", "2026-11-04")
+        b = make_event("punto", "Diego Torres en Arena Mardel Plata", "Arena Mardel Plata", "2026-11-04")
+        cluster = cluster_events([a, b])[0]
+        assert cluster["pairs"][0]["kind"] in {"title_core", "title_prefix"}
+
+    def test_artist_plus_tour_title_joins(self):
+        a = make_event("punto", "Sergio Dalma en Arena Mardel Plata", "Arena Mardel Plata", "2026-11-10")
+        b = make_event("municipal", "Sergio Dalma Tour Ritorno a Via Dalma", "Arena Mar del Plata", "2026-11-10")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_small_spelling_variant_joins(self):
+        a = make_event("municipal", "Baglieto Vitale", "Radio City", "2026-11-07")
+        b = make_event("punto", "Baglietto Vital presentan Bodas de Coral", "Teatro Radio City", "2026-11-07")
+        assert len(cluster_events([a, b])) == 1
+
+    def test_artist_prefix_with_different_show_title_joins(self):
+        a = make_event("municipal", "Patricia Luca - Ahora Solo Faltas Tú.", "Vorterix", "2026-10-31")
+        b = make_event("punto", "PATRICIA LUCAS - TRIBUTO A RITA LEE EN VORTERIX", "Vorterix Mar del Plata", "2026-10-31")
+        cluster = cluster_events([a, b])[0]
+        assert cluster["pairs"][0]["kind"] == "title_prefix"
+
+    def test_generic_first_words_do_not_fake_a_match(self):
+        a = make_event("municipal", "Fiesta de la Cerveza", "Brew House", "2026-11-07")
+        b = make_event("punto", "Fiesta de la Primavera", "Brew House", "2026-11-07")
+        assert cluster_events([a, b]) == []
+
+    def test_different_festival_and_band_same_night_stay_split(self):
+        a = make_event("punto", "Jurassic Fest 10 en Vorterix", "Vorterix", "2026-11-07")
+        b = make_event("municipal", "LOS PEREZ GARCIA - VORTERIX", "Vorterix", "2026-11-07")
+        assert cluster_events([a, b]) == []
+
+    def test_known_title_false_negative_from_report_is_fixed(self):
+        a = make_event("municipal", "Sebastián Molina presenta Vivo Arjona", "Teatro Tronador", "2026-11-07")
+        b = make_event("punto", "VIVO ARJONA EN MAR DEL PLATA", "Teatro Tronador", "2026-11-07")
+        assert len(cluster_events([a, b])) == 1
