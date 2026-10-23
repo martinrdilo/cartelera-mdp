@@ -192,6 +192,16 @@ def _pair_evidence(event_a, event_b, threshold):
     slug_b = extract_slug(event_b.ticket_url)
     if slug_a and slug_a == slug_b:
         return {"kind": "ticket_slug", "score": 100.0, "slug": slug_a}
+    if event_a.source == event_b.source:
+        # Fuzzy matching is for the same event published by different sources.
+        # Within one source, near titles usually mean different shows that
+        # share a venue, date or series prefix (e.g. film-festival screenings).
+        # Only an exact normalized title is evidence of a duplicate there.
+        title_a = normalize_text(strip_title_noise(event_a.title))
+        title_b = normalize_text(strip_title_noise(event_b.title))
+        if title_a and title_a == title_b:
+            return {"kind": "title_fuzzy", "score": 100.0}
+        return None
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
         return {"kind": "title_fuzzy", "score": round(float(score), 1)}

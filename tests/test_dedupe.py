@@ -105,6 +105,29 @@ class TestClusterEvents:
         b = make_event("articket", "MALA SANGRE 40 AÑOS DE OKTUBRE", "Club TRI", "2026-10-15")
         assert cluster_events([a, b]) == []
 
+    def test_same_source_festival_prefix_does_not_merge_distinct_shows(self):
+        a = make_event(
+            "auditorium",
+            "41° Festival Internacional de Cine: Children Untold",
+            "Teatro Auditorium",
+            "2026-11-06",
+        )
+        b = make_event(
+            "auditorium",
+            "41° Festival Internacional de Cine: Los relatos",
+            "Teatro Auditorium",
+            "2026-11-06",
+        )
+        assert cluster_events([a, b]) == []
+
+    def test_same_source_exact_title_still_joins(self):
+        a = make_event("venti", "CLUB QUBA | 22.10 QUEVES", "Quba", "2026-10-22")
+        b = make_event("venti", "CLUB QUBA | 22.10 QUEVES", "Quba", "2026-10-22")
+        clusters = cluster_events([a, b])
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "title_fuzzy"
+        assert clusters[0]["pairs"][0]["score"] == 100.0
+
     def test_same_title_different_venue_stays_split(self):
         a = make_event("municipal", "Abel Pintos", "Teatro Tronador", "2026-11-07")
         b = make_event("articket", "Abel Pintos", "Teatro Colón", "2026-11-07")
