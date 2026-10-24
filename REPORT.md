@@ -105,7 +105,7 @@ Grupos de alias notables:
 - **Canónico de venues** quedó hecho: 42 strings → 30 venues, 100% resuelto, sin lista hardcodeada en el dedupe.
 - **Multi-fecha** quedó hecho para lo que las fuentes exponen (rangos municipal con días + detalle Articket). Si aparece un rango sin recurrencia, el sistema lo flagea en vez de inventar.
 - **Slug como join de primera clase:** solo ClubTri lo expone; sumar Plateanet/Ticketek daría joins exactos para municipal ↔ vendedores.
-- **Fuentes duras fuera de alcance:** Plateanet sigue fuera de alcance (Incapsula/hCaptcha; ola 3 con estrategia manual o acuerdo). Bandsintown e Instagram quedan para fases posteriores. Bombo quedó cubierto en la ola 1 y Auditorium, Colón y TuEntrada en la ola 2.
+- **Fuentes duras fuera de alcance:** Plateanet sigue fuera de alcance directo (Incapsula/hCaptcha). La ola 3 lo cubre solo de forma indirecta, vía los links de Cual Pinta y Eleven Flow. Bandsintown e Instagram quedaron descartados por falta de un camino de enumeración. Bombo quedó cubierto en la ola 1; Auditorium, Colón y TuEntrada en la ola 2; Cual Pinta, Eleven Flow y Passline en la ola 3 (sección 8).
 - **Reglas de precedencia** por campo (título, hora, precio) cuando hay conflicto entre fuentes; hoy el cluster guarda todo y decide el consumidor.
 - **Cobertura del municipal:** 11 páginas de música son el tope práctico actual; verificar si el tope de 15 páginas alcanza en temporada alta (enero).
 - **Operación:** `scripts/daily.sh` + `data/last_run.json` dejan la corrida diaria lista para cron/systemd; falta decidir dónde corre (deploy) y sumar alerta si el exit code no es 0.
@@ -158,4 +158,37 @@ Corrida real del 2026-10-23T03:37Z, end-to-end con `run_pipeline.py` (334 s). Fe
 - **Corrección de falsos positivos:** la primera corrida agrupó 7 clusters del festival de cine del Auditorium (películas distintas con el prefijo "41° Festival Internacional de Cine:") y un par de listados de Venti. El fuzzy ahora solo une eventos de fuentes distintas; dentro de una misma fuente exige slug de ticketera o título normalizado exacto. Resultado: **0 clusters same-source**, las 23 películas del festival quedan como filas separadas y el sitio sigue con **0 tripletas duplicadas**.
 - **Sitio:** build con `--today 2026-10-23`: 225 filas próximas, 36 del finde, 42 venues; las etiquetas Auditorium, Teatro Colón y TuEntrada aparecen en la página.
 - **Venues:** `data/venues.json` suma las salas del Auditorium, `Teatro Enrique Carreras` y el alias `Polideportivo Mar De Plata` → Islas Malvinas. Resolución 360/363; los 3 sin resolver siguen siendo nombres de productora de Bombo (`SINERGIA`, `Antesala`).
-- **Pendiente:** Plateanet para la ola 3 (Incapsula/hCaptcha; estrategia manual o acuerdo). TuEntrada hoy tiene volumen bajo; conviene volver a medirlo en temporada.
+- **Pendiente:** Plateanet para la ola 3 (Incapsula/hCaptcha; estrategia manual o acuerdo). TuEntrada hoy tiene volumen bajo; conviene volver a medirlo en temporada. La ola 3 quedó cubierta en la sección 8.
+
+## 8. Ola 3 de fuentes (v5)
+
+Corrida real del 2026-10-24T02:09Z, end-to-end con `run_pipeline.py` (970 s). Fetch real, solo lectura, ~1 req/s. La ola 3 cambió de forma respecto del plan original: Plateanet sigue bloqueado y los medios locales no publican datos estructurados, así que las fuentes que entraron son tres agendas/vendedores relevados en el spike.
+
+| Fuente | Crudos | Normalizados | Notas |
+|---|---:|---:|---|
+| Municipal (EMTUR) | 80 | 80 | Música + festivales |
+| Articket | 68 | 68 | Vendedor dominante |
+| CultuTickets | 20 | 20 | Brew House |
+| Club TRI | 20 | 20 | Detalle de sala |
+| Venti | 13 | 13 | Quba, Sheraton/La Vin, Zwan, Casinos |
+| Ticketek | 9 | 9 | Bendu Arena, Teatro Tronador, Radio City |
+| Bombo | 7 | 7 | Mute Club de Mar y The County |
+| Punto Mar del Plata | 85 | 85 | Agenda local con link de venta |
+| Auditorium | 39 | 39 | 7 páginas + ficha por actividad |
+| Teatro Colón | 28 | 28 | Página mensual de octubre |
+| TuEntrada | 1 | 1 | PAREN LA MANO en el Polideportivo |
+| **Cual Pinta** | **144** | **144** | **Sitemap + ficha JSON-LD; 104 con precio, 38 gratis, 82 con link de venta** |
+| **Eleven Flow** | **53** | **53** | **Listado server-rendered + `MusicEvent` JSON-LD; 52 con link de venta** |
+| **Passline** | **4** | **4** | **Lista curada de venues; 4 con precio** |
+| **Total** | **571** | **571** | **338 únicos post-dedupe** |
+
+- **Cual Pinta:** 144 eventos vigentes relevados desde `sitemap.xml`; el listado `/proximos` topea en 30 y no pagina, así que la enumeración va por sitemap. La ficha trae JSON-LD `Event` (fecha con offset, venue + dirección + geo, precio, imagen) y el único link de venta externo. Vendedores observados: Plateanet 18, Venti 15, Articket 11, CultuTickets 7, Passline 3, Ticketek 3, TuEntrada 1, Bombo 1; 85 eventos no tienen link de venta (link al sitio del venue o ninguno). Se incluyeron todas las categorías (Música, Recital, Fiesta, Teatro, Concierto clásico, Stand-up, Cine, Deportes, Gastronomía, Feria); el sitio ya publicaba teatro y cine, y filtrar por categoría quedó como decisión posterior.
+- **Eleven Flow:** 53 recitales; la ficha trae un `MusicEvent` JSON-LD completo. Es la única vía observada a eventos que solo vende Plateanet. Todos los eventos publican `offers.price = 0` como placeholder (la ficha solo muestra "Comprar entradas"), así que el normalizador trata el cero como precio desconocido, no como gratis.
+- **Passline:** vendedor real con 4 eventos MDP (Roomie 30/10 y 31/10, Zwan 07/11, Jones 18/12). `/eventos` está detrás de Queue-it y no hay índice por ciudad, así que el descubrimiento usa una lista curada de slugs de venue (Roomie, Zwan, Mr. Jones, La Caseta, Villa Victoria). La fecha viene en español (`Viernes 30 de Octubre 2026 - 23:30 hrs`) y el precio de la tabla de tickets (`$20.000`).
+- **Plateanet:** sigue cerrado. Home, fichas, `api.plateanet.com` y el host mobile devuelven el challenge de Incapsula; el único artefacto abierto es `sitemap.txt` con 378 URLs `/obra/` sin ciudad, venue ni fecha. Su inventario entra solo por los links de Cual Pinta y Eleven Flow, y `seller` se deriva del host del link.
+- **Medios y redes:** 0223, El Marplatense, La Capital, Infobrisas y Qué Digital publican prosa sin JSON-LD ni `<time>`: descartados. Bandsintown devuelve 403 (Cloudflare y API) y no permite enumerar por ciudad; Instagram/Facebook requieren Graph API autenticada.
+- **Dedupe:** 135 clusters (368 eventos involucrados, 233 reducciones → 338 únicos), **0 same-source**. Joins nuevos: PAREN LA MANO (TuEntrada + Cual Pinta), Sol Feige (Cual Pinta + Eleven Flow), Mateo Moreno (Articket + Eleven Flow + Punto), Tan Biónica (municipal + Articket + Punto + Cual Pinta + Eleven Flow), Felicitas Colina (Cual Pinta + Eleven Flow).
+- **Corrección de falsos positivos (festival):** Eleven Flow titula cada película "41 FESTIVAL INTERNACIONAL DE CINE - <película>" y el prefijo compartido hizo que el fuzzy cross-source uniera films distintos (la primera corrida colapsó 6 clusters con 3-6 películas cada uno). Se corrigió `lib/dedupe.py` con dos guardas: `_series_prefix_conflict` rechaza el match cuando el prefijo común tiene ≥3 tokens y las colas difieren; y el union-find impide que un bridge cross-source una dos títulos distintos de la misma fuente (regla same-source transitiva). Resultado: las 25 películas del Auditorium quedan separadas, 9 unen con su gemela de Eleven Flow y el sitio no pierde films.
+- **Venues:** `data/venues.json` pasó de 41 a 73 venues. Se sumaron alias para Roxy Radio City, Brewhouse Puerto, Auditorium, Teatro Vorterix, Quba cafe del mar, Sala Café Teatral Emilio Alfaro, Foyer, POLIDEPORTIVO, Gran Hotel Provincial, Mute Club/Ruta 11 Alfar y The County ("Buenos Aires 7600"), más 20 venues nuevos (Antares, Brewhouse Olavarria, Nevermind, Club Méle, Bohr, Hoffen, Hops, Glow, Estelares La Perla, Heller, Club Einstein, hoteles, Dickens, Sarasanegro, Plaza Mitre, Bahia Varese, etc.). Resolución: 562/571; los 9 sin resolver son direcciones sueltas de Cual Pinta, el nombre de productora de Bombo (`Antesala`) y el typo "Mar de Plata" de Eleven Flow.
+- **Sitio:** build con `--today 2026-10-24`: **296 filas próximas, 42 del finde, 73 venues, 0 tripletas duplicadas**; las etiquetas Cual Pinta, Eleven Flow y Passline aparecen en la página.
+- **Pendiente:** Cual Pinta agrega ~144 fichas por corrida y el pipeline pasó de 334 s a 970 s; conviene evaluar caché de sitemap/fichas. Passline depende de una lista curada de venues. Plateanet sigue necesitando acuerdo o carga manual. Cual Pinta incluye categorías no musicales (Deportes, Gastronomía, Feria): decidir si se filtran.

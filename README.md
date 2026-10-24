@@ -82,8 +82,12 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 | `collectors/auditorium.py` | Agenda Drupal del Teatro Auditorium (`?page=N`, 6 actividades por página); fechas desde los pares `<time>` de cada tarjeta, salas mapeadas al venue canónico y detalle para vendedor/gratis. |
 | `collectors/colon.py` | Programación mensual del Teatro Colón (Drupal 7, HTML plano en dos columnas); precios en es-AR, entrada libre y año inferido por ventana de 180 días. |
 | `collectors/tuentrada.py` | Búsqueda server-rendered de TuEntrada filtrada a Mar del Plata; sesiones desde el payload RSC de la ficha, con fallback a la tarjeta. |
+| `collectors/cualpinta.py` | Agenda de Cual Pinta: enumeración por `sitemap.xml` (144 fichas), JSON-LD `Event` en la ficha, categoría por chip y link de venta externo. |
+| `collectors/elevenflow.py` | Agenda de Eleven Flow: listado server-rendered (53 shows) + `MusicEvent` JSON-LD en la ficha; descarta `endDate` anterior al inicio. |
+| `collectors/passline.py` | Vendedor Passline: lista curada de venues MDP (Roomie, Zwan, Jones, La Caseta, Villa Victoria), fechas en español y precio es-AR desde la tabla de tickets. |
 | `lib/schema.py` | `Event`: esquema normalizado único (fuente, título, lugar, fechas ISO, `occurrences`, hora, precio, link de compra, etc.). |
 | `lib/dates.py` | Parsing de `dd/mm/yyyy` y fechas en español sin año; extracción de hora. |
+| `lib/sellers.py` | Mapa host → vendedor compartido por los collectors que ven links de venta (Articket, Plateanet, Passline, etc.). |
 | `lib/occurrences.py` | Expansión multi-fecha: rangos municipal por día de semana y detalle Articket (select `fechas_evento` / JSON-LD). |
 | `lib/venues.py` | Registry de venues: normalización y resolución por alias (`data/venues.json`). |
 | `lib/dedupe.py` | Dedupe por venue canónico + intersección de `occurrences`: slug, fuzzy de títulos, contención de tokens y prefijo de artista. |
@@ -101,5 +105,5 @@ Cada collector expone `collect() -> list[dict]` (crudo) y `normalize(records) ->
 - Solo lectura sobre sitios externos; UA `cartelera-mdp-pipeline/0.2 (local research)` y ~1 req/s.
 - `.venv/`, `data/raw/` y `logs/` no se versionan; los JSON normalizados/dedupeados y `data/last_run.json` sí, como evidencia.
 - **Dedupe:** un cluster por venue canónico + intersección de fechas + slug o título (fuzzy, contención de tokens y prefijo de artista). El sitio aplica además un guard final: mismo venue + título normalizado + fecha compartida nunca se renderiza dos veces.
-- **Fuentes de la ola 1:** Venti, Ticketek, Bombo y Punto MDP. **Ola 2:** Auditorium, Teatro Colón y TuEntrada. La ola 3 (Plateanet, medios/redes) queda pendiente; Plateanet está detrás de Incapsula/hCaptcha, así que necesita estrategia manual o acuerdo.
+- **Fuentes de la ola 1:** Venti, Ticketek, Bombo y Punto MDP. **Ola 2:** Auditorium, Teatro Colón y TuEntrada. **Ola 3:** Cual Pinta, Eleven Flow y Passline. Plateanet sigue fuera de alcance directo (Incapsula/hCaptcha): su inventario entra solo por los links de Cual Pinta y Eleven Flow.
 - Decisiones de tuning y limitaciones conocidas: ver `REPORT.md`.
