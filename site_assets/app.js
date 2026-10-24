@@ -70,7 +70,7 @@
   var countLabel = document.getElementById("filter-count");
   var emptyState = document.getElementById("empty-state");
   var clearButton = document.getElementById("clear-filters");
-  var feature = document.querySelector(".feature");
+  var featured = document.querySelector(".featured");
 
   var defaultView = "all";
   dayButtons.forEach(function (button) {
@@ -96,9 +96,19 @@
     return true;
   }
 
+  function dateInWindow(iso, window) {
+    return Boolean(window) && iso >= window.start && iso <= window.end;
+  }
+
+  function inMonth(iso, key) {
+    return iso.indexOf(key) === 0;
+  }
+
   function inView(row, view) {
     if (view === "all") return true;
     if (view === "weekend") return row.dataset.inWeekend === "1";
+    if (view === "next-weekend") return dateInWindow(row.dataset.date, data.windows && data.windows.next_weekend);
+    if (view.indexOf("month:") === 0) return inMonth(row.dataset.date, view.slice(6));
     return row.dataset.date === view;
   }
 
@@ -134,6 +144,9 @@
       var groupInView =
         state.view === "all" ||
         (state.view === "weekend" && group.dataset.inWeekend === "1") ||
+        (state.view === "next-weekend" &&
+          dateInWindow(group.dataset.date, data.windows && data.windows.next_weekend)) ||
+        (state.view.indexOf("month:") === 0 && inMonth(group.dataset.date, state.view.slice(6))) ||
         group.dataset.date === state.view;
       group.hidden = !groupInView || shown === 0;
       var label = group.querySelector(".daygroup__head span");
@@ -161,7 +174,7 @@
     }
 
     if (emptyState) emptyState.hidden = visible !== 0;
-    if (feature) feature.hidden = activeFilters();
+    if (featured) featured.hidden = activeFilters();
 
     track("filter_change", {
       reason: reason,
@@ -177,10 +190,8 @@
     button.addEventListener("click", function () {
       state.view = button.dataset.view;
       render("view");
-      var agenda = document.getElementById("agenda-start");
-      if (agenda && window.scrollY > agenda.offsetTop) {
-        agenda.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      var agenda = document.getElementById("agenda");
+      if (agenda) agenda.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
@@ -267,6 +278,7 @@
     var shareButton = event.target.closest(".js-share");
     if (shareButton) {
       var row = shareButton.closest("[data-row]");
+      var card = shareButton.closest("[data-feature]");
       var title = shareButton.dataset.title;
       var venue = shareButton.dataset.venueName;
       var when = shareButton.dataset.when;
@@ -276,13 +288,11 @@
         venue = row.dataset.venueName;
         when = row.dataset.when;
         id = row.dataset.id;
-      }
-      var featureTitle = document.querySelector(".feature h2");
-      if (!row && featureTitle) {
-        title = featureTitle.textContent;
-        var featureMeta = document.querySelector(".feature__meta");
-        when = featureMeta ? featureMeta.textContent.replace(/\s+/g, " ").trim() : "";
-        venue = "";
+      } else if (card) {
+        title = card.dataset.title;
+        venue = card.dataset.venueName;
+        when = card.dataset.when;
+        id = card.dataset.eventId;
       }
       var url = location.href.split("#")[0] + "#" + (id || "");
       var lines = [title, when, venue].filter(Boolean).join(" · ");

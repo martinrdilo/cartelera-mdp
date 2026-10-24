@@ -478,17 +478,28 @@ class TestRedesignMarkup:
     def test_day_navigation_markup(self, tmp_path):
         stats, html, _, _, _ = self.build(tmp_path)
         assert 'class="daynav"' in html
-        assert 'data-view="weekend"' in html
-        assert 'data-view="2026-10-22"' in html
-        assert 'data-view="2026-10-25"' in html
-        assert 'data-view="all"' in html
-        assert html.count('data-view=') == 6
+        day_nav = html.split('aria-label="Filtrar por día">', 1)[1].split("</nav>", 1)[0]
+        assert 'data-view="weekend"' in day_nav
+        assert 'data-view="2026-10-22"' in day_nav
+        assert 'data-view="2026-10-25"' in day_nav
+        assert 'data-view="next-weekend"' in day_nav
+        assert 'data-view="all"' in day_nav
+        assert day_nav.count("data-view=") == 7
         # The finde view is the default when the weekend has events.
         assert stats["weekend"] > 0
         assert re.search(r'class="day is-on" data-view="weekend"', html)
 
+    def test_month_navigation_markup(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        month_nav = html.split('aria-label="Filtrar por mes">', 1)[1].split("</nav>", 1)[0]
+        keys = re.findall(r'data-view="month:(\d{4}-\d{2})"', month_nav)
+        expected = sorted({event["dates"][0][:7] for event in payload["events"]})[: build_site.MONTH_NAV_LIMIT]
+        assert keys == expected
+        assert "Noviembre" in month_nav
+        assert "Enero 2027" in month_nav
+
     def test_day_tab_counts_match_their_groups(self, tmp_path):
-        stats, html, _, _, _ = self.build(tmp_path)
+        stats, html, _, _, payload = self.build(tmp_path)
         tabs = dict(re.findall(r'data-view="([^"]+)"[^>]*>.*?<i>(\d+)</i>', html, re.DOTALL))
         groups = day_groups(html)
         for iso, _weekend, rows in groups:
@@ -496,6 +507,18 @@ class TestRedesignMarkup:
                 assert int(tabs[iso]) == rows
         assert int(tabs["weekend"]) == stats["weekend"]
         assert int(tabs["all"]) == stats["upcoming"]
+
+        next_window = payload["windows"]["next_weekend"]
+        expected_next = sum(
+            1
+            for event in payload["events"]
+            if next_window["start"] <= event["dates"][0] <= next_window["end"]
+        )
+        assert int(tabs["next-weekend"]) == expected_next
+
+        for key in re.findall(r'data-view="month:(\d{4}-\d{2})"', html):
+            expected_month = sum(1 for event in payload["events"] if event["dates"][0].startswith(key))
+            assert int(tabs[f"month:{key}"]) == expected_month
 
     def test_rows_carry_filter_attributes(self, tmp_path):
         stats, html, _, _, _ = self.build(tmp_path)
@@ -517,7 +540,9 @@ class TestRedesignMarkup:
 
     def test_every_row_has_a_share_action(self, tmp_path):
         stats, html, _, _, _ = self.build(tmp_path)
-        assert html.count('js-share') == stats["upcoming"] + html.count('class="feature"')
+        featured_cards = html.count('data-feature="1"')
+        assert featured_cards == 3
+        assert html.count('js-share') == stats["upcoming"] + featured_cards
         assert "Compartir" in html
 
     def test_outbound_links_match_the_payload(self, tmp_path):
@@ -550,6 +575,12 @@ class TestRedesignMarkup:
         assert "--bg: #080d12" in css and "--bg: #f4f1e9" in css
         assert "theme_change" in app_js
 
+    def test_shell_uses_more_of_wide_screens(self, tmp_path):
+        _, _, css, _, _ = self.build(tmp_path)
+        assert "--shell: 1440px" in css
+        assert "@media (min-width: 1680px)" in css
+        assert "--shell: 1560px" in css
+
     def test_search_and_filter_controls(self, tmp_path):
         _, html, _, app_js, _ = self.build(tmp_path)
         assert 'id="search"' in html
@@ -569,18 +600,60 @@ class TestRedesignMarkup:
         assert chips == [venue_id for _, venue_id, _ in expected]
         assert len(chips) == 3
 
-    def test_featured_band_uses_a_weekend_event_with_poster_and_ticket(self, tmp_path):
+    def test_featured_board_uses_three_events_from_distinct_venues(self, tmp_path):
         _, html, _, _, payload = self.build(tmp_path)
-        featured = build_site.pick_featured(
+        venue_names = re.findall(
+            r'<article class="feature feature--(?:lead|mini)"[^>]*data-feature="1"[^>]*data-venue-name="([^"]+)"',
+            html,
+        )
+        assert len(venue_names) == 3
+        assert len(set(venue_names)) == 3
+        assert 'id="featured-title">Destacados<' in html
+        known = {event["venue_name"] for event in payload["events"]}
+        assert set(venue_names) <= known
+
+    def test_featured_prefers_a_poster_ticket_and_a_bigger_show(self):
+        plain = build_site.merge_members(
             [
-                build_site.merge_members([make_member("articket", image_url="https://x/p.jpg",
-                                                      ticket_url="https://x/t")], empty_index(), SNAPSHOT_TODAY)
+                make_member(
+                    "articket",
+                    occurrences=["2026-10-17"],
+                    date_start="2026-10-17",
+                )
             ],
+            empty_index(),
             SNAPSHOT_TODAY,
         )
-        assert featured is not None
-        assert 'class="feature"' in html and "<h2>" in html
-        assert "Destacado del finde" in html
+        strong = build_site.merge_members(
+            [
+                make_member(
+                    "articket",
+                    source_event_id="articket-2",
+                    occurrences=["2026-10-17"],
+                    date_start="2026-10-17",
+                    image_url="https://x/p.jpg",
+                    ticket_url="https://x/t",
+                    price_min=60000.0,
+                )
+            ],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        picked = build_site.pick_featured([plain, strong], SNAPSHOT_TODAY)
+        assert picked[0]["slug"] == strong["slug"]
+
+    def test_featured_keeps_one_event_per_venue_when_it_can(self):
+        events = [
+            build_site.merge_members(
+                [make_member("articket", source_event_id=f"articket-{index}", venue_name=venue)],
+                empty_index(),
+                SNAPSHOT_TODAY,
+            )
+            for index, venue in enumerate(["Club TRI", "Club TRI", "Teatro Colón", "Vorterix"])
+        ]
+        picked = build_site.pick_featured(events, SNAPSHOT_TODAY, limit=2)
+        assert len(picked) == 2
+        assert len({event["venue_id"] for event in picked}) == 2
 
     def test_featured_is_absent_when_the_weekend_is_empty(self):
         event = build_site.merge_members(
@@ -588,8 +661,28 @@ class TestRedesignMarkup:
             empty_index(),
             SNAPSHOT_TODAY,
         )
-        assert build_site.pick_featured([event], SNAPSHOT_TODAY) is None
-        assert build_site.render_featured(None) == ""
+        assert build_site.pick_featured([event], SNAPSHOT_TODAY) == []
+        assert build_site.render_featured([], SNAPSHOT_TODAY) == ""
+
+    def test_featured_ignores_events_outside_the_horizon(self):
+        near = build_site.merge_members(
+            [make_member("articket", occurrences=["2026-10-18"], date_start="2026-10-18")],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        far = build_site.merge_members(
+            [
+                make_member(
+                    "articket",
+                    source_event_id="articket-far",
+                    occurrences=["2026-12-18"],
+                    date_start="2026-12-18",
+                )
+            ],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        assert [event["slug"] for event in build_site.pick_featured([near, far], SNAPSHOT_TODAY)] == [near["slug"]]
 
     def test_intro_adapts_when_the_weekend_is_empty(self):
         empty_intro = build_site.render_intro([], SNAPSHOT_TODAY)
@@ -614,6 +707,7 @@ class TestRedesignMarkup:
         _, _, css, _, _ = self.build(tmp_path)
         assert ".row[hidden]" in css
         assert ".daygroup[hidden]" in css
+        assert ".featured[hidden]" in css
 
     def test_inlined_payload_is_parseable(self, tmp_path):
         stats, _, _, _, payload = self.build(tmp_path)

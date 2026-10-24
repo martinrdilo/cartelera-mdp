@@ -94,6 +94,12 @@ PRICE_PLACEHOLDERS = {
 WINDOWS = ("weekend", "7days", "all")
 MAX_CARD_DATES = 3
 
+# Featured board: a small, deterministic editorial selection. Candidates must
+# start within this horizon; one card per venue keeps the strip varied.
+FEATURED_LIMIT = 3
+FEATURED_HORIZON_DAYS = 10
+MONTH_NAV_LIMIT = 6
+
 
 # ---------------------------------------------------------------------------
 # Dates and windows
@@ -119,6 +125,12 @@ def weekend_window(today: date) -> tuple[date, date]:
         start = today + timedelta(days=3 - weekday)
         end = start + timedelta(days=3)
     return start, end
+
+
+def next_weekend_window(today: date) -> tuple[date, date]:
+    """The weekend after the one returned by weekend_window."""
+    start, end = weekend_window(today)
+    return start + timedelta(days=7), end + timedelta(days=7)
 
 
 def window_bounds(window: str, today: date) -> tuple[date | None, date | None]:
@@ -553,6 +565,11 @@ def in_weekend(iso: str, today: date) -> bool:
     return start <= date.fromisoformat(iso) <= end
 
 
+def in_next_weekend(iso: str, today: date) -> bool:
+    start, end = next_weekend_window(today)
+    return start <= date.fromisoformat(iso) <= end
+
+
 def format_day_long(iso: str) -> str:
     """'2026-10-23' -> 'Viernes 23 de octubre'."""
     parsed = date.fromisoformat(iso)
@@ -562,6 +579,23 @@ def format_day_long(iso: str) -> str:
 def format_month_year(day: date) -> str:
     """'Octubre 2026'."""
     return f"{MONTHS_ES[day.month - 1].capitalize()} {day.year}"
+
+
+def month_counts(events: list[dict]) -> dict[str, int]:
+    """Events per month, keyed by the month of the row's primary date."""
+    counts: dict[str, int] = {}
+    for event in events:
+        key = primary_date(event)[:7]
+        counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
+def format_month_tab(key: str, today: date) -> str:
+    """'Noviembre' for the current year, 'Enero 2027' otherwise."""
+    year_text, month_text = key.split("-")
+    year, month = int(year_text), int(month_text)
+    label = MONTHS_ES[month - 1].capitalize()
+    return label if year == today.year else f"{label} {year}"
 
 
 def format_weekend_kicker(today: date) -> str:
@@ -693,11 +727,14 @@ def render_intro(events: list[dict], today: date) -> str:
 
 
 def render_day_nav(groups: list[tuple[str, list[dict]]], today: date) -> str:
-    """Finde + one tab per weekend day with events + Todo."""
+    """Finde + one tab per weekend day + next weekend + Todo."""
     start, end = weekend_window(today)
     weekend_dates = [(start + timedelta(days=offset)).isoformat() for offset in range((end - start).days + 1)]
+    next_start, next_end = next_weekend_window(today)
+    next_dates = [(next_start + timedelta(days=offset)).isoformat() for offset in range((next_end - next_start).days + 1)]
     by_date = dict(groups)
     weekend_count = sum(len(by_date.get(iso, [])) for iso in weekend_dates)
+    next_count = sum(len(by_date.get(iso, [])) for iso in next_dates)
     buttons: list[str] = []
     if weekend_count:
         buttons.append(
@@ -714,6 +751,11 @@ def render_day_nav(groups: list[tuple[str, list[dict]]], today: date) -> str:
             f"<b>{WEEKDAY_ABBR[parsed.weekday()]}</b><span>{parsed.day:02d}</span>"
             f"<i>{len(day_events)}</i></button>"
         )
+    if next_count:
+        buttons.append(
+            f'<button type="button" class="day day--next" data-view="next-weekend" aria-pressed="false">'
+            f"<b>Próx. finde</b><i>{next_count}</i></button>"
+        )
     total = sum(len(day_events) for _, day_events in groups)
     all_active = " is-on" if not weekend_count else ""
     buttons.append(
@@ -721,6 +763,29 @@ def render_day_nav(groups: list[tuple[str, list[dict]]], today: date) -> str:
         f'aria-pressed="{"true" if not weekend_count else "false"}"><b>Todo</b><i>{total}</i></button>'
     )
     return f'<nav class="daynav" aria-label="Filtrar por día">{"".join(buttons)}</nav>'
+
+
+def render_month_nav(events: list[dict], today: date) -> str:
+    """Month tabs for the first months with events, plus Todo in the day nav."""
+    counts = month_counts(events)
+    keys = sorted(counts)[:MONTH_NAV_LIMIT]
+    if not keys:
+        return ""
+    current_key = today.isoformat()[:7]
+    buttons = []
+    for key in keys:
+        label = format_month_tab(key, today)
+        current = " is-current" if key == current_key else ""
+        buttons.append(
+            f'<button type="button" class="day day--month{current}" data-view="month:{key}" '
+            f'aria-pressed="false"><b>{esc(label)}</b><i>{counts[key]}</i></button>'
+        )
+    return (
+        '<nav class="daynav daynav--months" aria-label="Filtrar por mes">'
+        '<span class="daynav__label">Mes</span>'
+        f'{"".join(buttons)}'
+        "</nav>"
+    )
 
 
 def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]:
@@ -755,33 +820,100 @@ def render_toolbar(events: list[dict]) -> str:
     )
 
 
-def pick_featured(events: list[dict], today: date) -> dict | None:
-    """S8: earliest weekend event with poster and ticket, then with poster, then any.
+def featured_score(event: dict, today: date) -> int | None:
+    """Editorial score for the featured strip; None when out of the horizon.
 
-    "Weekend" means the row's primary date (the day it is listed under), so the
-    featured event always appears in the weekend agenda.
+    Posters and a direct ticket link are the strongest signals (the strip is
+    visual), price bands stand in for production size (big tours cost more),
+    and weekend/prime-time dates weigh more than weekday or late-night slots.
     """
-    weekend = [event for event in events if in_weekend(primary_date(event), today)]
-    for pool in (
-        [event for event in weekend if event.get("image_url") and event.get("ticket_url")],
-        [event for event in weekend if event.get("image_url")],
-        weekend,
-    ):
-        if pool:
-            return pool[0]
-    return None
-
-
-def ticket_host(url: str | None) -> str | None:
-    if not url:
+    primary = date.fromisoformat(primary_date(event))
+    days = (primary - today).days
+    if days > FEATURED_HORIZON_DAYS:
         return None
-    host = urlparse(url).netloc
-    return host[4:] if host.startswith("www.") else host
+    score = 0
+    if event.get("image_url"):
+        score += 40
+    if event.get("ticket_url"):
+        score += 25
+    price = event.get("price_min")
+    if price:
+        score += min(int(price // 4000), 25)
+    if len(event["dates"]) > 1:
+        score += 10
+    if in_weekend(primary_date(event), today):
+        score += 18
+    elif in_next_weekend(primary_date(event), today):
+        score += 14
+    elif days <= 3:
+        score += 12
+    elif days <= 7:
+        score += 8
+    else:
+        score += 4
+    time_value = event.get("time") or ""
+    if "20:00" <= time_value <= "22:59":
+        score += 8
+    elif "18:00" <= time_value < "20:00":
+        score += 3
+    elif time_value >= "23:00" or (time_value and time_value < "18:00"):
+        score -= 6
+    return score
 
 
-def render_featured(event: dict | None) -> str:
-    if not event:
-        return ""
+def pick_featured(events: list[dict], today: date, limit: int = FEATURED_LIMIT) -> list[dict]:
+    """Up to `limit` featured events, best first.
+
+    Sorted by score, then date, time and title; the first pass keeps one event
+    per venue, and a second pass fills the strip when the catalog is thin.
+    """
+    ranked: list[tuple[int, dict]] = []
+    for event in events:
+        score = featured_score(event, today)
+        if score is None:
+            continue
+        ranked.append((score, event))
+    ranked.sort(
+        key=lambda row: (
+            -row[0],
+            primary_date(row[1]),
+            row[1].get("time") or "99:99",
+            row[1]["title"].casefold(),
+        )
+    )
+    chosen: list[dict] = []
+    chosen_slugs: set[str] = set()
+    seen_venues: set[str] = set()
+    for _score, event in ranked:
+        if event["venue_id"] in seen_venues:
+            continue
+        chosen.append(event)
+        chosen_slugs.add(event["slug"])
+        seen_venues.add(event["venue_id"])
+        if len(chosen) == limit:
+            return chosen
+    for _score, event in ranked:
+        if event["slug"] in chosen_slugs:
+            continue
+        chosen.append(event)
+        chosen_slugs.add(event["slug"])
+        if len(chosen) == limit:
+            break
+    return chosen
+
+
+def featured_kicker(event: dict, today: date) -> str:
+    """Small context label above a featured card title."""
+    primary = primary_date(event)
+    if in_weekend(primary, today):
+        return "Este finde"
+    if in_next_weekend(primary, today):
+        return "Próximo finde"
+    return "Próximamente"
+
+
+def render_featured_card(event: dict, today: date, variant: str = "lead") -> str:
+    lead = variant == "lead"
     parsed = date.fromisoformat(primary_date(event))
     price = price_parts(event)
     price_html = ""
@@ -793,45 +925,86 @@ def render_featured(event: dict | None) -> str:
     host = ticket_host(ticket)
     actions = []
     if ticket:
+        label = "Sacar entrada" if lead else "Entradas"
         actions.append(
             f'<a class="btn btn--primary" href="{esc(ticket)}" target="_blank" rel="noopener" '
-            f'data-outbound="ticket" data-event-id="{esc(event["slug"])}">Sacar entrada</a>'
+            f'data-outbound="ticket" data-event-id="{esc(event["slug"])}">{label}</a>'
         )
     actions.append(
         f'<button type="button" class="btn btn--ghost js-share" data-event-id="{esc(event["slug"])}">'
         "Compartir</button>"
     )
     where = esc(event["venue_name"])
-    if event.get("address"):
+    if lead and event.get("address"):
         where += f" · {esc(event['address'])}"
-    meta_bits = [
-        f"<b>{esc(format_day_long(primary_date(event)))}</b>",
-    ]
-    if event.get("time"):
-        meta_bits.append(esc(event["time"]))
-    meta_bits.append(where)
-    if host:
-        meta_bits.append(f"Venta en {esc(host)}")
-    meta = '<i>·</i>'.join(meta_bits[:1]) + "".join(f"<i>·</i>{bit}" for bit in meta_bits[1:])
+    if lead:
+        meta_bits = [f"<b>{esc(format_day_long(primary_date(event)))}</b>"]
+        if event.get("time"):
+            meta_bits.append(esc(event["time"]))
+        meta_bits.append(where)
+        if host:
+            meta_bits.append(f"Venta en {esc(host)}")
+    else:
+        meta_bits = [f"<b>{esc(format_date_short(primary_date(event)))}</b>"]
+        if event.get("time"):
+            meta_bits.append(esc(event["time"]))
+        meta_bits.append(esc(event["venue_name"]))
+    meta = "<i>·</i>".join(meta_bits[:1]) + "".join(f"<i>·</i>{bit}" for bit in meta_bits[1:])
     poster = (
         f'<img src="{esc(event["image_url"])}" alt="" loading="lazy" decoding="async" data-thumb>'
         if event.get("image_url")
-        else f'<div class="feature__fallback" aria-hidden="true"><b>{esc(initials(event["title"]))}</b></div>'
+        else f'<div class="feature__fallback" aria-hidden="true"><b>{esc(initials(event["display_title"]))}</b></div>'
     )
+    variant_class = "feature feature--lead" if lead else "feature feature--mini"
     return (
-        '<section class="feature" aria-label="Destacado del finde">'
+        f'<article class="{variant_class}" data-feature="1" data-event-id="{esc(event["slug"])}" '
+        f'data-title="{esc(event["display_title"])}" data-venue-name="{esc(event["venue_name"])}" '
+        f'data-when="{esc(format_when(event["dates"], event["time"]))}">'
         '<div class="feature__poster">'
         f"{poster}"
         f'<div class="feature__badge"><b>{WEEKDAY_ABBR[parsed.weekday()].upper()}</b><span>{parsed.day:02d}</span></div>'
         "</div>"
         '<div class="feature__body">'
-        '<p class="kicker">Destacado del finde</p>'
-        f"<h2>{esc(event['display_title'])}</h2>"
+        f'<p class="kicker">{featured_kicker(event, today)}</p>'
+        f"<h3>{esc(event['display_title'])}</h3>"
         f'<p class="feature__meta">{meta}</p>'
         f'<div class="feature__actions">{"".join(actions)}{price_html}</div>'
         "</div>"
+        "</article>"
+    )
+
+
+def render_featured(events: list[dict] | None, today: date) -> str:
+    if not events:
+        return ""
+    lead, rest = events[0], events[1:]
+    stack = ""
+    if rest:
+        stack = (
+            '<div class="featured__stack">'
+            + "".join(render_featured_card(event, today, "mini") for event in rest)
+            + "</div>"
+        )
+    single = " featured__grid--single" if not rest else ""
+    return (
+        '<section class="featured" aria-labelledby="featured-title">'
+        '<div class="featured__head">'
+        '<h2 class="kicker" id="featured-title">Destacados</h2>'
+        "<span>Del finde y la semana</span>"
+        "</div>"
+        f'<div class="featured__grid{single}">'
+        f'{render_featured_card(lead, today, "lead")}'
+        f"{stack}"
+        "</div>"
         "</section>"
     )
+
+
+def ticket_host(url: str | None) -> str | None:
+    if not url:
+        return None
+    host = urlparse(url).netloc
+    return host[4:] if host.startswith("www.") else host
 
 
 def render_thumb(event: dict) -> str:
@@ -1018,12 +1191,14 @@ def render_footer(last_run: dict) -> str:
 def events_payload(events: list[dict], today: date) -> dict:
     """Everything app.js needs, inlined so the page never fetches anything."""
     start, end = weekend_window(today)
+    next_start, next_end = next_weekend_window(today)
     seven_start, seven_end = window_bounds("7days", today)
     return {
         "site": {"name": SITE_NAME, "url": SITE_URL},
         "today": today.isoformat(),
         "windows": {
             "weekend": {"start": start.isoformat(), "end": end.isoformat()},
+            "next_weekend": {"start": next_start.isoformat(), "end": next_end.isoformat()},
             "7days": {"start": seven_start.isoformat(), "end": seven_end.isoformat()},
         },
         "events": [
@@ -1051,7 +1226,7 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
     weekend = [event for event in events if matches_window(event["dates"], "weekend", today)]
     has_weekend = bool(weekend)
     default_view = "weekend" if has_weekend else "all"
-    featured = render_featured(pick_featured(events, today))
+    featured = render_featured(pick_featured(events, today), today)
     if events:
         empty_html = (
             '<p class="empty-state" id="empty-state" hidden>'
@@ -1092,6 +1267,7 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 <main class="shell">
 {render_intro(events, today)}
 {render_day_nav(groups, today)}
+{render_month_nav(events, today)}
 {render_toolbar(events)}
 {featured}
 {render_agenda(groups, today, default_view)}
