@@ -120,6 +120,50 @@ class TestClusterEvents:
         )
         assert cluster_events([a, b]) == []
 
+    def test_festival_prefix_does_not_merge_distinct_films_across_sources(self):
+        a = make_event(
+            "auditorium",
+            "41° Festival Internacional de Cine: Children Untold",
+            "Teatro Auditorium",
+            "2026-11-06",
+        )
+        b = make_event(
+            "auditorium",
+            "41° Festival Internacional de Cine: Los relatos",
+            "Teatro Auditorium",
+            "2026-11-06",
+        )
+        c = make_event(
+            "elevenflow",
+            "41 FESTIVAL INTERNACIONAL DE CINE - LOS RELATOS",
+            "Teatro Auditorium",
+            "2026-11-06",
+        )
+
+        clusters = cluster_events([a, b, c])
+
+        assert len(clusters) == 1
+        assert {event["title"] for event in clusters[0]["events"]} == {b.title, c.title}
+
+    def test_cross_source_bridge_does_not_merge_two_same_source_shows(self):
+        kids = make_event("cultutickets", "HALLOWEEN KIDS", "Brew House", "2026-10-31")
+        nico = make_event("cultutickets", "HALLOWEEN NICO MATTIOLI", "Brew House", "2026-10-31")
+        bridge = make_event(
+            "cualpinta",
+            "Halloween Kids - Nico Mattioli",
+            "Brew House",
+            "2026-10-31",
+        )
+
+        clusters = cluster_events([kids, nico, bridge])
+
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+        assert {event["source"] for event in clusters[0]["events"]} == {
+            "cultutickets",
+            "cualpinta",
+        }
+
     def test_same_source_exact_title_still_joins(self):
         a = make_event("venti", "CLUB QUBA | 22.10 QUEVES", "Quba", "2026-10-22")
         b = make_event("venti", "CLUB QUBA | 22.10 QUEVES", "Quba", "2026-10-22")

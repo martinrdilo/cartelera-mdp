@@ -159,6 +159,31 @@ def _prefix_title_match(event_a, event_b):
     return round(float(min(scores)), 1)
 
 
+def _series_prefix_conflict(event_a, event_b):
+    """True when two titles share a long series prefix but differ in the entry.
+
+    A film festival publishes every screening under the same prefix
+    ("41° Festival Internacional de Cine: <film>"). The shared prefix inflates
+    token_set_ratio, so two different films look alike. When the common
+    leading tokens are long and the remaining tails are dissimilar, the titles
+    are different entries of the same series.
+    """
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    common = 0
+    for token_a, token_b in zip(tokens_a, tokens_b):
+        if fuzz.ratio(token_a, token_b) < 90:
+            break
+        common += 1
+    if common < 3:
+        return False
+    tail_a = " ".join(tokens_a[common:])
+    tail_b = " ".join(tokens_b[common:])
+    if not tail_a or not tail_b:
+        return False
+    return fuzz.token_set_ratio(tail_a, tail_b) < 85
+
+
 def venue_group_key(event):
     """Grouping key: canonical venue fingerprint."""
     return canonical_venue(event.venue_name or event.venue_raw)
@@ -202,6 +227,8 @@ def _pair_evidence(event_a, event_b, threshold):
         if title_a and title_a == title_b:
             return {"kind": "title_fuzzy", "score": 100.0}
         return None
+    if _series_prefix_conflict(event_a, event_b):
+        return None
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
         return {"kind": "title_fuzzy", "score": round(float(score), 1)}
@@ -236,6 +263,15 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
         if len(group) < 2:
             continue
         parent = list(range(len(group)))
+        # A cluster may hold at most one title per source: the same-source
+        # rule must also hold transitively, or a cross-source bridge can merge
+        # two distinct shows of one source (e.g. two Halloween shows).
+        titles = {
+            index: {
+                group[index].source: normalize_text(strip_title_noise(group[index].title))
+            }
+            for index in range(len(group))
+        }
 
         def find(index):
             while parent[index] != index:
@@ -243,10 +279,21 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
                 index = parent[index]
             return index
 
+        def compatible(left_root, right_root):
+            for source, title in titles[left_root].items():
+                if source in titles[right_root] and titles[right_root][source] != title:
+                    return False
+            return True
+
         def union(left, right):
             root_left, root_right = find(left), find(right)
-            if root_left != root_right:
-                parent[root_right] = root_left
+            if root_left == root_right:
+                return True
+            if not compatible(root_left, root_right):
+                return False
+            parent[root_right] = root_left
+            titles[root_left] = {**titles[root_left], **titles[root_right]}
+            return True
 
         pairs = []
         for i in range(len(group)):
@@ -256,7 +303,8 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
                 evidence = _pair_evidence(group[i], group[j], threshold)
                 if evidence is None:
                     continue
-                union(i, j)
+                if not union(i, j):
+                    continue
                 pairs.append(
                     {
                         "a": _event_ref(group[i]),
