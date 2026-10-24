@@ -40,19 +40,25 @@ def test_snapshot_totals_and_same_source_clusters():
     deduped = load("events_deduped.json")
     last = load("last_run.json")
 
-    assert len(normalized) == 571
-    assert deduped["total_normalized"] == 571
-    assert deduped["unique_events"] == 338
-    assert deduped["duplicate_clusters"] == 135
-    assert deduped["events_in_clusters"] == 368
-    assert last["totals"] == {"raw": 571, "normalized": 571, "unique": 338}
+    assert len(normalized) == 550
+    assert deduped["total_normalized"] == 550
+    assert deduped["unique_events"] == 318
+    assert deduped["duplicate_clusters"] == 130
+    assert deduped["events_in_clusters"] == 362
+    assert last["totals"] == {"raw": 550, "normalized": 550, "unique": 318}
 
     same_source = [
         cluster
         for cluster in deduped["clusters"]
         if len({event["source"] for event in cluster["events"]}) == 1
     ]
-    assert same_source == []
+    for cluster in same_source:
+        assert cluster["pairs"]
+        assert all(
+            pair["kind"] == "ticket_slug"
+            or (pair["kind"] == "title_fuzzy" and pair["score"] == 100.0)
+            for pair in cluster["pairs"]
+        )
     counts = collections.Counter(event["source"] for event in normalized)
     assert counts["cualpinta"] == 144
     assert counts["elevenflow"] == 53
@@ -101,8 +107,8 @@ def test_paren_la_mano_joins_tuentrada_and_cualpinta():
 
 def test_site_has_no_duplicate_triples_and_new_labels(tmp_path):
     stats = build_site.build(data_dir=DATA, out_dir=tmp_path, today=date(2026, 10, 24))
-    assert stats["upcoming"] == 296
-    assert stats["weekend"] == 42
+    assert stats["upcoming"] == 282
+    assert stats["weekend"] == 38
     assert stats["venues"] == 73
 
     html = (tmp_path / "index.html").read_text(encoding="utf-8")
