@@ -52,10 +52,16 @@ MODULES = (
 
 
 def _write_json_atomic(path, payload):
-    """Write JSON to a sibling tmp file, then rename over the target."""
+    """Write JSON to a sibling tmp file, then rename over the target.
+
+    A source can emit a lone surrogate (a broken JSON-LD escape) that cannot
+    be encoded as UTF-8; replace it instead of failing the whole run.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    text = text.encode("utf-8", "replace").decode("utf-8")
     tmp = path.with_name(path.name + ".tmp")
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.write_text(text, encoding="utf-8")
     tmp.replace(path)
 
 
@@ -96,7 +102,9 @@ def _write_errors(errors, raw_dir, failed_at):
 
 
 def _venue_stats(events):
-    resolved = sum(1 for event in events if resolve(event.venue_name or event.venue_raw))
+    resolved = sum(
+        1 for event in events if resolve(event.venue_name) or resolve(event.venue_raw)
+    )
     return {"resolved": resolved, "unknown": len(events) - resolved}
 
 

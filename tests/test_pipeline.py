@@ -74,3 +74,16 @@ def test_success_writes_outputs_and_last_run(tmp_path):
     assert last_run["totals"]["normalized"] == 1
     assert last_run["totals"]["unique"] == 1
     assert not list(data_dir.glob("*.tmp"))
+
+
+class TestWriteJsonAtomic:
+    def test_replaces_a_lone_surrogate(self, tmp_path):
+        # A source can emit a broken JSON-LD escape ("\ud835") that is not
+        # valid UTF-8; the runner must not fail the whole run on it.
+        path = tmp_path / "out.json"
+
+        run_pipeline._write_json_atomic(path, {"title": "bad \ud835 char"})
+
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        assert payload["title"].startswith("bad ")
+        assert not list(tmp_path.glob("*.tmp"))
