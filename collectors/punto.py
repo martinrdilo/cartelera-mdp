@@ -16,13 +16,13 @@ import json
 import re
 import sys
 import time
-from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 
 from lib.dates import extract_time
 from lib.schema import Event
+from lib.sellers import seller_from_url
 
 BASE = "https://puntomardelplata.com"
 LIST_URL = f"{BASE}/api/actividades"
@@ -35,17 +35,7 @@ PAGE_SIZE = 12
 CATEGORY_ID = "1"
 SOURCE = "punto"
 
-# Ticket host -> seller. Subdomains inherit their parent domain's seller.
-_SELLERS = (
-    ("venti.live", "Venti"),
-    ("articket.com.ar", "Articket"),
-    ("cultutickets.com", "CultuTickets"),
-    ("ticketek.com.ar", "Ticketek"),
-    ("plateanet.com", "Plateanet"),
-    ("wearebombo.com", "Bombo"),
-    ("tuentrada.com", "TuEntrada"),
-    ("unica-cartelera.com.ar", "Única Cartelera"),
-)
+# Ticket host -> seller lives in lib/sellers.py so every collector shares it.
 _YEAR_RE = re.compile(r"^\d{4}$")
 
 
@@ -95,19 +85,6 @@ def _parse_price(raw):
         return None
 
 
-def _seller_from_url(url):
-    """Map a ticket URL host to its seller, or None when unknown."""
-    if not url:
-        return None
-    host = (urlparse(url).netloc or "").lower()
-    if host.startswith("www."):
-        host = host[4:]
-    for domain, seller in _SELLERS:
-        if host == domain or host.endswith("." + domain):
-            return seller
-    return None
-
-
 def _offer_fields(offers):
     """Return (ticket_url, seller, price_min, price_text, currency)."""
     if isinstance(offers, dict):
@@ -132,7 +109,7 @@ def _offer_fields(offers):
         price_min, raw_text = min(priced, key=lambda item: item[0])
         price_text = raw_text if raw_text.startswith("$") else f"${raw_text}"
         currency = currency or "ARS"
-    return ticket_url, _seller_from_url(ticket_url), price_min, price_text, currency
+    return ticket_url, seller_from_url(ticket_url), price_min, price_text, currency
 
 
 def parse_detail(html):
@@ -240,7 +217,7 @@ def normalize(records):
                 price_min=price_min,
                 currency=detail.get("currency"),
                 ticket_url=ticket_url,
-                seller=detail.get("seller") or _seller_from_url(ticket_url),
+                seller=detail.get("seller") or seller_from_url(ticket_url),
                 image_url=_image_url(record, date_start),
                 city="Mar del Plata",
                 raw_url=DETAIL_URL.format(slug=(record.get("slug") or "").strip()),
