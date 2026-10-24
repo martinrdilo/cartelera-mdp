@@ -35,6 +35,26 @@ SOURCE = "cualpinta"
 USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 REQUEST_DELAY = 1.0
 
+# Categories that are activities, not shows. The site is a cartelera, not a
+# community noticeboard, so these are dropped at collect time.
+BLOCKED_CATEGORIES = frozenset(
+    {
+        "Deportes",
+        "Gastronomía",
+        "Feria",
+        "Feria gastronómica",
+        "Feria del libro",
+        "Seminario",
+        "Cursos",
+        "Taller",
+        "Charlas",
+        "Convención y cosplay",
+        "Encuentro comunitario",
+        "Social",
+        "Playa & Outdoor",
+    }
+)
+
 # Hosts that are never a ticket vendor: the source itself plus social and
 # utility links that appear on every detail page.
 _UTILITY_HOSTS = (
@@ -225,6 +245,7 @@ def collect():
     """
     urls = parse_sitemap(_fetch_sitemap())
     records = []
+    skipped = 0
     for index, url in enumerate(urls):
         if index:
             time.sleep(REQUEST_DELAY)
@@ -235,9 +256,14 @@ def collect():
             continue
         if _is_cancelled(record.get("event_status")):
             continue
+        if record.get("category") in BLOCKED_CATEGORIES:
+            skipped += 1
+            continue
         record["source"] = SOURCE
         record["detail_url"] = url
         records.append(record)
+    if skipped:
+        print(f"[cualpinta] skipped {skipped} non-show categories", file=sys.stderr)
     return records
 
 

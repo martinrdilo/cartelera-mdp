@@ -302,6 +302,23 @@ class TestCollect:
         assert [record["detail_url"] for record in records] == urls
         assert all(record["source"] == "cualpinta" for record in records)
 
+    def test_blocked_categories_are_skipped(self, cualpinta_source, monkeypatch):
+        urls, _ = cualpinta_source
+        blocked_url = urls[0]
+
+        def fetch_detail(url):
+            slug = url.rstrip("/").rsplit("/", 1)[-1]
+            record = cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+            if url == blocked_url:
+                record["category"] = "Deportes"
+            return record
+
+        monkeypatch.setattr(cualpinta, "_fetch_detail", fetch_detail)
+
+        records = cualpinta.collect()
+
+        assert [record["detail_url"] for record in records] == urls[1:]
+
     def test_cancelled_event_is_skipped(self, cualpinta_source, monkeypatch):
         urls, _ = cualpinta_source
         cancelled_url = urls[0]
