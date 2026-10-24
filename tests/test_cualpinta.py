@@ -249,6 +249,15 @@ class TestParseDetail:
 
         assert cualpinta.parse_detail(html)["ticket_url"] == "https://articket.com.ar/DEMO/"
 
+    def test_auditorium_hall_comes_from_the_description(self):
+        record = cualpinta.parse_detail(_load_html("cualpinta_detail_amniotika.html"))
+
+        assert record["venue_name"] == "Teatro Auditorium"
+        assert "sala Jorge Laureti" in record["description"]
+        record.update(detail_url=EVENT_URL.format(slug="amniotika"), source="cualpinta")
+        event = cualpinta.normalize([record])[0]
+        assert event.venue_name == "Sala Jorge Laureti"
+
     def test_ticket_cta_wins_over_a_non_seller_link(self):
         html = _html([_event()], anchors=("https://artist.example.test/profile",))
         html = html.replace(

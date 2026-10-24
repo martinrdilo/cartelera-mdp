@@ -51,6 +51,12 @@ _CANCEL_MARKER = "cancel"
 _WHITESPACE_RE = re.compile(r"\s+")
 _LOC_RE = re.compile(r"<loc>\s*([^<]+?)\s*</loc>")
 _TICKET_TEXT_RE = re.compile(r"comprar|entrada|ticket|reserv", re.IGNORECASE)
+# The JSON-LD sometimes points at the Auditorium complex while the description
+# names the hall ("en la sala Jorge Laureti del Teatro Auditorium").
+_SALA_RE = re.compile(
+    r"\bsala\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][\w\s.'’-]{2,40}?)\s+(?:del|de\s+la|de)\b",
+    re.IGNORECASE,
+)
 
 
 def _collapsed(node):
@@ -177,6 +183,7 @@ def parse_detail(html):
         "event_status": _text(event.get("eventStatus")),
         "venue_name": _text(location.get("name")),
         "street_address": _text(address.get("streetAddress")),
+        "description": _text(event.get("description")),
         "price": offer.get("price"),
         "currency": _text(offer.get("priceCurrency")),
         "image_url": _first_image(event.get("image")),
@@ -258,9 +265,19 @@ def _price_value(price):
         return None
 
 
+def _venue_name(record):
+    """Prefer the hall named in the description when JSON-LD points at the complex."""
+    name = _text(record.get("venue_name")) or ""
+    if name.casefold() == "teatro auditorium":
+        match = _SALA_RE.search(_text(record.get("description")) or "")
+        if match:
+            return f"Sala {match.group(1).strip()}"
+    return name
+
+
 def _venue(record):
     """Return (venue_name, venue_raw), appending the street when present."""
-    name = _text(record.get("venue_name")) or ""
+    name = _venue_name(record)
     street = _text(record.get("street_address"))
     if name and street:
         return name, f"{name}, {street}"
