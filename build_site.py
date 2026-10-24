@@ -66,6 +66,7 @@ SELLER_SOURCES = (
     "bombo",
     "tuentrada",
     "passline",
+    "chauvin",
 )
 SOURCE_ORDER = SELLER_SOURCES + (
     "auditorium",
@@ -73,6 +74,7 @@ SOURCE_ORDER = SELLER_SOURCES + (
     "punto",
     "cualpinta",
     "elevenflow",
+    "quehacemos",
     "municipal",
 )
 
@@ -535,6 +537,8 @@ SOURCE_LABELS = {
     "cualpinta": "Cual Pinta",
     "elevenflow": "Eleven Flow",
     "passline": "Passline",
+    "quehacemos": "Qué Hacemos",
+    "chauvin": "Chauvin",
 }
 THUMB_VARIANTS = 4
 

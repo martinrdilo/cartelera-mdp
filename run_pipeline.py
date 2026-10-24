@@ -22,10 +22,12 @@ from collectors import (
     colon,
     cualpinta,
     elevenflow,
+    fanz,
     muchticket,
     municipal,
     passline,
     punto,
+    quehacemos,
     ticketek,
     tuentrada,
     venti,
@@ -49,6 +51,8 @@ MODULES = (
     ("cualpinta", cualpinta),
     ("elevenflow", elevenflow),
     ("passline", passline),
+    ("quehacemos", quehacemos),
+    ("fanz", fanz),
 )
 
 

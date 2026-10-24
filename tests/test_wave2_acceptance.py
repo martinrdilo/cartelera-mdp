@@ -50,7 +50,7 @@ def test_snapshot_totals_and_same_source_clusters():
         assert cluster["pairs"]
         assert all(
             pair["kind"] == "ticket_slug"
-            or (pair["kind"] == "title_fuzzy" and pair["score"] == 100.0)
+            or (pair["kind"] in {"title_fuzzy", "title_core"} and pair["score"] == 100.0)
             for pair in cluster["pairs"]
         )
     counts = collections.Counter(event["source"] for event in normalized)

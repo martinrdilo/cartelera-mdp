@@ -122,7 +122,8 @@
         "Chauvin",
         "Microteatro Chauvin",
         "Chauvin Centro de recreación",
-        "Chauvin Centro de Recreacion"
+        "Chauvin Centro de Recreacion",
+        "Chauvin Centro de creación"
       ],
       "address": "San Luis 2849"
     },
@@ -303,7 +304,8 @@
         "Mute, Club de Mar",
         "Mute Club",
         "Mute Club, RP11",
-        "Ruta 11 Alfar"
+        "Ruta 11 Alfar",
+        "Alfar"
       ],
       "address": "Ruta 11, Alfar"
     },
@@ -340,7 +342,8 @@
       "name": "Casinos de la Provincia",
       "aliases": [
         "Casinos de la Provincia",
-        "Casino Central Mar del Plata"
+        "Casino Central Mar del Plata",
+        "Casino Central"
       ]
     },
     {
@@ -577,7 +580,8 @@
       "id": "glow-eventos",
       "name": "Glow Eventos",
       "aliases": [
-        "Glow Eventos"
+        "Glow Eventos",
+        "Glow"
       ],
       "address": "Moreno 3364"
     },
@@ -655,6 +659,59 @@
         "Bahia Varese"
       ],
       "address": "P.º Jesús de Galindez"
+    },
+    {
+      "id": "color-humano",
+      "name": "Color Humano",
+      "aliases": [
+        "Color Humano",
+        "Color Humano - Club de Arte"
+      ],
+      "address": "Los Mapuches"
+    },
+    {
+      "id": "baum-playa-grande",
+      "name": "Baum Playa Grande",
+      "aliases": [
+        "Baum Playa Grande",
+        "Baum"
+      ],
+      "address": "Bernardo de Irigoyen 3819"
+    },
+    {
+      "id": "stadium-la-normandina",
+      "name": "Stadium Complejo La Normandina",
+      "aliases": [
+        "Stadium Complejo La Normandina",
+        "Complejo La Normandina"
+      ],
+      "address": "Victoria Ocampo"
+    },
+    {
+      "id": "teatro-el-telon",
+      "name": "Teatro El Telón",
+      "aliases": [
+        "Teatro El Telón",
+        "Teatro El Telon"
+      ],
+      "address": ""
+    },
+    {
+      "id": "teatro-victoria",
+      "name": "Teatro Victoria",
+      "aliases": [
+        "Teatro Victoria",
+        "TEATRO VICTORIA"
+      ],
+      "address": ""
+    },
+    {
+      "id": "la-carpa",
+      "name": "La Carpa",
+      "aliases": [
+        "La Carpa"
+      ],
+      "address": ""
     }
   ]
 }

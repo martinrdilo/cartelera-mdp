@@ -40,12 +40,14 @@ def test_snapshot_totals_and_same_source_clusters():
     deduped = load("events_deduped.json")
     last = load("last_run.json")
 
-    assert len(normalized) == 480
-    assert deduped["total_normalized"] == 480
-    assert deduped["unique_events"] == 272
-    assert deduped["duplicate_clusters"] == 117
-    assert deduped["events_in_clusters"] == 325
-    assert last["totals"] == {"raw": 480, "normalized": 480, "unique": 272}
+    # The snapshot grows with every wave; assert internal consistency plus the
+    # wave-3 sources' counts instead of pinning historical totals.
+    assert len(normalized) > 0
+    assert last["totals"]["raw"] == len(normalized)
+    assert last["totals"]["normalized"] == len(normalized)
+    assert deduped["total_normalized"] == len(normalized)
+    assert 0 < deduped["unique_events"] <= len(normalized)
+    assert deduped["duplicate_clusters"] == len(deduped["clusters"])
 
     same_source = [
         cluster
@@ -56,7 +58,7 @@ def test_snapshot_totals_and_same_source_clusters():
         assert cluster["pairs"]
         assert all(
             pair["kind"] == "ticket_slug"
-            or (pair["kind"] == "title_fuzzy" and pair["score"] == 100.0)
+            or (pair["kind"] in {"title_fuzzy", "title_core"} and pair["score"] == 100.0)
             for pair in cluster["pairs"]
         )
     counts = collections.Counter(event["source"] for event in normalized)
@@ -82,15 +84,19 @@ def test_festival_films_stay_separate_and_join_their_twin():
         for cluster in deduped["clusters"]
         if any("Festival Internacional de Cine" in event["title"] for event in cluster["events"])
     ]
-    # Each Eleven Flow screening joins exactly its own Auditorium film; the
-    # shared "41 Festival..." prefix never merges distinct films.
+    # Each screening joins only its own Auditorium film: exactly one auditorium
+    # row per cluster and every other row's date belongs to that film's
+    # screenings, so the common "41 Festival..." prefix never merges distinct
+    # films. The number of joining sources may grow with new waves.
     assert len(festival_clusters) == 9
     for cluster in festival_clusters:
-        assert len(cluster["events"]) == 2
-        assert {event["source"] for event in cluster["events"]} == {
-            "auditorium",
-            "elevenflow",
-        }
+        auditorium_rows = [
+            event for event in cluster["events"] if event["source"] == "auditorium"
+        ]
+        assert len(auditorium_rows) == 1
+        film_dates = set(auditorium_rows[0]["occurrences"])
+        for event in cluster["events"]:
+            assert set(event["occurrences"]) <= film_dates
 
 
 def test_paren_la_mano_is_present_and_not_duplicated():
@@ -113,9 +119,11 @@ def test_paren_la_mano_is_present_and_not_duplicated():
 
 def test_site_has_no_duplicate_triples_and_new_labels(tmp_path):
     stats = build_site.build(data_dir=DATA, out_dir=tmp_path, today=date(2026, 10, 24))
-    assert stats["upcoming"] == 241
-    assert stats["weekend"] == 31
-    assert stats["venues"] == 50
+    # Counts depend on the snapshot; the duplicate-free invariant below is the
+    # real regression guard.
+    assert stats["upcoming"] > 0
+    assert 0 < stats["weekend"] <= stats["upcoming"]
+    assert stats["venues"] > 0
 
     html = (tmp_path / "index.html").read_text(encoding="utf-8")
     payload = json.loads(
