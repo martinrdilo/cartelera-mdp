@@ -66,29 +66,45 @@ def normalize_text(value):
 
 
 def extract_slug(url):
-    """Return "<host>:<slug>" for known ticket hosts, else None."""
+    """Return "<host>:<event-slug>" for known ticket hosts, else None.
+
+    Ticketek puts the event first and the venue second
+    (`/hairspray/teatro-tronador`), so its event slug is the first segment;
+    the other sellers end their URLs with the event slug.
+    """
     if not url:
         return None
     parsed = urlparse(url)
     host = parsed.netloc.lower()
     if not any(known in host for known in TICKET_HOSTS):
         return None
-    path = parsed.path.strip("/")
-    if not path:
+    segments = [segment for segment in parsed.path.strip("/").split("/") if segment]
+    if not segments:
         return None
-    return f"{host}:{path.split('/')[-1].lower()}"
+    if "ticketek.com.ar" in host:
+        slug = segments[0]
+    else:
+        slug = segments[-1]
+    return f"{host}:{slug.lower()}"
 
 
 # Standalone numeric date tokens ("22.10", "31/10", "16-10-2026") appear in
 # Bombo/Venti/Articket titles. Remove them anywhere in the title for matching;
 # the source title itself stays untouched in the output.
 _DATE_TOKEN_RE = re.compile(r"(?<!\d)\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?(?!\d)")
+# Edition markers ("Vol. 3", "Volumen III", "Edición 2") name the same event's
+# edition, not a different show; strip them for matching only.
+_EDITION_RE = re.compile(
+    r"\b(?:vol(?:umen)?|edici[oó]n)\.?\s*(?:[ivxlcdm]+|\d+)\b",
+    re.IGNORECASE,
+)
 
 
 def strip_title_noise(title):
     """Remove date/city noise (prefix, standalone dates, separators) before matching."""
     cleaned = _TITLE_DATE_PREFIX_RE.sub("", title or "")
     cleaned = _DATE_TOKEN_RE.sub(" ", cleaned)
+    cleaned = _EDITION_RE.sub(" ", cleaned)
     cleaned = re.sub(r"[|]+", " ", cleaned)
     return " ".join(cleaned.split()).strip(" -–,:|")
 
@@ -159,6 +175,22 @@ def _prefix_title_match(event_a, event_b):
     return round(float(min(scores)), 1)
 
 
+def _single_token_match(event_a, event_b):
+    """A one-token title (e.g. "DANTE") inside the other title's tokens."""
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    if len(tokens_a) == 1 and len(tokens_b) > 1:
+        short, longer = tokens_a[0], tokens_b
+    elif len(tokens_b) == 1 and len(tokens_a) > 1:
+        short, longer = tokens_b[0], tokens_a
+    else:
+        return None
+    if len(short) < 4:
+        return None
+    score = max(fuzz.ratio(short, token) for token in longer)
+    return round(float(score), 1) if score >= 90 else None
+
+
 def _series_prefix_conflict(event_a, event_b):
     """True when two titles share a long series prefix but differ in the entry.
 
@@ -226,6 +258,14 @@ def _pair_evidence(event_a, event_b, threshold):
         title_b = normalize_text(strip_title_noise(event_b.title))
         if title_a and title_a == title_b:
             return {"kind": "title_fuzzy", "score": 100.0}
+        # Municipal truncations ("Patricia Luca - Ahora Solo Faltas Tú." vs
+        # "Patricia Lucas") are the same show: accept core-token containment.
+        core_score = _core_title_match(event_a, event_b)
+        if core_score is not None:
+            return {"kind": "title_core", "score": core_score}
+        single_score = _single_token_match(event_a, event_b)
+        if single_score is not None:
+            return {"kind": "title_core", "score": single_score}
         return None
     if _series_prefix_conflict(event_a, event_b):
         return None
@@ -248,85 +288,131 @@ def _event_ref(event):
 def cluster_events(events, threshold=DEFAULT_THRESHOLD):
     """Cluster duplicate events; returns a list of clusters with evidence.
 
+    Venue groups gate title matching, but a shared ticket slug joins events
+    across venues: the same ticket page is the same event even when one source
+    publishes the wrong venue.
+
     Each cluster: {"venue": canonical id or normalized name,
     "venue_name": display name, "dates": known session dates (union of the
     members), "events": [...], "pairs": [...]}.
     """
+    indexed = [
+        (position, event) for position, event in enumerate(events) if event.date_start
+    ]
+    if not indexed:
+        return []
+
+    parent = list(range(len(indexed)))
+    # A cluster may hold at most one title per source: the same-source rule
+    # must also hold transitively, or a cross-source bridge can merge two
+    # distinct shows of one source (e.g. two Halloween shows). Strong identity
+    # signals (shared ticket slug, core-token containment) still allow the
+    # legitimate truncated variants of one show.
+    titles = {
+        index: {event.source: (normalize_text(strip_title_noise(event.title)), event)}
+        for index, event in indexed
+    }
+    slugs = {
+        index: {slug for slug in (extract_slug(event.ticket_url),) if slug}
+        for index, event in indexed
+    }
+
+    def find(index):
+        while parent[index] != index:
+            parent[index] = parent[parent[index]]
+            index = parent[index]
+        return index
+
+    def compatible(left_root, right_root):
+        if slugs[left_root] & slugs[right_root]:
+            return True
+        for source, (title, event) in titles[left_root].items():
+            if source not in titles[right_root]:
+                continue
+            other_title, other_event = titles[right_root][source]
+            if other_title == title:
+                continue
+            slug_left = extract_slug(event.ticket_url)
+            slug_right = extract_slug(other_event.ticket_url)
+            if slug_left and slug_left == slug_right:
+                continue
+            if _core_title_match(event, other_event) is not None:
+                continue
+            if _single_token_match(event, other_event) is not None:
+                continue
+            return False
+        return True
+
+    def union(left, right):
+        root_left, root_right = find(left), find(right)
+        if root_left == root_right:
+            return True
+        if not compatible(root_left, root_right):
+            return False
+        parent[root_right] = root_left
+        titles[root_left] = {**titles[root_left], **titles[root_right]}
+        slugs[root_left] = slugs[root_left] | slugs[root_right]
+        return True
+
+    pairs = []
+
+    # Cross-venue slug edges: a shared ticket page is the same event.
+    by_slug = {}
+    for index, event in indexed:
+        slug = extract_slug(event.ticket_url)
+        if slug:
+            by_slug.setdefault(slug, []).append(index)
+    for slug, positions in by_slug.items():
+        for other in positions[1:]:
+            union(positions[0], other)
+            pairs.append(
+                {
+                    "a": _event_ref(indexed[positions[0]][1]),
+                    "b": _event_ref(indexed[other][1]),
+                    "kind": "ticket_slug",
+                    "score": 100.0,
+                    "slug": slug,
+                }
+            )
+
+    # Venue edges: title evidence inside the same canonical venue.
     groups = {}
-    for event in events:
-        if not event.date_start:
-            continue
-        groups.setdefault(venue_group_key(event), []).append(event)
-
-    clusters = []
-    for key, group in groups.items():
-        if len(group) < 2:
-            continue
-        parent = list(range(len(group)))
-        # A cluster may hold at most one title per source: the same-source
-        # rule must also hold transitively, or a cross-source bridge can merge
-        # two distinct shows of one source (e.g. two Halloween shows).
-        titles = {
-            index: {
-                group[index].source: normalize_text(strip_title_noise(group[index].title))
-            }
-            for index in range(len(group))
-        }
-
-        def find(index):
-            while parent[index] != index:
-                parent[index] = parent[parent[index]]
-                index = parent[index]
-            return index
-
-        def compatible(left_root, right_root):
-            for source, title in titles[left_root].items():
-                if source in titles[right_root] and titles[right_root][source] != title:
-                    return False
-            return True
-
-        def union(left, right):
-            root_left, root_right = find(left), find(right)
-            if root_left == root_right:
-                return True
-            if not compatible(root_left, root_right):
-                return False
-            parent[root_right] = root_left
-            titles[root_left] = {**titles[root_left], **titles[root_right]}
-            return True
-
-        pairs = []
-        for i in range(len(group)):
-            for j in range(i + 1, len(group)):
-                if not _dates_match(group[i], group[j]):
+    for index, event in indexed:
+        groups.setdefault(venue_group_key(event), []).append(index)
+    for group in groups.values():
+        for left_position, left in enumerate(group):
+            for right in group[left_position + 1 :]:
+                if not _dates_match(indexed[left][1], indexed[right][1]):
                     continue
-                evidence = _pair_evidence(group[i], group[j], threshold)
+                evidence = _pair_evidence(indexed[left][1], indexed[right][1], threshold)
                 if evidence is None:
                     continue
-                if not union(i, j):
+                if not union(left, right):
                     continue
                 pairs.append(
                     {
-                        "a": _event_ref(group[i]),
-                        "b": _event_ref(group[j]),
+                        "a": _event_ref(indexed[left][1]),
+                        "b": _event_ref(indexed[right][1]),
                         **evidence,
                     }
                 )
-        components = {}
-        for index, event in enumerate(group):
-            components.setdefault(find(index), []).append(event)
-        for members in components.values():
-            if len(members) < 2:
-                continue
-            refs = {_event_ref(event) for event in members}
-            dates = sorted({date for event in members for date in occurrences_of(event)})
-            clusters.append(
-                {
-                    "venue": key,
-                    "venue_name": _display_venue(members[0]),
-                    "dates": dates,
-                    "events": [event.to_dict() for event in members],
-                    "pairs": [p for p in pairs if p["a"] in refs and p["b"] in refs],
-                }
-            )
+
+    components = {}
+    for index, event in indexed:
+        components.setdefault(find(index), []).append(event)
+    clusters = []
+    for members in components.values():
+        if len(members) < 2:
+            continue
+        refs = {_event_ref(event) for event in members}
+        dates = sorted({date for event in members for date in occurrences_of(event)})
+        clusters.append(
+            {
+                "venue": venue_group_key(members[0]),
+                "venue_name": _display_venue(members[0]),
+                "dates": dates,
+                "events": [event.to_dict() for event in members],
+                "pairs": [p for p in pairs if p["a"] in refs and p["b"] in refs],
+            }
+        )
     return clusters

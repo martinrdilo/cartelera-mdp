@@ -42,6 +42,20 @@ class TestExtractSlug:
         url = "https://www.passline.com/eventos/flaco-vazquez-mar-del-plata-5359"
         assert extract_slug(url) == "www.passline.com:flaco-vazquez-mar-del-plata-5359"
 
+    def test_ticketek_uses_the_event_segment_not_the_venue(self):
+        # Ticketek ends its URLs with the venue: /<event>/<venue>.
+        assert extract_slug("https://www.ticketek.com.ar/hairspray/teatro-tronador") == (
+            "www.ticketek.com.ar:hairspray"
+        )
+        assert extract_slug("https://www.ticketek.com.ar/abel-pintos/teatro-tronador") == (
+            "www.ticketek.com.ar:abel-pintos"
+        )
+
+    def test_ticketek_single_segment_still_works(self):
+        assert extract_slug("https://www.ticketek.com.ar/abel-pintos") == (
+            "www.ticketek.com.ar:abel-pintos"
+        )
+
     def test_instagram_is_not_a_ticket_slug(self):
         assert extract_slug("https://www.instagram.com/p/Dd7bsectNjW/") is None
 
