@@ -40,12 +40,12 @@ def test_snapshot_totals_and_same_source_clusters():
     deduped = load("events_deduped.json")
     last = load("last_run.json")
 
-    assert len(normalized) == 490
-    assert deduped["total_normalized"] == 490
-    assert deduped["unique_events"] == 283
-    assert deduped["duplicate_clusters"] == 116
-    assert deduped["events_in_clusters"] == 323
-    assert last["totals"] == {"raw": 490, "normalized": 490, "unique": 283}
+    assert len(normalized) == 480
+    assert deduped["total_normalized"] == 480
+    assert deduped["unique_events"] == 272
+    assert deduped["duplicate_clusters"] == 117
+    assert deduped["events_in_clusters"] == 325
+    assert last["totals"] == {"raw": 480, "normalized": 480, "unique": 272}
 
     same_source = [
         cluster
@@ -60,7 +60,7 @@ def test_snapshot_totals_and_same_source_clusters():
             for pair in cluster["pairs"]
         )
     counts = collections.Counter(event["source"] for event in normalized)
-    assert counts["cualpinta"] == 83
+    assert counts["cualpinta"] == 73
     assert counts["elevenflow"] == 53
     assert counts["passline"] == 4
 
@@ -113,9 +113,9 @@ def test_paren_la_mano_is_present_and_not_duplicated():
 
 def test_site_has_no_duplicate_triples_and_new_labels(tmp_path):
     stats = build_site.build(data_dir=DATA, out_dir=tmp_path, today=date(2026, 10, 24))
-    assert stats["upcoming"] == 250
+    assert stats["upcoming"] == 241
     assert stats["weekend"] == 31
-    assert stats["venues"] == 58
+    assert stats["venues"] == 50
 
     html = (tmp_path / "index.html").read_text(encoding="utf-8")
     payload = json.loads(
