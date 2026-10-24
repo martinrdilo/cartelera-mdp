@@ -788,20 +788,62 @@ def render_month_nav(events: list[dict], today: date) -> str:
     )
 
 
-def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]:
+def venue_options(events: list[dict]) -> list[tuple[str, str, int]]:
+    """Every venue in the catalog with its event count, busiest first."""
     counts: dict[str, int] = {}
     names: dict[str, str] = {}
     for event in events:
         counts[event["venue_id"]] = counts.get(event["venue_id"], 0) + 1
         names[event["venue_id"]] = event["venue_name"]
-    ranked = sorted(
+    return sorted(
         ((names[venue_id], venue_id, count) for venue_id, count in counts.items()),
         key=lambda row: (-row[2], row[0].casefold()),
     )
-    return ranked[:limit]
 
 
-def render_toolbar(events: list[dict]) -> str:
+def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]:
+    return venue_options(events)[:limit]
+
+
+def render_venue_filter(events: list[dict]) -> str:
+    options = ['<option value="">Todas las salas</option>']
+    for name, venue_id, count in venue_options(events):
+        options.append(
+            f'<option value="{esc(venue_id)}" data-name="{esc(name)}">{esc(name)} ({count})</option>'
+        )
+    return (
+        '<label class="filter-select" for="venue-filter">'
+        '<span class="filter-select__label">Sala</span>'
+        f'<select id="venue-filter" aria-label="Filtrar por sala">{"".join(options)}</select>'
+        "</label>"
+    )
+
+
+def render_day_filter(groups: list[tuple[str, list[dict]]], today: date) -> str:
+    options = ['<option value="">Todos los días</option>']
+    current_month = None
+    for iso, day_events in groups:
+        month_key = iso[:7]
+        if month_key != current_month:
+            if current_month is not None:
+                options.append("</optgroup>")
+            options.append(f'<optgroup label="{esc(format_month_tab(month_key, today))}">')
+            current_month = month_key
+        label = format_day_long(iso)
+        options.append(
+            f'<option value="{iso}" data-label="{esc(label)}">{esc(label)} ({len(day_events)})</option>'
+        )
+    if current_month is not None:
+        options.append("</optgroup>")
+    return (
+        '<label class="filter-select" for="day-filter">'
+        '<span class="filter-select__label">Día</span>'
+        f'<select id="day-filter" aria-label="Filtrar por día">{"".join(options)}</select>'
+        "</label>"
+    )
+
+
+def render_toolbar(events: list[dict], groups: list[tuple[str, list[dict]]], today: date) -> str:
     free = sum(1 for event in events if event["is_free"])
     chips = [
         f'<button type="button" class="chip" data-filter="free" aria-pressed="false">'
@@ -814,7 +856,10 @@ def render_toolbar(events: list[dict]) -> str:
         )
     return (
         '<div class="toolbar" role="group" aria-label="Filtros de la agenda">'
-        f'{"".join(chips)}'
+        f'{"".join(chips[:1])}'
+        f"{render_day_filter(groups, today)}"
+        f"{render_venue_filter(events)}"
+        f'{"".join(chips[1:])}'
         '<p class="toolbar__count" id="filter-count" aria-live="polite"></p>'
         "</div>"
     )
@@ -1268,7 +1313,7 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 {render_intro(events, today)}
 {render_day_nav(groups, today)}
 {render_month_nav(events, today)}
-{render_toolbar(events)}
+{render_toolbar(events, groups, today)}
 {featured}
 {render_agenda(groups, today, default_view)}
 {empty_html}

@@ -586,11 +586,21 @@ class TestRedesignMarkup:
         assert 'id="search"' in html
         assert 'data-filter="free"' in html
         assert 'data-filter="venue"' in html
+        assert 'id="day-filter"' in html
+        assert 'id="venue-filter"' in html
         assert 'id="filter-count"' in html
         assert 'id="empty-state"' in html
         assert 'id="clear-filters"' in html
         assert "No hay eventos con esos filtros" in html
-        for hook in ("filter_change", "auto-todo", "outbound_ticket", "share_whatsapp"):
+        for hook in (
+            "filter_change",
+            "auto-todo",
+            "outbound_ticket",
+            "share_whatsapp",
+            "day-filter",
+            "venue-filter",
+            "updateFilterCounts",
+        ):
             assert hook in app_js
 
     def test_venue_chips_are_the_three_busiest_venues(self, tmp_path):
@@ -599,6 +609,25 @@ class TestRedesignMarkup:
         chips = re.findall(r'class="chip" data-filter="venue" data-value="([^"]+)"', html)
         assert chips == [venue_id for _, venue_id, _ in expected]
         assert len(chips) == 3
+
+    def test_venue_select_lists_every_venue(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        select = html.split('id="venue-filter"', 1)[1].split("</select>", 1)[0]
+        values = re.findall(r'<option value="([^"]*)"', select)
+        expected = [venue_id for _, venue_id, _ in build_site.venue_options(payload["events"])]
+        assert values == [""] + expected
+        assert len(values) == len(expected) + 1
+        assert select.count('data-name="') == len(expected)
+        assert 'class="filter-select__label">Sala<' in html
+
+    def test_day_select_lists_every_date(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        select = html.split('id="day-filter"', 1)[1].split("</select>", 1)[0]
+        values = re.findall(r'<option value="([^"]*)"', select)
+        dates = [iso for iso, _, _ in day_groups(html)]
+        assert values == [""] + dates
+        assert "<optgroup" in select
+        assert select.count('data-label="') == len(dates)
 
     def test_featured_board_uses_three_events_from_distinct_venues(self, tmp_path):
         _, html, _, _, payload = self.build(tmp_path)

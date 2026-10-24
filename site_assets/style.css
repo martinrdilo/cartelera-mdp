@@ -433,6 +433,7 @@ img { max-width: 100%; }
   display: inline-flex;
   align-items: center;
   gap: 0.32rem;
+  flex: 0 0 auto;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 .chip:hover { border-color: var(--line-2); color: var(--text); }
@@ -448,6 +449,53 @@ img { max-width: 100%; }
   color: var(--sea-text);
 }
 .chip.is-on em { color: var(--sea-text); }
+
+.filter-select {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.24rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  transition: border-color 0.15s, background 0.15s;
+}
+.filter-select:focus-within {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.filter-select__label {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.filter-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0 1rem 0 0;
+  max-width: 12.5rem;
+  cursor: pointer;
+}
+.filter-select::after {
+  content: "▾";
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.58rem;
+  color: var(--dim);
+}
 
 .toolbar__count {
   margin: 0 0 0 auto;

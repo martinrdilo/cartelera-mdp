@@ -71,6 +71,8 @@
   var emptyState = document.getElementById("empty-state");
   var clearButton = document.getElementById("clear-filters");
   var featured = document.querySelector(".featured");
+  var daySelect = document.getElementById("day-filter");
+  var venueSelect = document.getElementById("venue-filter");
 
   var defaultView = "all";
   dayButtons.forEach(function (button) {
@@ -89,11 +91,17 @@
       .trim();
   }
 
-  function matches(row) {
-    if (state.free && row.dataset.free !== "1") return false;
-    if (state.venue && row.dataset.venue !== state.venue) return false;
+  function matchesFilters(row, overrides) {
+    var free = overrides && "free" in overrides ? overrides.free : state.free;
+    var venue = overrides && "venue" in overrides ? overrides.venue : state.venue;
+    if (free && row.dataset.free !== "1") return false;
+    if (venue && row.dataset.venue !== venue) return false;
     if (state.query && (row.dataset.search || "").indexOf(state.query) === -1) return false;
     return true;
+  }
+
+  function matches(row) {
+    return matchesFilters(row, null);
   }
 
   function dateInWindow(iso, window) {
@@ -130,6 +138,70 @@
     });
   }
 
+  function syncControls() {
+    if (venueSelect) venueSelect.value = state.venue || "";
+    if (daySelect) {
+      daySelect.value = /^\d{4}-\d{2}-\d{2}$/.test(state.view) ? state.view : "";
+    }
+    chips.forEach(function (chip) {
+      if (chip.dataset.filter !== "venue") return;
+      var on = chip.dataset.value === state.venue;
+      chip.classList.toggle("is-on", on);
+      chip.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  function updateFilterCounts() {
+    chips.forEach(function (chip) {
+      var count;
+      if (chip.dataset.filter === "free") {
+        count = rows.filter(function (row) {
+          return (
+            row.dataset.free === "1" &&
+            matchesFilters(row, { free: false }) &&
+            inView(row, state.view)
+          );
+        }).length;
+      } else {
+        count = rows.filter(function (row) {
+          return (
+            row.dataset.venue === chip.dataset.value &&
+            matchesFilters(row, { venue: null }) &&
+            inView(row, state.view)
+          );
+        }).length;
+      }
+      var badge = chip.querySelector("em");
+      if (badge) badge.textContent = count;
+    });
+
+    if (venueSelect) {
+      Array.prototype.forEach.call(venueSelect.options, function (option) {
+        if (!option.value) return;
+        var name = option.dataset.name || option.textContent.replace(/ \(\d+\)$/, "");
+        var count = rows.filter(function (row) {
+          return (
+            row.dataset.venue === option.value &&
+            matchesFilters(row, { venue: null }) &&
+            inView(row, state.view)
+          );
+        }).length;
+        option.textContent = name + " (" + count + ")";
+      });
+    }
+
+    if (daySelect) {
+      Array.prototype.forEach.call(daySelect.options, function (option) {
+        if (!option.value) return;
+        var label = option.dataset.label || option.textContent.replace(/ \(\d+\)$/, "");
+        var count = rows.filter(function (row) {
+          return row.dataset.date === option.value && matchesFilters(row, null);
+        }).length;
+        option.textContent = label + " (" + count + ")";
+      });
+    }
+  }
+
   function render(reason) {
     var visible = 0;
 
@@ -155,6 +227,7 @@
     });
 
     updateTabCounts();
+    updateFilterCounts();
 
     if (countLabel) {
       countLabel.textContent = visible + (visible === 1 ? " evento" : " eventos");
@@ -174,7 +247,10 @@
     }
 
     if (emptyState) emptyState.hidden = visible !== 0;
-    if (featured) featured.hidden = activeFilters();
+    var keepFeatured =
+      state.view === "weekend" || state.view === "next-weekend" || state.view === "all";
+    if (featured) featured.hidden = activeFilters() || !keepFeatured;
+    syncControls();
 
     track("filter_change", {
       reason: reason,
@@ -218,6 +294,22 @@
       render("chip");
     });
   });
+
+  if (daySelect) {
+    daySelect.addEventListener("change", function () {
+      state.view = daySelect.value || "all";
+      render("day-filter");
+      var agenda = document.getElementById("agenda");
+      if (agenda) agenda.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  if (venueSelect) {
+    venueSelect.addEventListener("change", function () {
+      state.venue = venueSelect.value || null;
+      render("venue-filter");
+    });
+  }
 
   if (searchInput) {
     searchInput.addEventListener("input", function () {
