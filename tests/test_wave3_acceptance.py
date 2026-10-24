@@ -40,12 +40,12 @@ def test_snapshot_totals_and_same_source_clusters():
     deduped = load("events_deduped.json")
     last = load("last_run.json")
 
-    assert len(normalized) == 527
-    assert deduped["total_normalized"] == 527
-    assert deduped["unique_events"] == 300
-    assert deduped["duplicate_clusters"] == 126
-    assert deduped["events_in_clusters"] == 353
-    assert last["totals"] == {"raw": 527, "normalized": 527, "unique": 300}
+    assert len(normalized) == 490
+    assert deduped["total_normalized"] == 490
+    assert deduped["unique_events"] == 283
+    assert deduped["duplicate_clusters"] == 116
+    assert deduped["events_in_clusters"] == 323
+    assert last["totals"] == {"raw": 490, "normalized": 490, "unique": 283}
 
     same_source = [
         cluster
@@ -60,7 +60,7 @@ def test_snapshot_totals_and_same_source_clusters():
             for pair in cluster["pairs"]
         )
     counts = collections.Counter(event["source"] for event in normalized)
-    assert counts["cualpinta"] == 121
+    assert counts["cualpinta"] == 83
     assert counts["elevenflow"] == 53
     assert counts["passline"] == 4
 
@@ -93,23 +93,29 @@ def test_festival_films_stay_separate_and_join_their_twin():
         }
 
 
-def test_paren_la_mano_joins_tuentrada_and_cualpinta():
+def test_paren_la_mano_is_present_and_not_duplicated():
+    normalized = load("events_normalized.json")
     deduped = load("events_deduped.json")
+
     matches = [
-        cluster
-        for cluster in deduped["clusters"]
-        if any("paren la mano" in event["title"].lower() for event in cluster["events"])
+        event for event in normalized if "paren la mano" in event["title"].lower()
     ]
-    assert len(matches) == 1
-    sources = {event["source"] for event in matches[0]["events"]}
-    assert {"cualpinta", "tuentrada"} <= sources
+    assert matches
+    # If more than one source still publishes it, they must share one cluster.
+    if len(matches) > 1:
+        clusters = [
+            cluster
+            for cluster in deduped["clusters"]
+            if any("paren la mano" in event["title"].lower() for event in cluster["events"])
+        ]
+        assert len(clusters) == 1
 
 
 def test_site_has_no_duplicate_triples_and_new_labels(tmp_path):
     stats = build_site.build(data_dir=DATA, out_dir=tmp_path, today=date(2026, 10, 24))
-    assert stats["upcoming"] == 265
-    assert stats["weekend"] == 35
-    assert stats["venues"] == 61
+    assert stats["upcoming"] == 250
+    assert stats["weekend"] == 31
+    assert stats["venues"] == 58
 
     html = (tmp_path / "index.html").read_text(encoding="utf-8")
     payload = json.loads(

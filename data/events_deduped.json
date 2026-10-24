@@ -1,8 +1,8 @@
 {
-  "total_normalized": 527,
-  "unique_events": 300,
-  "duplicate_clusters": 126,
-  "events_in_clusters": 353,
+  "total_normalized": 490,
+  "unique_events": 283,
+  "duplicate_clusters": 116,
+  "events_in_clusters": 323,
   "clusters": [
     {
       "venue": "teatro-tronador",
@@ -36,7 +36,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43510_ACT%20-%20ABEL%20PINTOS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "ticketek",
@@ -62,7 +62,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/ap_s26.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/abel-pintos/teatro-tronador",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -85,7 +85,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-abel-presenta-buenaventura-tour-2026-20303.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/abel-presenta-buenaventura-tour-2026-20303",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -108,7 +108,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789153394718-jzefr1wv4md.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/buenaventura-tour-2026",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -133,7 +133,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/e8bb5dba-767a-4130-941a-3a1ff4038359.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/abel-pintos-20261107-a1aa",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -158,7 +158,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/275c7fec-b084-41f2-acb4-39ed31d9fd67.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/abel-pintos-20261108-2jrj",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -273,7 +273,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/32407_ACT%20-%20ALEX%20UBAGO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -298,7 +298,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-alex-ubago-en-arena-mardel-plata-20073.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/alex-ubago-en-arena-mardel-plata-20073",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -323,7 +323,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947139896-ja05iuwjx6l.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/alex-ubago-gira-que-pides-tu-25-aniversario",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -385,7 +385,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49411_ACT-AN.ESPIL.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -410,7 +410,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/post_mardelpla.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -435,7 +435,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/682/thumb0000.jpg?v=1788556862",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -497,7 +497,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49748_ACT%20-%20ANGELA%20TORRES.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -522,7 +522,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-angela-torres-no-me-olvides-tour-en-arena-mardel-plata-20236.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/angela-torres-no-me-olvides-tour-en-arena-mardel-plata-20236",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -547,7 +547,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1789158700947-nus0z465yzl.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/no-me-olvides-angela-torres",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -572,7 +572,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/ce0451cc-8131-4c68-83ac-8f0cdf926b70.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/angela-torres-20261101-59wk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -626,8 +626,7 @@
       "venue": "brew-house",
       "venue_name": "Ciudad Cultural Brew House",
       "dates": [
-        "2026-10-30",
-        "2026-10-31"
+        "2026-10-30"
       ],
       "events": [
         {
@@ -653,7 +652,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45161_ACT-ATTITUDE2.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -678,45 +677,44 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_XmrHHrH.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
-          "source_event_id": "halloween-kids-nico-mattioli",
-          "title": "Halloween Kids - Nico Mattioli",
+          "source_event_id": "mar-del-plata-attitude",
+          "title": "Mar del Plata Attitude",
           "venue_name": "Ciudad Cultural Brewhouse Puerto",
           "venue_raw": "Ciudad Cultural Brewhouse Puerto, Diagonal Garibaldi 4830",
-          "date_start": "2026-10-31",
-          "date_end": "2026-10-31",
+          "date_start": "2026-10-30",
+          "date_end": "2026-10-30",
           "occurrences": [
-            "2026-10-31"
+            "2026-10-30"
           ],
           "recurrence_unknown": false,
           "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
+          "time": "21:00",
+          "is_free": null,
           "price_text": null,
-          "price_min": 12000.0,
-          "currency": "ARS",
-          "ticket_url": "https://cultutickets.com/ATTITUDE-MDP/",
-          "seller": "CultuTickets",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1790687180993-ejl1ewn8qer.jpg",
+          "price_min": null,
+          "currency": null,
+          "ticket_url": null,
+          "seller": null,
+          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789159267321-43lrbq0r81n.jpg",
           "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/halloween-kids-nico-mattioli",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/mar-del-plata-attitude",
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
-          "a": "cultutickets:ATTITUDE-MDP",
-          "b": "cualpinta:halloween-kids-nico-mattioli",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "cultutickets.com:attitude-mdp"
+          "a": "municipal:45161",
+          "b": "cultutickets:ATTITUDE-MDP",
+          "kind": "title_fuzzy",
+          "score": 100.0
         },
         {
           "a": "municipal:45161",
-          "b": "cultutickets:ATTITUDE-MDP",
+          "b": "cualpinta:mar-del-plata-attitude",
           "kind": "title_fuzzy",
           "score": 100.0
         }
@@ -752,7 +750,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/44962_ACT%20-%20BABASONICOS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -777,7 +775,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-babasonicos-en-arena-mardel-plata-20072.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/babasonicos-en-arena-mardel-plata-20072",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -802,7 +800,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947143372-x1dckgmldp.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/babasonicos",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -827,7 +825,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/e253b751-61e9-4e8a-9864-cea2e66941b4.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/babasonicos-20261031-ic5k",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -916,7 +914,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43919_ACT%20-%2007%20DE%20NOVIEMBRE%20BAGLIETTO-VITALE-PRESENTAN-BODAS-DE-CORAL_.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -941,54 +939,15 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-baglietto-vital-presentan-bodas-de-coral-19971.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/baglietto-vital-presentan-bodas-de-coral-19971",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "bodas-de-coral",
-          "title": "BODAS DE CORAL",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-11-07",
-          "date_end": "2026-11-07",
-          "occurrences": [
-            "2026-11-07"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 45000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34880?obra=BAGLIETTO%20VITALE%20PRESENTAN%20BODAS%20DE%20CORAL.&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787335274159-lbylpg30jfi.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/bodas-de-coral",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
-        {
-          "a": "punto:19971",
-          "b": "cualpinta:bodas-de-coral",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34880"
-        },
         {
           "a": "municipal:43919",
           "b": "punto:19971",
           "kind": "title_core",
           "score": 90.9
-        },
-        {
-          "a": "punto:19971",
-          "b": "cualpinta:bodas-de-coral",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34880"
         }
       ]
     },
@@ -1022,7 +981,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47292_ACT-BARBI.R.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -1047,7 +1006,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/BRB.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -1072,7 +1031,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/681/thumb0000.jpg?v=1788394907",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1097,7 +1056,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-barbi-recanati-presenta-unico-y-nuestro-en-club-tri-20299.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/barbi-recanati-presenta-unico-y-nuestro-en-club-tri-20299",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -1122,7 +1081,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/cae9c371-b92b-4b9d-bf0b-4563d1693998.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/barbi-recanati-20261112-d3jl",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1246,7 +1205,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/44693_ACT%20-%20C4.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -1271,7 +1230,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/FEED_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1296,7 +1255,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-c4-en-abbey-road-20134.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/c4-en-abbey-road-20134",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -1321,7 +1280,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789484956582-b2fw4jmm31i.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/c4-reggae-combativo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1376,7 +1335,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1401,7 +1360,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-candlelight-tributo-a-taylor-swift-20091.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/candlelight-tributo-a-taylor-swift-20091",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1443,7 +1402,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1468,7 +1427,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-cruzando-en-charco-el-arena-mardel-plata-20074.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/cruzando-en-charco-el-arena-mardel-plata-20074",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -1493,7 +1452,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947149281-9gl4zqk4c8q.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/cruzando-el-charco-desactivar-el-drama-tour-2026",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1555,7 +1514,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45599_ACT%20-14%20NOVIEMBRE%20DANTE%20SPINETTA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -1580,7 +1539,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/06/1080x1350_29.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -1605,7 +1564,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/634/thumb0000.jpg?v=1782781020",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -1630,7 +1589,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1783024937466-p8g29536vgr.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/dante",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -1655,7 +1614,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1791835253882-emiw7dskx8k.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/dante-spinetta",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -1680,7 +1639,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/a3442239-6fd4-46e4-b4d4-f05e3ac7e144.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/dante-spinetta-20261114-g3pm",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1833,7 +1792,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47708_ACT%20-%20DIEGO%20TORRES.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1858,7 +1817,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-diego-torres-en-arena-mardel-plata-20079.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/diego-torres-en-arena-mardel-plata-20079",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -1883,7 +1842,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947136952-n7hdt9m2mvb.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/diego-torres-mi-norte-mi-sur-tour",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -1945,7 +1904,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=2&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "ticketek",
@@ -1970,7 +1929,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/dillom_s27.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/dillom/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -1995,7 +1954,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-dillom-20493.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/dillom-20493",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -2020,7 +1979,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/abc3a83a-39cf-409f-a16b-28f7b4bb8df8.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/dillom-20270130-3u3s",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2109,7 +2068,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "ticketek",
@@ -2134,7 +2093,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/divididos_tucuman_s.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/divididos/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -2159,7 +2118,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-divididos-en-mar-del-plata-20463.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/divididos-en-mar-del-plata-20463",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -2184,7 +2143,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/01d38618-a747-4794-8747-f9a82418c4ad.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/divididos-20270131-hp0p",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2273,7 +2232,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49750_ACT-PRINCIPE.IDIOTA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -2298,7 +2257,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/prin_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -2323,7 +2282,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/690/thumb0000.jpg?v=1789787683",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -2348,7 +2307,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1790083178581-167kg0bfbnc.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/el-principe-idiota-en-el-club",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -2373,7 +2332,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/33258e9c-f5d0-4f54-b9d4-7bef1ca2a3c2.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/el-principe-idiota-20261108-es66",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2486,7 +2445,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "ticketek",
@@ -2511,7 +2470,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/fiestafa27s.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/fiesta-fa/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -2536,7 +2495,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-fiesta-fa-20492.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/fiesta-fa-20492",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2598,7 +2557,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49703_ACT-NICO%20MAT..JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=3&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -2623,7 +2582,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_YAXDOXP.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2666,7 +2625,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43394_ACT%20-%20%20FEED-JURASSIC.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -2691,7 +2650,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/1000727942.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -2716,7 +2675,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-jurassic-fest-10-en-vorterix-20147.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/jurassic-fest-10-en-vorterix-20147",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -2741,7 +2700,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/1000727942.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/jurassic-fest-10-en-vorterix-20261113-gq56",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -2810,7 +2769,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46890_ACT%20-%20KE%20PERSONAJES.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -2835,7 +2794,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-ke-personajes-en-arena-mardel-plata-20078.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ke-personajes-en-arena-mardel-plata-20078",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -2860,7 +2819,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947133685-8bxaq0r8d7h.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/ke-personajes-corazon-ausente-tour",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -2885,7 +2844,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789487050421-ec0yynvro26.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/ke-personajes-en-arena-mardel-plata",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -2910,7 +2869,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/8387a70b-e0a3-4a7c-a634-067a050170d7.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/ke-personajes-20261029-wokf",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3033,7 +2992,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48532_ACT%20-%20KOINO%20YOKAN.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -3058,7 +3017,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/680/thumb0000.jpg?v=1788391562",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3083,7 +3042,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592438296-vrsrje81i4.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/koino-yokan-en-club-tri",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -3108,7 +3067,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/16804622-3c67-4112-baad-c97ac662382c.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/koino-yokan-20261024-yno6",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3197,7 +3156,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45640_ACT%20-%2013%20DE%20NOVIEMBRE%202001.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -3222,7 +3181,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/2001.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3247,7 +3206,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787241101968-uh35iodctbl.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/la-2001-en-mar-del-plata",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3309,7 +3268,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "ticketek",
@@ -3334,7 +3293,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/images/show-header/konga960x400.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/la-konga-y-la-delio-valdez-candu-dominguez/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -3359,7 +3318,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-la-konga-y-la-delio-valdez-candu-dominguez-20491.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/la-konga-y-la-delio-valdez-candu-dominguez-20491",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3421,7 +3380,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48986_ACT%20-%20LA%20VELA%20PUERCA%20Y%20LAS%20PELOTAS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3446,7 +3405,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1789158642164-6s6ldg1npw4.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/la-vela-puerca-y-las-pelotas",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -3471,7 +3430,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/abf71bab-5651-4fab-92cf-01b6f75bc816.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/la-vela-puerca-las-pelotas-rocco-posca-20261122-6aup",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3525,7 +3484,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48788_ACT%20-%20LA%20VIN.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "venti",
@@ -3550,7 +3509,7 @@
           "image_url": "https://images.venti.live/user-images/1788782986347-lg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://api.venti.live/api/home/events?limit=100&page=1",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -3575,7 +3534,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-la-vin-los-totora-tour-20280.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/la-vin-los-totora-tour-20280",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3600,7 +3559,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1788362060638-zbn11n3liyh.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/los-totora-tour",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3689,7 +3648,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49692_ACT-LATINGATEO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -3714,7 +3673,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/lg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -3739,7 +3698,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/686/thumb0000.jpg?v=1788980962",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3801,7 +3760,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49749_ACT%20-%20EUGE%20QUEVEDO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3826,7 +3785,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1789158464281-qyzylbrep0j.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/lbc-y-euge-quevedo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -3851,7 +3810,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/21b8f7f2-fbc9-4c00-a5e0-2d2795845f42.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/eugenia-quevedo-lbc-20261129-5xcf",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3905,7 +3864,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49747_ACT%20-%20CADILLACS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -3930,7 +3889,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1789390602465-l5s9n5gjjni.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/los-fabulosos-cadillacs",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -3972,7 +3931,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46421_ACT-PEREZ.GARCIA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -3997,7 +3956,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/MdP-1080_1350_1.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -4022,7 +3981,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-los-perez-garcia-vorterix-20330.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/los-perez-garcia-vorterix-20330",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -4047,7 +4006,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789151957932-83cbtp0u2l.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/los-perez-garcia",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -4072,7 +4031,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/263b07b5-008d-4600-be68-ba5ab8594b88.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/los-perez-garcia-20261107-s5d4",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -4187,7 +4146,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45903_ACT%20-%20LUCIANO-PEREYRA---TOUR-TE-SIGO-AMANDO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -4210,7 +4169,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-luciano-pereyra-tour-te-sigo-amando-19845.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/luciano-pereyra-tour-te-sigo-amando-19845",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -4233,7 +4192,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1783024919438-q49tkdjp2x.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/luciano-pereyra-tour-te-sigo-amando",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -4258,7 +4217,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/a3f5042b-2dd4-4d09-93bb-5d2aa6c05fdc.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/luciano-pereyra-20261205-41hr",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -4283,7 +4242,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/215e3fdb-4987-43f4-97f0-fdf525b60e8b.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/luciano-pereyra-20261206-w67g",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -4368,7 +4327,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46729_ACT%20-%2031%20DE%20OCTUBRE%20MARCELA%20MORELO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -4393,32 +4352,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-marcela-morelo-presenta-la-morelo-19809.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/marcela-morelo-presenta-la-morelo-19809",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "la-morelo",
-          "title": "LA MORELO",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-10-31",
-          "date_end": "2026-10-31",
-          "occurrences": [
-            "2026-10-31"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 35000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34546?obra=MARCELA%20MORELO%20PRESENTA%20LA%20MORELO&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787335162839-pamc4hmnnf.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/la-morelo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -4443,17 +4377,10 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/34dfe31b-d423-4242-a727-80e45abf2ae2.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/marcela-morelo-20261031-v0d5",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
-        {
-          "a": "cualpinta:la-morelo",
-          "b": "elevenflow:marcela-morelo-20261031-v0d5",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34546"
-        },
         {
           "a": "municipal:46729",
           "b": "punto:19809",
@@ -4468,22 +4395,9 @@
         },
         {
           "a": "punto:19809",
-          "b": "cualpinta:la-morelo",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        },
-        {
-          "a": "punto:19809",
           "b": "elevenflow:marcela-morelo-20261031-v0d5",
           "kind": "title_fuzzy",
           "score": 100.0
-        },
-        {
-          "a": "cualpinta:la-morelo",
-          "b": "elevenflow:marcela-morelo-20261031-v0d5",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34546"
         }
       ]
     },
@@ -4517,7 +4431,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46761_ACT%20-%2014%20DE%20NOVIEMBRE%20MARTIN-MASIELLO--LA-VOZ-QUE-RECORRE-EL-MUNDO_.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -4542,60 +4456,15 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-martin-masielo-la-voz-que-recorre-el-mundo-20206.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/martin-masielo-la-voz-que-recorre-el-mundo-20206",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "martin-masiello",
-          "title": "MARTIN MASIELLO",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-11-14",
-          "date_end": "2026-11-14",
-          "occurrences": [
-            "2026-11-14"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 40000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35226?obra=MARTIN%20MASIELLO%20-LA%20VOZ%20QUE%20RECORRE%20EL%20MUNDO.&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787335377332-dzrb8uguflf.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/martin-masiello",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
-        {
-          "a": "punto:20206",
-          "b": "cualpinta:martin-masiello",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:35226"
-        },
         {
           "a": "municipal:46761",
           "b": "punto:20206",
           "kind": "title_core",
           "score": 93.3
-        },
-        {
-          "a": "municipal:46761",
-          "b": "cualpinta:martin-masiello",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        },
-        {
-          "a": "punto:20206",
-          "b": "cualpinta:martin-masiello",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:35226"
         }
       ]
     },
@@ -4629,7 +4498,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47870_ACT-MIR_NICOLAS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -4654,7 +4523,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/mir_nicolas.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -4679,7 +4548,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/692/thumb0000.jpg?v=1789912236",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -4741,7 +4610,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49746_ACT-EFECTO.BOOMERANG.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=5&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -4766,7 +4635,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/FEED_1_FLYER_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -4791,7 +4660,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/694/thumb0000.jpg?v=1790964667",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -4816,7 +4685,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-nahue-mc-presenta-efecto-boomerang-20377.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/nahue-mc-presenta-efecto-boomerang-20377",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -4905,7 +4774,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46207_ACT%20-%20NEPAL.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -4930,7 +4799,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/IMG_6752.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -4955,7 +4824,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/5165dd04-8fd6-4b3b-b1d6-8fe550514826.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/nepal-caudillo-fatigados-hellraider-en-abbey-road-20261024-9k3h",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5009,7 +4878,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49650_ACT%20-%20TRIBUTO%20LUCIANO%20PEREYRA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5034,7 +4903,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-nico-urquiza-tributo-a-luciano-pereyra-20253.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/nico-urquiza-tributo-a-luciano-pereyra-20253",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -5059,7 +4928,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/4da2b821-8c94-4dae-8505-30b9232c1a93.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/nico-urquiza-tributo-a-luciano-pereyra-20261025-1hfm",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5113,7 +4982,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5138,7 +5007,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-no-te-va-gustar-en-arena-mardel-plata-20075.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/no-te-va-gustar-en-arena-mardel-plata-20075",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -5163,7 +5032,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/e649fc1d-536f-4c97-b469-b7148b0f9b7c.avif",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/no-te-va-gustar-20270403-kpxk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5225,7 +5094,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45918_ACT%20-%20NONPALICEDE.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -5250,7 +5119,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/08/home_y_detalle_5.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -5275,7 +5144,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/f72adf69-e42d-48c5-bce6-bf8c980ccd05.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/nonpalidece-20270116-zydd",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5337,7 +5206,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/44516_ACT%20-%20ORELLANALUCCA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5362,7 +5231,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-orellana-lucca-20100.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/orellana-lucca-20100",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5404,7 +5273,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "colon",
@@ -5429,7 +5298,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.mardelplata.gob.ar/colonprogramacion",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5471,7 +5340,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43086_ACT%20-%20COL%C3%93N.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "colon",
@@ -5496,7 +5365,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.mardelplata.gob.ar/colonprogramacion",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5538,7 +5407,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49651_ACT%20-%20LEE.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "municipal",
@@ -5563,7 +5432,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49694_ACT-P.LEE.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -5588,7 +5457,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/lee.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5613,7 +5482,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-patricia-lucas-tributo-a-rita-lee-en-vorterix-20124.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/patricia-lucas-tributo-a-rita-lee-en-vorterix-20124",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5693,7 +5562,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48900_ACT%20-%20PAZ%20CARRARA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5718,7 +5587,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-paz-carrara-20205.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/paz-carrara-20205",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -5743,7 +5612,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/8639d783-9c51-400f-b83c-7417ac4c9b16.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/paz-carrara-20261106-0mps",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5797,7 +5666,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49504_ACT%20-%20PRAYER.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -5822,7 +5691,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/FEED_2_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -5847,7 +5716,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-prayer-the-bon-jovi-experience-en-vorterix-6-11-20254.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/prayer-the-bon-jovi-experience-en-vorterix-6-11-20254",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -5913,7 +5782,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "auditorium",
@@ -5940,7 +5809,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/el-auditorium-sera-sede-oficial-del-certamen-pre-cosquin-2027_0.jpg.webp?itok=O3eBLWF_",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/el-auditorium-sera-sede-oficial-del-certamen-pre-cosquin-2027-0",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -5965,7 +5834,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/PRE-COSQUIN-2027.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/pre-cosquin-2027-20261030-u2j4",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6013,7 +5882,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49693_ACT-P.ROSWELL.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -6038,7 +5907,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/PR_FEED.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -6063,7 +5932,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-proyecto-roswell-fiesta-de-halloween-en-vinoteca-perrier-20151.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/proyecto-roswell-fiesta-de-halloween-en-vinoteca-perrier-20151",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6125,7 +5994,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/45493_ACT%20-%20PULSO%20COSMICO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -6150,7 +6019,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/IMG_6728_1.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -6175,7 +6044,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-pulso-cosmico-vota-tu-groove-20255.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/pulso-cosmico-vota-tu-groove-20255",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6237,7 +6106,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46001_ACT%20-%20REY%20GARUFA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -6262,7 +6131,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789159497556-htlmva3z0xd.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/rey-garufa-y-sus-timadores-en-directo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6304,7 +6173,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -6329,7 +6198,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-sergio-dalma-en-arena-mardel-plata-20076.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/sergio-dalma-en-arena-mardel-plata-20076",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -6354,7 +6223,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947131798-3fj9hg3tfze.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/sergio-dalma-tour-retorno-a-via-dalma",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6418,7 +6287,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/46015_ACT%20-%2021%20DE%20NOVIEMBRE%20TAN%20BIONICA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=7&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -6443,7 +6312,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/05/FEED_TB.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -6468,7 +6337,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/05/TAN_BIONICA_-_AGOTADO_c.png",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -6491,7 +6360,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-tan-bionica-llega-a-mar-del-plata-19994.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/tan-bionica-llega-a-mar-del-plata-19994",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -6516,7 +6385,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1787587719468-eeidpng9yq8.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/tan-bionica-mar-del-plata",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -6541,7 +6410,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/events/vskf2iyug5n-1779204319272.png",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/tan-bionica-tan-bionica-mar-del-plata-f56c3059",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -6566,7 +6435,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/events/btssqlc6y2o-1779742422037.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/tan-bionica-tan-bionica-mar-del-plata-59be3a63",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6698,7 +6567,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49093_ACT%20-%20THE%20LA%20PLANTA.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -6723,7 +6592,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_17.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6765,7 +6634,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "auditorium",
@@ -6790,7 +6659,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/sube-escena-la-obra-todas-en-ella.jpg.webp?itok=-Kwu0MUo",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/sube-escena-la-obra-todas-en-ella",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -6815,7 +6684,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/5a575bc3-a0b8-469b-990a-372a74aad035.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/todas-en-ella-20261024-u73p",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6869,7 +6738,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "colon",
@@ -6894,7 +6763,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.mardelplata.gob.ar/colonprogramacion",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -6936,7 +6805,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/43480_ACT%20-%20URIEL%20LOZANO.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cultutickets",
@@ -6961,7 +6830,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7003,7 +6872,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -7026,60 +6895,15 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-fiesta-de-los-90-con-vilma-palma-en-arena-mardel-plata-20080.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/fiesta-de-los-90-con-vilma-palma-en-arena-mardel-plata-20080",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "modo-fiesta-80s-y-90s-con-vilma-palma-dj-diego-pastochi",
-          "title": "Modo Fiesta 80s y 90s con Vilma Palma + DJ Diego Pastochi",
-          "venue_name": "ARENA MAR DEL PLATA",
-          "venue_raw": "ARENA MAR DEL PLATA, Av. Pedro Luro 4202, B7600GVD Mar del Plata, Provincia de Buenos Aires, Argentina",
-          "date_start": "2026-12-05",
-          "date_end": "2026-12-05",
-          "occurrences": [
-            "2026-12-05"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "22:00",
-          "is_free": null,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": "https://venti.live/evento/fiesta-de-los-90-con-vilma-palma-en-arena-mardel-plata",
-          "seller": "Venti",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785947135455-b8gavw1zr09.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/modo-fiesta-80s-y-90s-con-vilma-palma-dj-diego-pastochi",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
-        {
-          "a": "punto:20080",
-          "b": "cualpinta:modo-fiesta-80s-y-90s-con-vilma-palma-dj-diego-pastochi",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "venti.live:fiesta-de-los-90-con-vilma-palma-en-arena-mardel-plata"
-        },
         {
           "a": "municipal:mdp-31a7f4f2b8",
           "b": "punto:20080",
           "kind": "title_core",
           "score": 100.0
-        },
-        {
-          "a": "municipal:mdp-31a7f4f2b8",
-          "b": "cualpinta:modo-fiesta-80s-y-90s-con-vilma-palma-dj-diego-pastochi",
-          "kind": "title_fuzzy",
-          "score": 94.2
-        },
-        {
-          "a": "punto:20080",
-          "b": "cualpinta:modo-fiesta-80s-y-90s-con-vilma-palma-dj-diego-pastochi",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "venti.live:fiesta-de-los-90-con-vilma-palma-en-arena-mardel-plata"
         }
       ]
     },
@@ -7113,7 +6937,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/49519_ACT-ZROCK.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=8&tipo=11",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -7138,7 +6962,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/IMG_7114.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -7163,7 +6987,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-zrock-los-toxicos-splash-sativa-jovenes-indocumentados-20426.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/zrock-los-toxicos-splash-sativa-jovenes-indocumentados-20426",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -7188,7 +7012,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592446376-rqonw9rr26j.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/zrock-ae4410",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7277,7 +7101,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=19",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "colon",
@@ -7302,7 +7126,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.mardelplata.gob.ar/colonprogramacion",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7344,7 +7168,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/48862_ACT%20-%20FESTIVAL%20ETCET%C3%89RA%20NOV%202026.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=19",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "articket",
@@ -7369,7 +7193,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/FESTIVAL_ETCETERA_2026_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -7394,7 +7218,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/FESTIVAL_ETCETERA_2026_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/festival-etcetera-20261121-p5xj",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7456,7 +7280,7 @@
           "image_url": "https://www.turismomardelplata.gob.ar/Fotos/eventos/47265_ACT%20-%20CHEERS.JPG",
           "city": "Mar del Plata",
           "raw_url": "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=19",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "venti",
@@ -7481,7 +7305,7 @@
           "image_url": "https://images.venti.live/user-images/1791582513126-lg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://api.venti.live/api/home/events?limit=100&page=3",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -7504,7 +7328,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-vinmusic-mdq-cheers-2026-20331.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/vinmusic-mdq-cheers-2026-20331",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -7529,7 +7353,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1791992841216-1cjo1wo69co.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/sparkling-cheers-con-franco-schmidt-y-fede-lopez",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7612,32 +7436,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/07/IG_FEED.png",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "falso-casamiento",
-          "title": "FALSO CASAMIENTO",
-          "venue_name": "CASA DEL MAR",
-          "venue_raw": "CASA DEL MAR, C. Scaglia 5400, B7600MDB Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-10-24",
-          "date_end": "2026-10-24",
-          "occurrences": [
-            "2026-10-24"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 36000.0,
-          "currency": "ARS",
-          "ticket_url": "https://articket.com.ar/FALSO-CASAMIENTO/",
-          "seller": "Articket",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1784224630502-hvcln8zj3p.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/falso-casamiento",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -7662,32 +7461,12 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/c484f56c-771a-420b-b2ca-b04758f45340.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/falso-casamiento-en-mar-del-plata-20261024-q9y7",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
           "a": "articket:FALSO-CASAMIENTO",
-          "b": "cualpinta:falso-casamiento",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:falso-casamiento"
-        },
-        {
-          "a": "articket:FALSO-CASAMIENTO",
-          "b": "cualpinta:falso-casamiento",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:falso-casamiento"
-        },
-        {
-          "a": "articket:FALSO-CASAMIENTO",
-          "b": "elevenflow:falso-casamiento-en-mar-del-plata-20261024-q9y7",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        },
-        {
-          "a": "cualpinta:falso-casamiento",
           "b": "elevenflow:falso-casamiento-en-mar-del-plata-20261024-q9y7",
           "kind": "title_fuzzy",
           "score": 100.0
@@ -7724,7 +7503,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/toycon_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -7749,7 +7528,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1788199586548-e2xkwyvcf4m.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/toy-con-gamer",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7791,7 +7570,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/MATEO_FEED.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -7816,7 +7595,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-mateo-moreno-en-wolfgang-20279.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/mateo-moreno-en-wolfgang-20279",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -7841,7 +7620,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/7053dd0a-cd55-4cf6-a377-d8daf40ab29b.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/mateo-moreno-en-wolfgang-20261024-eu3h",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -7903,7 +7682,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/1000746546.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -7928,7 +7707,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/708/thumb0000.jpg?v=1791404112",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -7953,7 +7732,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-fiesta-plop-atiende-al-demonio-20501.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/fiesta-plop-atiende-al-demonio-20501",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8024,7 +7803,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/File_14_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8049,7 +7828,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-furia-rumbo-al-2027-20419.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/furia-rumbo-al-2027-20419",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -8074,7 +7853,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/File_14_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/furia-rumbo-al-2027-20261030-dpzq",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8145,7 +7924,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/exp_arjona.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8170,7 +7949,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-experiencia-arjona-ale-rosales-20530.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/experiencia-arjona-ale-rosales-20530",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8220,7 +7999,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/1080X1350_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8245,7 +8024,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-tomas-metrikf-deyco-tian-vck-en-wolfgang-20270.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/tomas-metrikf-deyco-tian-vck-en-wolfgang-20270",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8296,7 +8075,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/Delirio_7n2.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8321,7 +8100,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-delirio-homenaje-a-luis-miguel-20509.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/delirio-homenaje-a-luis-miguel-20509",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8364,7 +8143,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/papaperrier3_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8389,7 +8168,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-papa-rush-y-las-ruedas-en-vinoteca-perrier-20420.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/papa-rush-y-las-ruedas-en-vinoteca-perrier-20420",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8439,7 +8218,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/tela.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8464,7 +8243,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-telaranas-signos-40-anos-20328.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/telaranas-signos-40-anos-20328",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -8489,7 +8268,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789762125967-0nusiongfhic.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/telaranas-festejamos-los-40-anos-de-signos",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8551,7 +8330,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/don_joaquin.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8576,7 +8355,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-don-joaquin-homenaje-a-sabina-20518.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/don-joaquin-homenaje-a-sabina-20518",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8626,7 +8405,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/santo.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8651,7 +8430,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-santo-pecado-en-abbey-road-20557.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/santo-pecado-en-abbey-road-20557",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8701,7 +8480,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/animal_nocturno_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8726,7 +8505,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-animal-nocturno-tributo-a-ricardo-arjona-20415.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/animal-nocturno-tributo-a-ricardo-arjona-20415",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8776,7 +8555,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/kanoa.PNG",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8801,7 +8580,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-kanoa-festeja-sus-10-anos-en-chauvin-20519.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/kanoa-festeja-sus-10-anos-en-chauvin-20519",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8851,7 +8630,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/KAINOAS.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -8876,7 +8655,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-pesos-pesados-kaindas-darlotodo-aero-y-sangre-la-tierra-20527.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/pesos-pesados-kaindas-darlotodo-aero-y-sangre-la-tierra-20527",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8926,7 +8705,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/IMG_7311.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -8951,7 +8730,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592444687-zsef6exvduq.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/cover-nights-presenta-physical-graffitti",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -8993,7 +8772,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/07/TOBIKA_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9018,7 +8797,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-tobika-en-wolfgang-mar-del-plata-20087.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/tobika-en-wolfgang-mar-del-plata-20087",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -9043,7 +8822,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1787588284892-w3ws6tgdln.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/torika",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -9068,7 +8847,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/4d88a554-a180-40fa-b66b-1f1d9f7bd385.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/tobika-20261121-511u",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9167,7 +8946,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/queen_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9192,7 +8971,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-queen-master-stroke-20338.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/queen-master-stroke-20338",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -9217,7 +8996,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789762124820-letazs1born.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/queen-por-master-stroke",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9288,7 +9067,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/ccave_feed_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9313,7 +9092,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-raptores-en-ccave-20545.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/raptores-en-ccave-20545",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9363,7 +9142,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/Sofia_Viola_feed_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -9388,7 +9167,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/03e6c88c-9c46-4cba-ac29-5aa73855acb6.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/sofia-viola-20261204-0ftd",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9438,7 +9217,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/08/mdq1.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9463,7 +9242,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-ivan-noble-en-vorterix-20177.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ivan-noble-en-vorterix-20177",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9513,32 +9292,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/IMG_7164.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "retropartuzafest-3",
-          "title": "RETROPARTUZAFEST 3",
-          "venue_name": "Abbey Road",
-          "venue_raw": "Abbey Road, Av. Juan B. Justo 620, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-12-05",
-          "date_end": "2026-12-05",
-          "occurrences": [
-            "2026-12-05"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 15000.0,
-          "currency": "ARS",
-          "ticket_url": "https://articket.com.ar/RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI/",
-          "seller": "Articket",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1791831532979-i7sueqy5yg.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/retropartuzafest-3",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -9563,19 +9317,12 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/IMG_7164.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/retropartuzafest-charly-moreno-y-los-chikilines-cele-martinez-y-dj-pastocchi-20261205-a5a8",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
           "a": "articket:RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI",
-          "b": "cualpinta:retropartuzafest-3",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:retropartuzafest-charly-moreno-cele-martinez-pastocchi"
-        },
-        {
-          "a": "articket:RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI",
           "b": "elevenflow:retropartuzafest-charly-moreno-y-los-chikilines-cele-martinez-y-dj-pastocchi-20261205-a5a8",
           "kind": "ticket_slug",
           "score": 100.0,
@@ -9583,20 +9330,6 @@
         },
         {
           "a": "articket:RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI",
-          "b": "cualpinta:retropartuzafest-3",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:retropartuzafest-charly-moreno-cele-martinez-pastocchi"
-        },
-        {
-          "a": "articket:RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI",
-          "b": "elevenflow:retropartuzafest-charly-moreno-y-los-chikilines-cele-martinez-y-dj-pastocchi-20261205-a5a8",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:retropartuzafest-charly-moreno-cele-martinez-pastocchi"
-        },
-        {
-          "a": "cualpinta:retropartuzafest-3",
           "b": "elevenflow:retropartuzafest-charly-moreno-y-los-chikilines-cele-martinez-y-dj-pastocchi-20261205-a5a8",
           "kind": "ticket_slug",
           "score": 100.0,
@@ -9634,7 +9367,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/MARDEL_SKAY-01_1.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9659,7 +9392,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-skay-y-los-fakires-en-mar-del-plata-20481.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/skay-y-los-fakires-en-mar-del-plata-20481",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9709,7 +9442,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/09/Untitled_design_29.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -9734,7 +9467,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/698/thumb0000.jpg?v=1790357854",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9784,7 +9517,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/rose_gun.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9809,7 +9542,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-rose-gun-tribute-bajos-instintos-xentrica-20559.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/rose-gun-tribute-bajos-instintos-xentrica-20559",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9859,7 +9592,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/hugo.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9884,7 +9617,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-hugo-bistelfi-viaje-al-cosmos-20529.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/hugo-bistelfi-viaje-al-cosmos-20529",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -9934,7 +9667,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/abel_pintos.png",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -9959,7 +9692,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-motivos-tributo-a-abel-pintos-20482.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/motivos-tributo-a-abel-pintos-20482",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10009,7 +9742,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/the_policemen.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -10034,7 +9767,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-the-police-men-en-vorterix-20524.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/the-police-men-en-vorterix-20524",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10085,7 +9818,7 @@
           "image_url": "https://articket.com.ar/media/imagenes_eventos/home/2026/10/MILONGA_UNDER.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "clubtri",
@@ -10110,7 +9843,7 @@
           "image_url": "https://clubtri.com/imgs/agenda/713/thumb0000.jpg?v=1792363086",
           "city": "Mar del Plata",
           "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -10135,7 +9868,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-milonga-under-el-cachivache-quinteto-en-club-tri-20526.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/milonga-under-el-cachivache-quinteto-en-club-tri-20526",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10192,7 +9925,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_14.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -10217,7 +9950,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1790686809544-hvpykeh1iob.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/ariel-el-traidor",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10259,7 +9992,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/07/home_y_detalle.jpeg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -10284,7 +10017,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1783346736883-kok8r2j5jtg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/los-cafres",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -10309,7 +10042,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/2dd83429-3756-4546-b0c3-f1fc7a42c624.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/los-cafres-20261107-s8rn",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10380,7 +10113,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/09/home_y_detalle_5.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -10405,7 +10138,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1789159692819-vlihqv1n39p.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/ruta-66-multitributo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10413,73 +10146,6 @@
           "a": "cultutickets:DOM-8-DE-NOV--RUTA-DE-66-",
           "b": "cualpinta:ruta-66-multitributo",
           "kind": "title_core",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "brew-house",
-      "venue_name": "Ciudad Cultural Brew House",
-      "dates": [
-        "2026-11-14"
-      ],
-      "events": [
-        {
-          "source": "cultutickets",
-          "source_event_id": "SAB-14-DE-NOV-ROMAN-EL-ORIGINAL-",
-          "title": "SAB 14 DE NOV ROMAN EL ORIGINAL",
-          "venue_name": "Ciudad Cultural Brew House",
-          "venue_raw": "Ciudad Cultural Brew House, Mar de Plata, Buenos Aires",
-          "date_start": "2026-11-14",
-          "date_end": "2026-11-14",
-          "occurrences": [
-            "2026-11-14"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": true,
-          "price_text": null,
-          "price_min": 0.0,
-          "currency": "ARS",
-          "ticket_url": "https://cultutickets.com/SAB-14-DE-NOV-ROMAN-EL-ORIGINAL-/",
-          "seller": "CultuTickets",
-          "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/10/home_y_detalle_20.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "roman-el-original-y-el-mas-berraco",
-          "title": "ROMÁN EL ORIGINAL y EL MÁS BERRACO",
-          "venue_name": "Ciudad Cultural Brewhouse Puerto",
-          "venue_raw": "Ciudad Cultural Brewhouse Puerto, Diagonal Garibaldi 4830",
-          "date_start": "2026-11-14",
-          "date_end": "2026-11-14",
-          "occurrences": [
-            "2026-11-14"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 5000.0,
-          "currency": "ARS",
-          "ticket_url": null,
-          "seller": null,
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792599134409-9h5omgnxu7d.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/roman-el-original-y-el-mas-berraco",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "cultutickets:SAB-14-DE-NOV-ROMAN-EL-ORIGINAL-",
-          "b": "cualpinta:roman-el-original-y-el-mas-berraco",
-          "kind": "title_fuzzy",
           "score": 100.0
         }
       ]
@@ -10514,7 +10180,7 @@
           "image_url": "https://cultutickets.com/media/imagenes_eventos/home/2026/07/fabi.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://cultutickets.com/obtener_eventos/?cantidad_eventos=500",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -10539,7 +10205,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785941411714-8byo2qtt67g.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/fabiana-cantilo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -10564,7 +10230,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/f5fad625-ae9a-47ad-bbf7-2b18d7a13f95.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/fabiana-cantilo-20261121-1ezk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10606,81 +10272,6 @@
       ]
     },
     {
-      "venue": "club-tri",
-      "venue_name": "Club TRI",
-      "dates": [
-        "2026-10-23"
-      ],
-      "events": [
-        {
-          "source": "clubtri",
-          "source_event_id": "672",
-          "title": "Post Punk Junk en Club TRI : Sergio Rotman y Asia del Sur.",
-          "venue_name": "Club TRI",
-          "venue_raw": "Club TRI, XX de Septiembre 2650, Mar del Plata",
-          "date_start": "2026-10-23",
-          "date_end": "2026-10-23",
-          "occurrences": [
-            "2026-10-23"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "23:59",
-          "is_free": false,
-          "price_text": "Comprar",
-          "price_min": null,
-          "currency": null,
-          "ticket_url": "https://articket.com.ar/POST-PUNK-JUNK-EN-CLUB-TRI",
-          "seller": "Articket",
-          "image_url": "https://clubtri.com/imgs/agenda/672/thumb0000.jpg?v=1787606257",
-          "city": "Mar del Plata",
-          "raw_url": "https://clubtri.com/",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "post-punk-junk",
-          "title": "POST PUNK JUNK",
-          "venue_name": "Club Tri",
-          "venue_raw": "Club Tri, 20 de Septiembre 2650",
-          "date_start": "2026-10-23",
-          "date_end": "2026-10-23",
-          "occurrences": [
-            "2026-10-23"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "00:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 5000.0,
-          "currency": "ARS",
-          "ticket_url": "https://articket.com.ar/POST-PUNK-JUNK-EN-CLUB-TRI/",
-          "seller": "Articket",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1788362910441-9fh7zt3cp3w.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/post-punk-junk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "clubtri:672",
-          "b": "cualpinta:post-punk-junk",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:post-punk-junk-en-club-tri"
-        },
-        {
-          "a": "clubtri:672",
-          "b": "cualpinta:post-punk-junk",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "articket.com.ar:post-punk-junk-en-club-tri"
-        }
-      ]
-    },
-    {
       "venue": "quba",
       "venue_name": "Quba",
       "dates": [
@@ -10711,7 +10302,7 @@
           "image_url": "https://images.venti.live/user-images/1792011438355-lg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://api.venti.live/api/home/events?limit=100&page=1",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "venti",
@@ -10736,32 +10327,7 @@
           "image_url": "https://images.venti.live/user-images/1792597011395-lg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://api.venti.live/api/home/events?limit=100&page=1",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "momo-trosman-glasidum-ccorna",
-          "title": "MOMO TROSMAN GLASIDUM CCORNA",
-          "venue_name": "Quba cafe del mar",
-          "venue_raw": "Quba cafe del mar, Escollera Nte. 1, Mar del Plata, Provincia de Buenos Aires, Argentina",
-          "date_start": "2026-10-24",
-          "date_end": "2026-10-24",
-          "occurrences": [
-            "2026-10-24"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "00:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 10000.0,
-          "currency": "ARS",
-          "ticket_url": "https://venti.live/evento/club-quba-x-no-pain-sabado-24-10",
-          "seller": "Venti",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1791992538031-n0vgckituiq.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/momo-trosman-glasidum-ccorna",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -10786,17 +10352,10 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1791992636602-zm1mimlnn5i.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/getover-002-halloween",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
-        {
-          "a": "venti:11644",
-          "b": "cualpinta:momo-trosman-glasidum-ccorna",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "venti.live:club-quba-x-no-pain-sabado-24-10"
-        },
         {
           "a": "venti:11644",
           "b": "cualpinta:getover-002-halloween",
@@ -10809,79 +10368,6 @@
           "b": "venti:11797",
           "kind": "title_core",
           "score": 100.0
-        },
-        {
-          "a": "venti:11644",
-          "b": "cualpinta:momo-trosman-glasidum-ccorna",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "venti.live:club-quba-x-no-pain-sabado-24-10"
-        }
-      ]
-    },
-    {
-      "venue": "teatro-tronador",
-      "venue_name": "Teatro Tronador",
-      "dates": [
-        "2026-12-12"
-      ],
-      "events": [
-        {
-          "source": "ticketek",
-          "source_event_id": "HAIRS26TT",
-          "title": "HAIRSPRAY",
-          "venue_name": "Teatro Tronador",
-          "venue_raw": "Teatro Tronador, Santiago del Estero 1746",
-          "date_start": "2026-12-12",
-          "date_end": "2026-12-12",
-          "occurrences": [
-            "2026-12-12"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": "Desde $69000",
-          "price_min": 69000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.ticketek.com.ar/hairspray/teatro-tronador",
-          "seller": "Ticketek",
-          "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/960x400_generica_0.png",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.ticketek.com.ar/hairspray/teatro-tronador",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "hairspray",
-          "title": "Hairspray",
-          "venue_name": "Av. Luro 2451",
-          "venue_raw": "Av. Luro 2451, Av. Luro 2451",
-          "date_start": "2026-12-12",
-          "date_end": "2026-12-13",
-          "occurrences": [],
-          "recurrence_unknown": true,
-          "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 69000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.ticketek.com.ar/hairspray/teatro-tronador",
-          "seller": "Ticketek",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1790608653571-d9v6mhhkwaf.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/hairspray",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "ticketek:HAIRS26TT",
-          "b": "cualpinta:hairspray",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.ticketek.com.ar:hairspray"
         }
       ]
     },
@@ -10915,7 +10401,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/ciro_g_s.png",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/ciro-y-los-persas/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -10940,7 +10426,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-ciro-y-los-persas-20462.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ciro-y-los-persas-20462",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -10990,7 +10476,7 @@
           "image_url": "https://prod-cms-static.ticketek.com.ar/sites/default/files/styles/artists_list_featured/public/el_plan_de_la_mariposa_-_ticketek.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.ticketek.com.ar/el-plan-de-la-mariposa/bendu-arena",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -11015,7 +10501,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-el-plan-de-la-mariposa-20461.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/el-plan-de-la-mariposa-20461",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11063,7 +10549,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-los-fabulosos-cadillacs-en-arena-mardel-plata-20077.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/los-fabulosos-cadillacs-en-arena-mardel-plata-20077",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -11088,7 +10574,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1785951797747-awai6933mjg.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/los-fabulosos-cadillacs-lfc-tour-2026",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -11113,7 +10599,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/b8713091-e9fb-4435-80e8-ddd9ddce2991.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/los-fabulosos-cadillacs-20261024-tspz",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11175,7 +10661,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-amniotika404-y-rachet-en-el-ciclo-el-rock-a-buen-puerto-20494.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/amniotika404-y-rachet-en-el-ciclo-el-rock-a-buen-puerto-20494",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "punto",
@@ -11200,7 +10686,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-ciclo-rock-a-buen-puerto-amniotika404-y-rachet-20469.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ciclo-rock-a-buen-puerto-amniotika404-y-rachet-20469",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "auditorium",
@@ -11225,7 +10711,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/amniotika404-y-rachet-en-el-ciclo-el-rock-buen-puerto.jpg.webp?itok=jqoEWDCt",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/amniotika404-y-rachet-en-el-ciclo-el-rock-buen-puerto",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -11250,7 +10736,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792595914870-uy6ps0w3at.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/amniotika-404-y-rachet-en-rock-a-buen-puerto",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11310,7 +10796,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-jam-a-tierra-20439.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/jam-a-tierra-20439",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -11335,7 +10821,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792595927867-s212hdcaibp.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/jam-a-tierra",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11377,7 +10863,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-tango-furia-20414.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/tango-furia-20414",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "colon",
@@ -11402,7 +10888,7 @@
           "image_url": null,
           "city": "Mar del Plata",
           "raw_url": "https://www.mardelplata.gob.ar/colonprogramacion",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11444,7 +10930,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-suona-ensamble-20472.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/suona-ensamble-20472",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -11469,7 +10955,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1792612895684-bd7guyqmbql.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/suona-ensamble",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11511,7 +10997,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-luciana-teixido-concierto-de-piano-y-voz-20473.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/luciana-teixido-concierto-de-piano-y-voz-20473",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -11536,7 +11022,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1792613515226-gzc9bpd3g0s.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/luciana-teixido",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11578,7 +11064,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2026/2026-ian-lucas-en-arena-mardel-plata-20483.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ian-lucas-en-arena-mardel-plata-20483",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -11603,7 +11089,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/0fa2deda-8227-4f1e-a0bd-b4e5f3b22214.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/ian-lucas-20261207-kpw0",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -11653,7 +11139,7 @@
           "image_url": "https://puntomardelplata.com/recursos/actividades/2027/2027-ricardo-montaner-el-ultimo-tour-20534.webp",
           "city": "Mar del Plata",
           "raw_url": "https://puntomardelplata.com/actividades/ricardo-montaner-el-ultimo-tour-20534",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -11678,326 +11164,13 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/b2e928b0-ef45-447f-922f-1e55cdcb9f1a.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/ricardo-montaner-20270326-r9we",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
           "a": "punto:20534",
           "b": "elevenflow:ricardo-montaner-20270326-r9we",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "teatro-auditorium",
-      "venue_name": "Teatro Auditorium",
-      "dates": [
-        "2026-10-24"
-      ],
-      "events": [
-        {
-          "source": "auditorium",
-          "source_event_id": "mar-del-plata-adora-llega-la-piazzolla",
-          "title": "\"Mar del Plata Adora\" llega a la Piazzolla",
-          "venue_name": "Teatro Auditorium",
-          "venue_raw": "Sala Astor Piazzolla",
-          "date_start": "2026-10-24",
-          "date_end": "2026-10-24",
-          "occurrences": [
-            "2026-10-24"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "19:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": null,
-          "seller": "Plateanet",
-          "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/mar-del-plata-adora-llega-la-piazzolla.jpg.webp?itok=Jvln1cU_",
-          "city": "Mar del Plata",
-          "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/mar-del-plata-adora-llega-la-piazzolla",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "mar-del-plata-adora",
-          "title": "Mar del Plata Adora",
-          "venue_name": "Sala Astor Piazzolla",
-          "venue_raw": "Sala Astor Piazzolla, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-24",
-          "date_end": "2026-10-24",
-          "occurrences": [
-            "2026-10-24"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "19:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 35000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35456?obra=MAR%20DEL%20PLATA%20ADORA&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592462371-dfq0rozdjmt.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/mar-del-plata-adora",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "auditorium:mar-del-plata-adora-llega-la-piazzolla",
-          "b": "cualpinta:mar-del-plata-adora",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "teatro-auditorium",
-      "venue_name": "Teatro Auditorium",
-      "dates": [
-        "2026-10-25"
-      ],
-      "events": [
-        {
-          "source": "auditorium",
-          "source_event_id": "proyectan-la-vida-es-asi-en-el-ciclo-cine-arte",
-          "title": "Proyectan “La vida es así” en el ciclo Cine Arte",
-          "venue_name": "Teatro Auditorium",
-          "venue_raw": "Sala Astor Piazzolla",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "16:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": null,
-          "seller": "Plateanet",
-          "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/proyectan-la-vida-es-asi-en-el-ciclo-cine-arte-auditorium.jpg.webp?itok=Yg8VmYw0",
-          "city": "Mar del Plata",
-          "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/proyectan-la-vida-es-asi-en-el-ciclo-cine-arte",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "la-vida-es-asi-369007",
-          "title": "La vida es así",
-          "venue_name": "Sala Astor Piazzolla",
-          "venue_raw": "Sala Astor Piazzolla, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "18:30",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 7000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35644?obra=CICLO%20CINE%20ARTE%20-%20LA%20VIDA%20ES%20ASI&paso=butacas&login=true",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592467593-pjfpy8dgay.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/la-vida-es-asi-369007",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "la-vida-es-asi",
-          "title": "La vida es así",
-          "venue_name": "Sala Astor Piazzolla",
-          "venue_raw": "Sala Astor Piazzolla, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "16:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 7000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35644?obra=CICLO%20CINE%20ARTE%20-%20LA%20VIDA%20ES%20ASI&paso=butacas&login=true",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592466281-3lf4goucdxq.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/la-vida-es-asi",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "cualpinta:la-vida-es-asi-369007",
-          "b": "cualpinta:la-vida-es-asi",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:35644"
-        },
-        {
-          "a": "auditorium:proyectan-la-vida-es-asi-en-el-ciclo-cine-arte",
-          "b": "cualpinta:la-vida-es-asi-369007",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        },
-        {
-          "a": "auditorium:proyectan-la-vida-es-asi-en-el-ciclo-cine-arte",
-          "b": "cualpinta:la-vida-es-asi",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        },
-        {
-          "a": "cualpinta:la-vida-es-asi-369007",
-          "b": "cualpinta:la-vida-es-asi",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:35644"
-        }
-      ]
-    },
-    {
-      "venue": "teatro-auditorium",
-      "venue_name": "Teatro Auditorium",
-      "dates": [
-        "2026-10-25"
-      ],
-      "events": [
-        {
-          "source": "auditorium",
-          "source_event_id": "se-presenta-el-espectaculo-infantil-mor-malhu",
-          "title": "Se presenta el espectáculo infantil Mor Malhu",
-          "venue_name": "Teatro Auditorium",
-          "venue_raw": "Sala Roberto J. Payró",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "17:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": null,
-          "seller": null,
-          "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/se-presenta-el-espectaculo-infantil-mor-malhu.jpg.webp?itok=bvVQlOff",
-          "city": "Mar del Plata",
-          "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/se-presenta-el-espectaculo-infantil-mor-malhu",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "mor-malhu",
-          "title": "Mor Malhu",
-          "venue_name": "Sala Roberto J. Payró",
-          "venue_raw": "Sala Roberto J. Payró, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "17:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 12000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35664?obra=MOR%20MALHU&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792599124846-8bi3897ns55.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/mor-malhu",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "auditorium:se-presenta-el-espectaculo-infantil-mor-malhu",
-          "b": "cualpinta:mor-malhu",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "teatro-auditorium",
-      "venue_name": "Teatro Auditorium",
-      "dates": [
-        "2026-10-25"
-      ],
-      "events": [
-        {
-          "source": "auditorium",
-          "source_event_id": "los-locos-del-radioteatro-presentan-juana-es-america",
-          "title": "Los locos del radioteatro presentan \"Juana es América\"",
-          "venue_name": "Teatro Auditorium",
-          "venue_raw": "Sala Gregorio Nachman",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "18:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": null,
-          "seller": null,
-          "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/los-locos-del-radioteatro-presentan-juana-es-america.jpg.webp?itok=vWP0d6B0",
-          "city": "Mar del Plata",
-          "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/los-locos-del-radioteatro-presentan-juana-es-america",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "juana-es-america",
-          "title": "Juana es América",
-          "venue_name": "Sala Gregorio Nachman",
-          "venue_raw": "Sala Gregorio Nachman, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "18:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 8000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35689?obra=LOS%20LOCOS%20DEL%20RADIOTEATRO%20-%20JUANA%20ES%20AMERICA&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592463766-mk2uoq3kcoc.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/juana-es-america",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "auditorium:los-locos-del-radioteatro-presentan-juana-es-america",
-          "b": "cualpinta:juana-es-america",
           "kind": "title_fuzzy",
           "score": 100.0
         }
@@ -12033,7 +11206,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/el-centro-de-dia-kumelen-presenta-un-viaje-en-el-tiempo.jpg.webp?itok=91HWvPBf",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/el-centro-de-dia-kumelen-presenta-un-viaje-en-el-tiempo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "cualpinta",
@@ -12058,7 +11231,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592468710-fvha4d2ishe.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/un-viaje-en-el-tiempo",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12066,73 +11239,6 @@
           "a": "auditorium:el-centro-de-dia-kumelen-presenta-un-viaje-en-el-tiempo",
           "b": "cualpinta:un-viaje-en-el-tiempo",
           "kind": "title_fuzzy",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "teatro-auditorium",
-      "venue_name": "Teatro Auditorium",
-      "dates": [
-        "2026-10-28"
-      ],
-      "events": [
-        {
-          "source": "auditorium",
-          "source_event_id": "marea-dance-se-presenta-en-el-teatro-auditorium",
-          "title": "Marea Dance se presenta en el Teatro Auditorium",
-          "venue_name": "Teatro Auditorium",
-          "venue_raw": "Sala Roberto J. Payró",
-          "date_start": "2026-10-28",
-          "date_end": "2026-10-28",
-          "occurrences": [
-            "2026-10-28"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "19:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": null,
-          "seller": "Plateanet",
-          "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/10/marea-dance-se-presenta-en-el-teatro-auditorium.jpg.webp?itok=khh4EV_T",
-          "city": "Mar del Plata",
-          "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/marea-dance-se-presenta-en-el-teatro-auditorium",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "marea-dance-presenta-un-mar-de-movimiento",
-          "title": "Marea Dance presenta \"Un mar de movimiento\"",
-          "venue_name": "Sala Roberto J. Payró",
-          "venue_raw": "Sala Roberto J. Payró, Bvd. Marítimo P. P. Ramos 2280",
-          "date_start": "2026-10-28",
-          "date_end": "2026-10-28",
-          "occurrences": [
-            "2026-10-28"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "19:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 10000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/35660?obra=MAREA%20DANCE&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792592464920-jgbxziwb8fl.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/marea-dance-presenta-un-mar-de-movimiento",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "auditorium:marea-dance-se-presenta-en-el-teatro-auditorium",
-          "b": "cualpinta:marea-dance-presenta-un-mar-de-movimiento",
-          "kind": "title_prefix",
           "score": 100.0
         }
       ]
@@ -12167,7 +11273,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-caballo-salvaje-nueve.jpg.webp?itok=AW_nE-CX",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-caballo-salvaje-nueve",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12192,7 +11298,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---LOS-RELAT.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-caballo-salvaje-nueve-20261106-cgnr",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12234,7 +11340,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-professora-de-frances.jpg.webp?itok=RU7XJ-0Z",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-professora-de-frances",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12259,7 +11365,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---SHAUN-EL.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-a-professora-de-frances-20261107-2tc0",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12301,7 +11407,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-belyeg.jpg.webp?itok=bu6Fpo7s",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-belyeg",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12326,7 +11432,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---TRULY-NAK.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-belyeg-20261108-zozk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12368,7 +11474,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-ink.jpg.webp?itok=0Ek7gMk7",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-ink",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12393,7 +11499,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---VIGILANTE.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-ink-20261109-65ja",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12435,7 +11541,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-2-valid-ids.jpg.webp?itok=3IRqnxt9",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-2-valid-ids",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12460,7 +11566,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---FJORD.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-2-valid-ids-20261110-ywwk",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12502,7 +11608,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/tigre-de-papel.jpg.webp?itok=wDmKNIJ9",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-tigre-de-papel",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12527,7 +11633,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---THE-NIGHT.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-tigre-de-papel-20261111-5n8i",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12569,7 +11675,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cine-la-violinista.jpg.webp?itok=IZOcOSGi",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-la-violinista",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12594,7 +11700,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---UN-PRECIO.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-la-violinista-20261112-zgzh",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12638,7 +11744,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/41deg-festival-internacional-de-cinewoman-unknown.jpg.webp?itok=r9ISmFNE",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cinewoman-unknown",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12663,7 +11769,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---VINDIMA.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-woman-unknown-20261113-ze58",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12707,7 +11813,7 @@
           "image_url": "https://teatroauditorium.gba.gob.ar/sites/default/files/styles/resumen_noticias/public/actividades/agenda-cartelera/2026/11/may-el-toukhy-seccion-luces-nordicas-genero-ficcion-duracion-124-min-pais-dinamarca-letonia-suecia.jpg.webp?itok=5UPSj8GD",
           "city": "Mar del Plata",
           "raw_url": "https://teatroauditorium.gba.gob.ar/actividades-agenda/41deg-festival-internacional-de-cine-borges-and-me",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12732,80 +11838,13 @@
           "image_url": "https://www.plateanet.com/img/imagenes/1440x500/41-FESTIVAL-INTERNACIONAL-DE-CINE---BORGES-AN.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/41-festival-internacional-de-cine-borges-and-me-20261114-ly6f",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
           "a": "auditorium:41deg-festival-internacional-de-cine-borges-and-me",
           "b": "elevenflow:41-festival-internacional-de-cine-borges-and-me-20261114-ly6f",
-          "kind": "title_fuzzy",
-          "score": 100.0
-        }
-      ]
-    },
-    {
-      "venue": "polideportivo-islas-malvinas",
-      "venue_name": "Polideportivo Islas Malvinas",
-      "dates": [
-        "2026-11-07"
-      ],
-      "events": [
-        {
-          "source": "tuentrada",
-          "source_event_id": "paren-la-mano-mdq",
-          "title": "PAREN LA MANO",
-          "venue_name": "Polideportivo Islas Malvinas",
-          "venue_raw": "Polideportivo Mar De Plata, Mar Del Plata",
-          "date_start": "2026-11-07",
-          "date_end": "2026-11-07",
-          "occurrences": [
-            "2026-11-07"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": null,
-          "price_text": null,
-          "price_min": null,
-          "currency": null,
-          "ticket_url": "https://www.tuentrada.com/paren-la-mano-mdq",
-          "seller": "TuEntrada",
-          "image_url": "https://bucket.tuentrada.com/cdn-cgi/image/width=590,height=548,format=auto,quality=85/bucket/events/paren-la-mano/paren-la-mano-image-main-1784649384.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.tuentrada.com/paren-la-mano-mdq",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "circus-paren-la-mano",
-          "title": "CIRCUS - Paren La Mano",
-          "venue_name": "POLIDEPORTIVO",
-          "venue_raw": "POLIDEPORTIVO, Av. Juan B. Justo 3525, B7602EHJ Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-11-07",
-          "date_end": "2026-11-07",
-          "occurrences": [
-            "2026-11-07"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 50000.0,
-          "currency": "ARS",
-          "ticket_url": "https://tuentrada.com/paren-la-mano-mdq",
-          "seller": "TuEntrada",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787664487518-st2ahzeljkn.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/circus-paren-la-mano",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "tuentrada:paren-la-mano-mdq",
-          "b": "cualpinta:circus-paren-la-mano",
           "kind": "title_fuzzy",
           "score": 100.0
         }
@@ -12841,7 +11880,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1792599152309-4q968q1i7pf.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/sol-feige-grandes-canciones-de-los-80",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12866,7 +11905,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/7f995c08-5933-4b36-870a-a891606e940f.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/sol-feige-a-night-of-80s-classics-en-mar-del-plata-24-de-octubre-20261024-p6q3",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12908,7 +11947,7 @@
           "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1788286445135-ewghvbt0pma.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/felicitas-colina-juana-rozas",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -12933,7 +11972,7 @@
           "image_url": "https://nxfwjuobcaycszirliqr.supabase.co/storage/v1/object/public/imported-events/agendade/e2e991c1-13ad-4f3f-8f0d-9fd5bf4741ed.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/feli-colina-juana-rozas-20261024-i7ht",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
@@ -12953,56 +11992,6 @@
         "2026-10-25"
       ],
       "events": [
-        {
-          "source": "cualpinta",
-          "source_event_id": "knitting-peace",
-          "title": "Knitting Peace",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-10-24",
-          "date_end": "2026-10-24",
-          "occurrences": [
-            "2026-10-24"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "21:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 40000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34743?obra=CIRKUS%20CIRKOR%20PRESENTA%20-%20KNITTING%20PEACE&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/ingesta/1786128079908-v59vh7iuxm.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/knitting-peace",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "bajo-terapia-41f627",
-          "title": "CIRKUS CIRKOR",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-10-25",
-          "date_end": "2026-10-25",
-          "occurrences": [
-            "2026-10-25"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 40000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34743?obra=CIRKUS%20CIRKOR%20PRESENTA%20-%20KNITTING%20PEACE&paso=inicio",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787334682359-hoc8b2ncru.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/bajo-terapia-41f627",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
         {
           "source": "elevenflow",
           "source_event_id": "cirkus-cirkor-presenta-knitting-peace-20261024-hxxz",
@@ -13026,7 +12015,7 @@
           "image_url": "https://www.plateanet.com/img/imagenes/220x220/CIRKUS-CIRKOR-PRESENTA---KNITTING-PEACE.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/cirkus-cirkor-presenta-knitting-peace-20261024-hxxz",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         },
         {
           "source": "elevenflow",
@@ -13051,113 +12040,16 @@
           "image_url": "https://www.plateanet.com/img/imagenes/220x220/CIRKUS-CIRKOR-PRESENTA---KNITTING-PEACE.jpg",
           "city": "Mar del Plata",
           "raw_url": "https://elevenflow.app/events/cirkus-cirkor-presenta-knitting-peace-20261025-on5f",
-          "collected_at": "2026-10-24T14:49:57+00:00"
+          "collected_at": "2026-10-24T15:33:06+00:00"
         }
       ],
       "pairs": [
         {
-          "a": "cualpinta:knitting-peace",
-          "b": "cualpinta:bajo-terapia-41f627",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34743"
-        },
-        {
-          "a": "cualpinta:knitting-peace",
-          "b": "elevenflow:cirkus-cirkor-presenta-knitting-peace-20261024-hxxz",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34743"
-        },
-        {
-          "a": "cualpinta:knitting-peace",
+          "a": "elevenflow:cirkus-cirkor-presenta-knitting-peace-20261024-hxxz",
           "b": "elevenflow:cirkus-cirkor-presenta-knitting-peace-20261025-on5f",
           "kind": "ticket_slug",
           "score": 100.0,
           "slug": "www.plateanet.com:34743"
-        },
-        {
-          "a": "cualpinta:knitting-peace",
-          "b": "elevenflow:cirkus-cirkor-presenta-knitting-peace-20261024-hxxz",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34743"
-        },
-        {
-          "a": "cualpinta:bajo-terapia-41f627",
-          "b": "elevenflow:cirkus-cirkor-presenta-knitting-peace-20261025-on5f",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34743"
-        }
-      ]
-    },
-    {
-      "venue": "radio-city",
-      "venue_name": "Centro de Arte Radio City - Roxy - Melany",
-      "dates": [
-        "2026-10-31",
-        "2026-11-01"
-      ],
-      "events": [
-        {
-          "source": "cualpinta",
-          "source_event_id": "https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je",
-          "title": "EL JEFE DEL JEFE",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-10-31",
-          "date_end": "2026-10-31",
-          "occurrences": [
-            "2026-10-31"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 50000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34808?obra=EL%20JEFE%20DEL%20JEFE..&paso=sectores",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787331358428-6q5gpe4nj62.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        },
-        {
-          "source": "cualpinta",
-          "source_event_id": "https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je-ab261f",
-          "title": "EL JEFE DEL JEFE",
-          "venue_name": "Teatro Roxy Radio City",
-          "venue_raw": "Teatro Roxy Radio City, San Luis 1750, B7600 Mar del Plata, Provincia de Buenos Aires",
-          "date_start": "2026-11-01",
-          "date_end": "2026-11-01",
-          "occurrences": [
-            "2026-11-01"
-          ],
-          "recurrence_unknown": false,
-          "multi_date_incomplete": false,
-          "time": "20:00",
-          "is_free": false,
-          "price_text": null,
-          "price_min": 50000.0,
-          "currency": "ARS",
-          "ticket_url": "https://www.plateanet.com/obra/34808?obra=EL%20JEFE%20DEL%20JEFE..&paso=sectores",
-          "seller": "Plateanet",
-          "image_url": "https://tevemsqyanpeztfjfqvx.supabase.co/storage/v1/object/public/eventos-imagenes/1787331358428-6q5gpe4nj62.jpg",
-          "city": "Mar del Plata",
-          "raw_url": "https://www.cualpinta.com/mar-del-plata/eventos/https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je-ab261f",
-          "collected_at": "2026-10-24T14:49:57+00:00"
-        }
-      ],
-      "pairs": [
-        {
-          "a": "cualpinta:https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je",
-          "b": "cualpinta:https-www-plateanet-com-obra-34808-obra-el-20jefe-20del-20je-ab261f",
-          "kind": "ticket_slug",
-          "score": 100.0,
-          "slug": "www.plateanet.com:34808"
         }
       ]
     }
