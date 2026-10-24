@@ -16,6 +16,8 @@ SELLERS = (
     ("tuentrada.com", "TuEntrada"),
     ("unica-cartelera.com.ar", "Única Cartelera"),
     ("passline.com", "Passline"),
+    ("getdogma.app", "Dogma"),
+    ("alpogo.com", "Alpogo"),
 )
 
 

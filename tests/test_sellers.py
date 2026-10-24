@@ -14,6 +14,16 @@ def test_maps_subdomains_to_their_parent():
     assert seller_from_url("https://www.passline.com/eventos/x") == "Passline"
 
 
+def test_maps_the_wave4_sellers():
+    assert seller_from_url("https://getdogma.app/web/event/QgFh7Ao4G7F5") == "Dogma"
+    assert seller_from_url("https://alpogo.com/evento/john-5-en-mar-del-plata-26982") == "Alpogo"
+
+
+def test_bandsintown_is_an_info_page_not_a_seller():
+    # Que Hacemos links Bandsintown event pages, but they sell no tickets.
+    assert seller_from_url("https://www.bandsintown.com/e/109045198-joystick") is None
+
+
 def test_unknown_or_missing_host_returns_none():
     assert seller_from_url("https://example.com/x") is None
     assert seller_from_url("") is None
