@@ -1,6 +1,7 @@
 """Tests for the robust pipeline runner (partial-failure policy, outputs)."""
 
 import json
+import threading
 
 import run_pipeline
 from lib.schema import Event
@@ -87,3 +88,35 @@ class TestWriteJsonAtomic:
         payload = json.loads(path.read_text(encoding="utf-8"))
         assert payload["title"].startswith("bad ")
         assert not list(tmp_path.glob("*.tmp"))
+
+
+class TestCollectConcurrency:
+    def test_modules_collect_concurrently(self):
+        barrier = threading.Barrier(2, timeout=3)
+
+        class Slow:
+            def __init__(self, name):
+                self.name = name
+
+            def collect(self):
+                barrier.wait()
+                return [{"source": self.name}]
+
+        raw, errors = run_pipeline._collect_all((("a", Slow("a")), ("b", Slow("b"))))
+
+        assert errors == {}
+        assert list(raw) == ["a", "b"]
+
+    def test_one_failure_does_not_hide_the_others(self):
+        class Good:
+            def collect(self):
+                return [{"source": "good"}]
+
+        class Bad:
+            def collect(self):
+                raise RuntimeError("boom")
+
+        raw, errors = run_pipeline._collect_all((("good", Good()), ("bad", Bad())))
+
+        assert list(raw) == ["good"]
+        assert set(errors) == {"bad"}

@@ -11,6 +11,7 @@ data/last_run.json with the run summary.
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -66,15 +67,27 @@ def _write_json_atomic(path, payload):
 
 
 def _collect_all(modules):
-    """Run every collector; keep going so one failure does not hide others."""
+    """Run every collector concurrently; keep going so one failure does not hide others.
+
+    Sources live on different domains and each collector keeps its own ~1 req/s
+    pacing, so overlapping them cuts the wall time to the slowest source. The
+    returned mapping preserves MODULES order for deterministic outputs.
+    """
+    modules = tuple(modules)
     raw_by_module = {}
     errors = {}
-    for name, module in modules:
-        try:
-            raw_by_module[name] = module.collect()
-        except Exception as exc:  # network, HTTP, decode or parse errors
-            errors[name] = exc
-    return raw_by_module, errors
+    if not modules:
+        return raw_by_module, errors
+    with ThreadPoolExecutor(max_workers=len(modules)) as pool:
+        futures = {pool.submit(module.collect): name for name, module in modules}
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                raw_by_module[name] = future.result()
+            except Exception as exc:  # network, HTTP, decode or parse errors
+                errors[name] = exc
+    ordered = {name: raw_by_module[name] for name, _ in modules if name in raw_by_module}
+    return ordered, errors
 
 
 def _normalize_all(modules, raw_by_module):
