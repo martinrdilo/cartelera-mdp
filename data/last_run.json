@@ -1,6 +1,6 @@
 {
-  "finished_at": "2026-10-24T16:10:19+00:00",
-  "duration_seconds": 363.0,
+  "finished_at": "2026-10-24T18:58:11+00:00",
+  "duration_seconds": 395.6,
   "sources": {
     "articket": {
       "raw": 63,
@@ -13,6 +13,10 @@
     "bombo": {
       "raw": 7,
       "normalized": 7
+    },
+    "chauvin": {
+      "raw": 12,
+      "normalized": 12
     },
     "clubtri": {
       "raw": 21,
@@ -43,8 +47,12 @@
       "normalized": 4
     },
     "punto": {
-      "raw": 78,
-      "normalized": 78
+      "raw": 79,
+      "normalized": 79
+    },
+    "quehacemos": {
+      "raw": 133,
+      "normalized": 133
     },
     "ticketek": {
       "raw": 9,
@@ -60,13 +68,13 @@
     }
   },
   "totals": {
-    "raw": 480,
-    "normalized": 480,
-    "unique": 272
+    "raw": 626,
+    "normalized": 626,
+    "unique": 313
   },
   "duplicates": {
-    "clusters": 117,
-    "events_in_clusters": 325
+    "clusters": 141,
+    "events_in_clusters": 454
   },
   "occurrences": {
     "multi_date_events": 16,
@@ -75,7 +83,7 @@
     "enriched_from_detail": 2
   },
   "venues": {
-    "resolved": 474,
-    "unknown": 6
+    "resolved": 612,
+    "unknown": 14
   }
 }

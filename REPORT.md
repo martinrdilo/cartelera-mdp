@@ -193,3 +193,38 @@ Corrida real del 2026-10-24T16:10Z, end-to-end con `run_pipeline.py` (363 s; los
 - **Venues:** `data/venues.json` pasó de 41 a 73 venues. Se sumaron alias para Roxy Radio City, Brewhouse Puerto, Auditorium, Teatro Vorterix, Quba cafe del mar, Sala Café Teatral Emilio Alfaro, Foyer, POLIDEPORTIVO, Gran Hotel Provincial, Mute Club/Ruta 11 Alfar y The County ("Buenos Aires 7600"), más 20 venues nuevos (Antares, Brewhouse Olavarria, Nevermind, Club Méle, Bohr, Hoffen, Hops, Glow, Estelares La Perla, Heller, Club Einstein, hoteles, Dickens, Sarasanegro, Plaza Mitre, Bahia Varese, etc.). Resolución: 474/480; los 6 sin resolver son direcciones sueltas de Cual Pinta, el nombre de productora de Bombo (`Antesala`) y el typo "Mar de Plata" de Eleven Flow.
 - **Sitio:** build con `--today 2026-10-24`: **241 filas próximas, 31 del finde, 50 venues, 0 tripletas duplicadas**; las etiquetas Cual Pinta, Eleven Flow y Passline aparecen en la página.
 - **Pendiente:** Cual Pinta agrega ~73 fichas por corrida; con los collectors en paralelo el pipeline quedó en 264-363 s según la red (antes 813 s secuencial). Passline depende de una lista curada de venues. Plateanet sigue necesitando acuerdo o carga manual.
+
+## 9. Ola 4 de fuentes (v6)
+
+Corrida real del 2026-10-24T18:58Z, end-to-end con `run_pipeline.py` (**395,6 s**; los 16 collectors corren en paralelo). Fetch real, solo lectura. La ola suma dos fuentes: **Qué Hacemos** (metabuscador con API abierta) y **Chauvin** (plataforma Fanz).
+
+| Fuente | Crudos | Normalizados | Notas |
+|---|---:|---:|---|
+| Municipal (EMTUR) | 73 | 73 | Música + festivales |
+| Articket | 63 | 63 | Vendedor dominante |
+| CultuTickets | 19 | 19 | Brew House |
+| Club TRI | 21 | 21 | Detalle de sala |
+| Venti | 12 | 12 | Quba, Sheraton/La Vin, Zwan, Casinos |
+| Ticketek | 9 | 9 | Bendu Arena, Teatro Tronador, Radio City |
+| Bombo | 7 | 7 | Mute Club de Mar y The County |
+| Punto Mar del Plata | 78 | 78 | Agenda local con link de venta |
+| Auditorium | 39 | 39 | 7 páginas + ficha por actividad |
+| Teatro Colón | 28 | 28 | Página mensual de octubre |
+| TuEntrada | 1 | 1 | PAREN LA MANO en el Polideportivo |
+| Cual Pinta | 73 | 73 | Sitemap + ficha JSON-LD |
+| Eleven Flow | 53 | 53 | Listado + `MusicEvent` JSON-LD |
+| Passline | 4 | 4 | Lista curada de venues |
+| **Qué Hacemos** | **133** | **133** | **API abierta por ventanas de fecha; 94 con precio y 133 con link; puente a Plateanet/Dogma/Alpogo/Bandsintown** |
+| **Chauvin (Fanz)** | **12** | **12** | **`__NEXT_DATA__` + JSON-LD; fechas UTC → ART** |
+| **Total** | **626** | **626** | **313 únicos post-dedupe** |
+
+- **Qué Hacemos:** el descubrimiento va por `GET /api/v1/events/?province=Buenos Aires&date_from=...&date_to=...&limit=1000` en **ventanas de 4 días** sobre un horizonte de 180 días (45 requests). El endpoint no tiene filtro de ciudad ni paginación: la ciudad se filtra en el cliente y, si una ventana toca el tope de 1000, se parte recursivamente por fecha. El registro completo ya trae `price`, `link`, `source`, `venue` y `address`, así que **no hay request por evento**. Filtro music-first: se conservan `recital`, `festival` y `electronica`; los `otro` entran solo si el link es de un vendedor musical (`passline.com`, `getdogma.app`, `alpogo.com`). Resultado: recital 85, electrónica 18, festival 18, otro 12. La fuente **no publica hora** (`time` queda nulo) y `ticket_url` viene siempre nulo: el link de venta se deriva de `link` y el vendedor del host. Aporta **15 eventos de vendedores que no tocamos** (Plateanet 2, Dogma 6, Bandsintown 4, Alpogo 3) más 5 de Passline que las páginas de venue no exponen.
+- **Corrección de rendimiento:** la primera versión pedía el detalle por evento (`/events/{id}`). La latencia medida fue 0,1–20 s por request y la corrida se fue a **577 s**. Con ventanas de fecha el mismo inventario entra en 45 requests y la corrida bajó a **395,6 s**.
+- **Chauvin (Fanz):** el home server-rendered trae `__NEXT_DATA__.props.pageProps.events` con el inventario completo del tenant (12 eventos) en un solo request. `Dates[].start` viene en **UTC** y se convierte a ART (-03): SUONA `2026-10-31T00:00:00Z` es el viernes 30/10 a las 21:00. `cheapestVisibleTicket` es nulo en los 12, así que el precio sale del JSON-LD `Event.offers.price` de la ficha (12 requests). 6 de los 12 ya estaban cubiertos por Punto/Cual Pinta/municipal/Articket; los otros 6 son nuevos (4 musicales: Cabaret Concert, Soy Sofía, Festival de Voces Creativas, Joystik).
+- **Passline (acompañante descartado):** ampliar la lista de venues no aporta. Las páginas `/venue/<slug>` sólo enlazan **4** eventos hoy (Roomie 2, Zwan 1, Jones 1), los marginales existen como ficha pero no están enlazados desde ningún venue, `sitemap.xml` no lista eventos y `/eventos` sigue detrás de Queue-it. Esos eventos entran igual por Qué Hacemos con `seller=Passline`.
+- **Descartados en el spike:** **ticketmas.ar** devuelve 429 + Vercel Security Checkpoint en home, `robots.txt` y ficha (no se evade); sus shows ya entran por Club TRI, Cual Pinta y Punto. **Abbey Road** tiene 8 eventos vigentes y **0 marginales**. **Séptimo Fuego** (8 marginales) y **Cuatro Elementos** (10 eventos) son Fanz pero casi todo teatro/infantil: fuera de scope. **Fever** tiene 6 eventos reales, 3 marginales y 2 ya están en Qué Hacemos; aporta 1 solo (The Jazz Room Nueva Orleans).
+- **Dedupe:** 141 clusters (454 eventos involucrados → 313 únicos). Los 9 clusters del festival ahora unen **tres** filas (Auditorium + Eleven Flow + Qué Hacemos) sin mezclar películas distintas; el único cluster same-source es Solomun (Bandsintown + Dogma, mismo día y sala en Mute). Qué Hacemos participa en 92 clusters.
+- **Venues:** `data/venues.json` pasó de 73 a **79** venues. Se sumaron `Color Humano`, `Baum Playa Grande`, `Stadium Complejo La Normandina`, `Teatro El Telón`, `Teatro Victoria` y `La Carpa`, más los alias `Glow`, `Alfar` y `Casino Central`. Resolución: **612/626**; los 14 sin resolver son nombres de ciudad de Bandsintown ("Mar de Plata", "Mar del Plata"), zonas ("Playa Grande"), la productora de Bombo (`Antesala`), una dirección suelta de Cual Pinta ("Av. Luro 2451") y un evento sin venue.
+- **Sitio:** build con `--today 2026-10-24`: **282 filas próximas, 36 del finde, 61 venues, 0 tripletas duplicadas**; las etiquetas Qué Hacemos y Chauvin aparecen en la página.
+- **Suite:** **547 tests** en verde (487 de la ola 3 + 15 de Qué Hacemos + 39 de Fanz + 2 de sellers + 4 de aceptación de la ola 4). Los tests de aceptación de las olas 2 y 3 se volvieron agnósticos a los totales del snapshot (consistencia interna + invariantes estructurales) para que cada ola no los rompa.
+- **Pendiente:** Qué Hacemos no expone hora ni link de compra directo; el `source` del evento queda como `quehacemos` aunque el vendedor real sea Plateanet/Dogma/etc. (el `seller` sí es correcto). Fanz queda con un solo tenant curado; sumar Séptimo Fuego o Cuatro Elementos es una línea, pero hoy son teatro/infantil.

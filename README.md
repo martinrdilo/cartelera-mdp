@@ -1,6 +1,6 @@
 # cartelera-mdp — pipeline de extracción
 
-Pipeline local que extrae eventos musicales reales de Mar del Plata desde 11 feeds (agenda municipal EMTUR, Articket, CultuTickets, Club TRI, Venti, Ticketek, Bombo, Punto Mar del Plata, Auditorium, Teatro Colón y TuEntrada), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto, y alimenta el sitio estático de la Fase 2 (`build_site.py`). Resultados: ver `REPORT.md`.
+Pipeline local que extrae eventos musicales reales de Mar del Plata desde 16 fuentes (agenda municipal EMTUR, Articket, CultuTickets, Club TRI, Venti, Ticketek, Bombo, Punto Mar del Plata, Auditorium, Teatro Colón, TuEntrada, Cual Pinta, Eleven Flow, Passline, Qué Hacemos y Chauvin), los normaliza a un esquema común, expande los eventos multi-fecha y detecta duplicados entre fuentes usando un canónico de venues. Sirve para medir cobertura, calidad de datos y esfuerzo de dedupe antes de invertir en producto, y alimenta el sitio estático de la Fase 2 (`build_site.py`). Resultados: ver `REPORT.md`.
 
 ## Camino rápido
 
@@ -85,6 +85,8 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 | `collectors/cualpinta.py` | Agenda de Cual Pinta: enumeración por `sitemap.xml` (144 fichas), JSON-LD `Event` en la ficha, categoría por chip y link de venta externo. |
 | `collectors/elevenflow.py` | Agenda de Eleven Flow: listado server-rendered (53 shows) + `MusicEvent` JSON-LD en la ficha; descarta `endDate` anterior al inicio. |
 | `collectors/passline.py` | Vendedor Passline: lista curada de venues MDP (Roomie, Zwan, Jones, La Caseta, Villa Victoria), fechas en español y precio es-AR desde la tabla de tickets. |
+| `collectors/quehacemos.py` | Metabuscador Qué Hacemos: ventanas de 4 días sobre la API abierta (`province=Buenos Aires`), filtro de ciudad en cliente, split recursivo si una ventana toca el tope de 1000 y filtro music-first por `event_type` + whitelist de vendedores para `otro`. |
+| `collectors/fanz.py` | Plataforma Fanz (white-label): inventario completo del tenant en `__NEXT_DATA__`, fechas UTC → ART y precio desde el JSON-LD de la ficha. Hoy un tenant: Chauvin. |
 | `lib/schema.py` | `Event`: esquema normalizado único (fuente, título, lugar, fechas ISO, `occurrences`, hora, precio, link de compra, etc.). |
 | `lib/dates.py` | Parsing de `dd/mm/yyyy` y fechas en español sin año; extracción de hora. |
 | `lib/sellers.py` | Mapa host → vendedor compartido por los collectors que ven links de venta (Articket, Plateanet, Passline, etc.). |
@@ -105,5 +107,5 @@ Cada collector expone `collect() -> list[dict]` (crudo) y `normalize(records) ->
 - Solo lectura sobre sitios externos; UA `cartelera-mdp-pipeline/0.2 (local research)` y ~1 req/s.
 - `.venv/`, `data/raw/` y `logs/` no se versionan; los JSON normalizados/dedupeados y `data/last_run.json` sí, como evidencia.
 - **Dedupe:** un cluster por venue canónico + intersección de fechas + slug o título (fuzzy, contención de tokens y prefijo de artista). El sitio aplica además un guard final: mismo venue + título normalizado + fecha compartida nunca se renderiza dos veces.
-- **Fuentes de la ola 1:** Venti, Ticketek, Bombo y Punto MDP. **Ola 2:** Auditorium, Teatro Colón y TuEntrada. **Ola 3:** Cual Pinta, Eleven Flow y Passline. Plateanet sigue fuera de alcance directo (Incapsula/hCaptcha): su inventario entra solo por los links de Cual Pinta y Eleven Flow.
+- **Fuentes de la ola 1:** Venti, Ticketek, Bombo y Punto MDP. **Ola 2:** Auditorium, Teatro Colón y TuEntrada. **Ola 3:** Cual Pinta, Eleven Flow y Passline. **Ola 4:** Qué Hacemos y Chauvin (Fanz). Plateanet sigue fuera de alcance directo (Incapsula/hCaptcha): su inventario entra por los links de Cual Pinta, Eleven Flow y Qué Hacemos, que es la única vía abierta observada a sus fichas.
 - Decisiones de tuning y limitaciones conocidas: ver `REPORT.md`.
