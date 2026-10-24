@@ -1,6 +1,6 @@
 {
-  "finished_at": "2026-10-24T14:00:08+00:00",
-  "duration_seconds": 772.1,
+  "finished_at": "2026-10-24T14:50:05+00:00",
+  "duration_seconds": 288.9,
   "sources": {
     "articket": {
       "raw": 63,
@@ -23,8 +23,8 @@
       "normalized": 28
     },
     "cualpinta": {
-      "raw": 144,
-      "normalized": 144
+      "raw": 121,
+      "normalized": 121
     },
     "cultutickets": {
       "raw": 19,
@@ -60,22 +60,22 @@
     }
   },
   "totals": {
-    "raw": 550,
-    "normalized": 550,
-    "unique": 318
+    "raw": 527,
+    "normalized": 527,
+    "unique": 300
   },
   "duplicates": {
-    "clusters": 130,
-    "events_in_clusters": 362
+    "clusters": 126,
+    "events_in_clusters": 353
   },
   "occurrences": {
     "multi_date_events": 16,
-    "recurrence_unknown": 19,
+    "recurrence_unknown": 13,
     "multi_date_incomplete": 0,
     "enriched_from_detail": 2
   },
   "venues": {
-    "resolved": 541,
-    "unknown": 9
+    "resolved": 520,
+    "unknown": 7
   }
 }

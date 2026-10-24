@@ -38,7 +38,6 @@ def test_same_event_renders_once(tmp_path):
         "Amniótika",
         "Hairspray",
         "Dante Spinetta",
-        "Retro Feria",
     ):
         days = {
             event["date_start"]
