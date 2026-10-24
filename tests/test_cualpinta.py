@@ -121,7 +121,11 @@ def cualpinta_source(monkeypatch):
     def fetch_detail(url):
         calls["details"].append(url)
         slug = url.rstrip("/").rsplit("/", 1)[-1]
-        return cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+        record = cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+        # Keep the collection tests about collection mechanics; the category
+        # filter has its own tests below.
+        record["category"] = "Recital"
+        return record
 
     monkeypatch.setattr(cualpinta, "REQUEST_DELAY", 0)
     monkeypatch.setattr(cualpinta, "_fetch_sitemap", fetch_sitemap)
@@ -309,8 +313,7 @@ class TestCollect:
         def fetch_detail(url):
             slug = url.rstrip("/").rsplit("/", 1)[-1]
             record = cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
-            if url == blocked_url:
-                record["category"] = "Deportes"
+            record["category"] = "Deportes" if url == blocked_url else "Recital"
             return record
 
         monkeypatch.setattr(cualpinta, "_fetch_detail", fetch_detail)
@@ -326,6 +329,7 @@ class TestCollect:
         def fetch_detail(url):
             slug = url.rstrip("/").rsplit("/", 1)[-1]
             record = cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+            record["category"] = "Recital"
             if url == cancelled_url:
                 record["event_status"] = "https://schema.org/EventCancelled"
             return record
@@ -344,7 +348,9 @@ class TestCollect:
             if url == failing_url:
                 raise requests.RequestException("boom")
             slug = url.rstrip("/").rsplit("/", 1)[-1]
-            return cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+            record = cualpinta.parse_detail(_load_html(DETAIL_FIXTURES[slug]))
+            record["category"] = "Recital"
+            return record
 
         monkeypatch.setattr(cualpinta, "_fetch_detail", fetch_detail)
 
@@ -508,3 +514,8 @@ class TestNormalize:
 
     def test_empty_input_returns_no_events(self):
         assert cualpinta.normalize([]) == []
+
+
+def test_blocked_categories_cover_non_music_shows():
+    for category in ("Cine", "Festival de cine", "Preestreno", "Stand-up", "Danza", "Teatro", "Teatro infantil"):
+        assert category in cualpinta.BLOCKED_CATEGORIES

@@ -52,6 +52,13 @@ BLOCKED_CATEGORIES = frozenset(
         "Encuentro comunitario",
         "Social",
         "Playa & Outdoor",
+        "Cine",
+        "Festival de cine",
+        "Preestreno",
+        "Stand-up",
+        "Danza",
+        "Teatro",
+        "Teatro infantil",
     }
 )
 
