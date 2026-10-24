@@ -526,5 +526,7 @@ def test_blocked_categories_cover_the_product_exclusions():
         "Teatro",
         "Teatro infantil",
         "Fiesta",
+        "Fiesta de disfraces",
+        "Halloween",
     ):
         assert category in cualpinta.BLOCKED_CATEGORIES

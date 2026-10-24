@@ -60,6 +60,8 @@ BLOCKED_CATEGORIES = frozenset(
         "Teatro",
         "Teatro infantil",
         "Fiesta",
+        "Fiesta de disfraces",
+        "Halloween",
     }
 )
 
