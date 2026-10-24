@@ -65,8 +65,16 @@ SELLER_SOURCES = (
     "ticketek",
     "bombo",
     "tuentrada",
+    "passline",
 )
-SOURCE_ORDER = SELLER_SOURCES + ("auditorium", "colon", "punto", "municipal")
+SOURCE_ORDER = SELLER_SOURCES + (
+    "auditorium",
+    "colon",
+    "punto",
+    "cualpinta",
+    "elevenflow",
+    "municipal",
+)
 
 WEEKDAY_ABBR = ("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -524,6 +532,9 @@ SOURCE_LABELS = {
     "auditorium": "Auditorium",
     "colon": "Teatro Colón",
     "tuentrada": "TuEntrada",
+    "cualpinta": "Cual Pinta",
+    "elevenflow": "Eleven Flow",
+    "passline": "Passline",
 }
 THUMB_VARIANTS = 4
 

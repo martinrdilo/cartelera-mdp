@@ -19,8 +19,11 @@ from collectors import (
     bombo,
     clubtri,
     colon,
+    cualpinta,
+    elevenflow,
     muchticket,
     municipal,
+    passline,
     punto,
     ticketek,
     tuentrada,
@@ -42,6 +45,9 @@ MODULES = (
     ("auditorium", auditorium),
     ("colon", colon),
     ("tuentrada", tuentrada),
+    ("cualpinta", cualpinta),
+    ("elevenflow", elevenflow),
+    ("passline", passline),
 )
 
 

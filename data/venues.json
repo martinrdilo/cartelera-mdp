@@ -16,7 +16,8 @@
       "name": "Vorterix",
       "aliases": [
         "Vorterix",
-        "Vorterix Mar del Plata"
+        "Vorterix Mar del Plata",
+        "Teatro Vorterix"
       ],
       "address": "Diag. Pueyrredón 3338"
     },
@@ -25,7 +26,10 @@
       "name": "Ciudad Cultural Brew House",
       "aliases": [
         "Brew House",
-        "Ciudad Cultural Brew House"
+        "Ciudad Cultural Brew House",
+        "BrewHouse",
+        "Ciudad Cultural Brewhouse Puerto",
+        "Brewhouse Puerto"
       ],
       "address": "Diag. Garibaldi 4830"
     },
@@ -67,7 +71,10 @@
         "Radio City",
         "Teatro Radio City",
         "Teatro Roxy",
-        "Roxy"
+        "Roxy",
+        "Teatro Roxy Radio City",
+        "Roxy Radio City",
+        "Teatro Roxy - Radio City"
       ],
       "address": "San Luis 1752"
     },
@@ -134,7 +141,8 @@
         "Polideportivo Islas Malvinas",
         "Estadio Polideportivo Islas Malvinas",
         "Polideportivo Mar De Plata",
-        "Polideportivo Mar del Plata"
+        "Polideportivo Mar del Plata",
+        "POLIDEPORTIVO"
       ],
       "address": "Av. Juan B. Justo 3600"
     },
@@ -182,7 +190,10 @@
         "Sala Roberto J. Payró",
         "Sala Gregorio Nachman",
         "Sala Astor Piazzolla",
-        "Café Teatral Emilio Alfaro"
+        "Café Teatral Emilio Alfaro",
+        "Auditorium",
+        "Sala Café Teatral Emilio Alfaro",
+        "Foyer"
       ],
       "address": "Bv. Marítimo Patricio Peralta Ramos 2282"
     },
@@ -248,7 +259,8 @@
       "id": "nh-gran-hotel-provincial",
       "name": "NH Gran Hotel Provincial",
       "aliases": [
-        "NH Gran Hotel Provincial"
+        "NH Gran Hotel Provincial",
+        "Gran Hotel Provincial"
       ]
     },
     {
@@ -288,7 +300,10 @@
         "Mute Club de Mar",
         "MUTE",
         "Mute",
-        "Mute, Club de Mar"
+        "Mute, Club de Mar",
+        "Mute Club",
+        "Mute Club, RP11",
+        "Ruta 11 Alfar"
       ],
       "address": "Ruta 11, Alfar"
     },
@@ -298,7 +313,8 @@
       "aliases": [
         "The County Music",
         "The County",
-        "The County Music en Jones"
+        "The County Music en Jones",
+        "Buenos Aires 7600"
       ]
     },
     {
@@ -307,7 +323,8 @@
       "aliases": [
         "Quba",
         "Quba, café de mar",
-        "Club Quba"
+        "Club Quba",
+        "Quba cafe del mar"
       ],
       "address": "Escollera Norte"
     },
@@ -367,6 +384,277 @@
         "El Séptimo Fuego",
         "El Septimo Fuego"
       ]
+    },
+    {
+      "id": "roomie-club",
+      "name": "Roomie Club",
+      "aliases": [
+        "Roomie Club",
+        "ROOMIE CLUB",
+        "Roomie"
+      ],
+      "address": "Av. Colón y el Mar"
+    },
+    {
+      "id": "mr-jones",
+      "name": "Mr. Jones",
+      "aliases": [
+        "Mr. Jones",
+        "Mr Jones",
+        "Jones"
+      ],
+      "address": ""
+    },
+    {
+      "id": "bajo-tierra",
+      "name": "Bajo Tierra",
+      "aliases": [
+        "Bajo Tierra",
+        "Bajo Tierra Club de Jazz"
+      ],
+      "address": "Carlos Pellegrini 2575"
+    },
+    {
+      "id": "club-alsina",
+      "name": "Club Alsina",
+      "aliases": [
+        "Club Alsina"
+      ],
+      "address": "Gral. Roca 1354"
+    },
+    {
+      "id": "paseo-aldrey",
+      "name": "Centro Cultural Paseo Aldrey",
+      "aliases": [
+        "Centro Cultural Paseo Aldrey",
+        "Paseo Aldrey"
+      ],
+      "address": "Sarmiento 2601"
+    },
+    {
+      "id": "retro-feria-mdq",
+      "name": "Retro Feria MDQ",
+      "aliases": [
+        "Retro Feria MDQ"
+      ],
+      "address": "Maipú 4020"
+    },
+    {
+      "id": "calamar-loco",
+      "name": "Calamar Loco PG",
+      "aliases": [
+        "Calamar Loco PG",
+        "Calamar Loco"
+      ],
+      "address": "Av. Patricio Peralta Ramos 5050"
+    },
+    {
+      "id": "vista-norte",
+      "name": "Vista Norte Resto Mirador",
+      "aliases": [
+        "Vista Norte Resto Mirador"
+      ],
+      "address": "Av. Félix U. Camet 1629"
+    },
+    {
+      "id": "el-argentino-bar",
+      "name": "El Argentino Bar",
+      "aliases": [
+        "El Argentino Bar"
+      ],
+      "address": "Chacabuco 3627"
+    },
+    {
+      "id": "barrio-viejo-bar",
+      "name": "Barrio Viejo Bar",
+      "aliases": [
+        "Barrio Viejo Bar"
+      ],
+      "address": "Córdoba 2250"
+    },
+    {
+      "id": "dulces-caprichos",
+      "name": "Dulces Caprichos",
+      "aliases": [
+        "Dulces Caprichos"
+      ],
+      "address": "Sta. Fe 3097"
+    },
+    {
+      "id": "mar-museo",
+      "name": "MAR — Museo de Arte Contemporáneo",
+      "aliases": [
+        "MAR — Museo de Arte Contemporáneo",
+        "MAR Museo de Arte Contemporáneo"
+      ],
+      "address": "Av. Félix U. Camet y López de Gomar"
+    },
+    {
+      "id": "antares-faro",
+      "name": "Antares Faro",
+      "aliases": [
+        "Antares Faro"
+      ],
+      "address": "Guillermo Magrassi 5511"
+    },
+    {
+      "id": "antares-primer",
+      "name": "Cervecería Antares — Primer Antares",
+      "aliases": [
+        "Cervecería Antares — Primer Antares",
+        "Primer Antares"
+      ],
+      "address": "Córdoba 3025"
+    },
+    {
+      "id": "brewhouse-olavarria",
+      "name": "Brewhouse Olavarria",
+      "aliases": [
+        "Brewhouse Olavarria"
+      ],
+      "address": "Avellaneda 1414"
+    },
+    {
+      "id": "bai-bai",
+      "name": "Bai Bai",
+      "aliases": [
+        "Bai Bai"
+      ],
+      "address": "Chapadmalal"
+    },
+    {
+      "id": "la-casa-del-balcon",
+      "name": "La Casa del Balcón",
+      "aliases": [
+        "La Casa del Balcón"
+      ],
+      "address": "3 de Febrero 2538"
+    },
+    {
+      "id": "nevermind-bar",
+      "name": "Nevermind Bar",
+      "aliases": [
+        "Nevermind Bar",
+        "NEVERMIND BAR"
+      ],
+      "address": "Moreno 2736"
+    },
+    {
+      "id": "club-mele",
+      "name": "Club Méle",
+      "aliases": [
+        "Club Méle | Espacio Cultural",
+        "Club Méle",
+        "Club Mele"
+      ],
+      "address": "Córdoba 2855"
+    },
+    {
+      "id": "bohr-bar",
+      "name": "Bohr bar",
+      "aliases": [
+        "Bohr bar"
+      ],
+      "address": "San Lorenzo 2980"
+    },
+    {
+      "id": "hoffen",
+      "name": "Hoffen",
+      "aliases": [
+        "Hoffen"
+      ],
+      "address": "Rodríguez Peña 1333"
+    },
+    {
+      "id": "hops-galeria",
+      "name": "Hops Galeria",
+      "aliases": [
+        "Hops Galeria"
+      ],
+      "address": "Moreno 2941"
+    },
+    {
+      "id": "glow-eventos",
+      "name": "Glow Eventos",
+      "aliases": [
+        "Glow Eventos"
+      ],
+      "address": "Moreno 3364"
+    },
+    {
+      "id": "estelares-la-perla",
+      "name": "Estelares La Perla",
+      "aliases": [
+        "Estelares La Perla | Cervecería Bar",
+        "Estelares La Perla"
+      ],
+      "address": "Av. Libertad 3175"
+    },
+    {
+      "id": "heller-cerveza",
+      "name": "Heller Cerveza Artesanal",
+      "aliases": [
+        "Heller Cerveza Artesanal Mar del Plata",
+        "Heller Cerveza Artesanal"
+      ],
+      "address": "25 de Mayo 5271"
+    },
+    {
+      "id": "club-einstein",
+      "name": "Club Einstein",
+      "aliases": [
+        "Club Einstein"
+      ],
+      "address": "Saavedra 3050"
+    },
+    {
+      "id": "hotel-amsterdam",
+      "name": "Hotel Amsterdam",
+      "aliases": [
+        "Hotel Amsterdam"
+      ],
+      "address": "Av. Patricio Peralta Ramos 4799"
+    },
+    {
+      "id": "dickens",
+      "name": "Dickens",
+      "aliases": [
+        "Dickens"
+      ],
+      "address": "Diagonal Pueyrredón 3017"
+    },
+    {
+      "id": "hotel-bermudas",
+      "name": "Hotel Bermudas",
+      "aliases": [
+        "Hotel Bermudas"
+      ],
+      "address": "3 de Febrero 2484"
+    },
+    {
+      "id": "sarasanegro",
+      "name": "Sarasanegro Restaurante",
+      "aliases": [
+        "Sarasanegro Restaurante",
+        "Sarasanegro"
+      ],
+      "address": "San Martín 3458"
+    },
+    {
+      "id": "plaza-mitre",
+      "name": "Plaza Mitre",
+      "aliases": [
+        "Plaza Mitre"
+      ],
+      "address": "Av. Colón S/N"
+    },
+    {
+      "id": "bahia-varese",
+      "name": "Bahia Varese",
+      "aliases": [
+        "Bahia Varese"
+      ],
+      "address": "P.º Jesús de Galindez"
     }
   ]
 }

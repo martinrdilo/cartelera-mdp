@@ -98,6 +98,22 @@ class TestResolve:
             "Teatro Enrique Carreras",
         )
 
+    def test_ola3_aliases_resolve(self):
+        assert resolve("Teatro Roxy Radio City, San Luis 1750") == (
+            "radio-city",
+            "Centro de Arte Radio City - Roxy - Melany",
+        )
+        assert resolve("Ciudad Cultural Brewhouse Puerto") == (
+            "brew-house",
+            "Ciudad Cultural Brew House",
+        )
+        assert resolve("Auditorium") == ("teatro-auditorium", "Teatro Auditorium")
+        assert resolve("Teatro Vorterix") == ("vorterix", "Vorterix")
+        assert resolve("Quba cafe del mar") == ("quba", "Quba")
+        assert resolve("ROOMIE CLUB, Av. Colón y el Mar") == ("roomie-club", "Roomie Club")
+        assert resolve("Jones, Mar del Plata Buenos Aires AR") == ("mr-jones", "Mr. Jones")
+        assert resolve("Bajo Tierra Club de Jazz") == ("bajo-tierra", "Bajo Tierra")
+
     def test_unknown_venue_returns_none(self):
         assert resolve("Bolichito de la esquina") is None
 
