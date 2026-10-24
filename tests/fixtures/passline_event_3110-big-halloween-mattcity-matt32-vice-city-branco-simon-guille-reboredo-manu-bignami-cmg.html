@@ -1,0 +1,2539 @@
+<!doctype html>
+<html>
+
+<head>
+		<meta charset="UTF-8">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+			<meta name="robots" content="index,follow" />
+		<meta name="description" content="Consigue tus entradas para 31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG en Passline. Encuentra detalles, asegura tu asistencia y prepárate para disfrutar de una experiencia inolvidable." />
+	<meta name="keywords" content="31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG,Passline" />
+	<meta name="language" content="spanish" />
+	<meta name="rating" content="general" />
+	<meta name="revisit-after" content="5 days" />
+	<meta name="classification" content="General" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name="lavel1" content="Donde:" />
+	<meta name="data1" content="31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG" />
+	<meta name="label2" content="Cuando:" />
+	<meta name="data2" content="2026-10-31 23:30:00" />
+
+	<meta property="og:image" content="https://www.passline.com/imagenes/eventos/-805432-rec.jpg" />
+	<meta property="og:title" content="Passline - 31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg" />
+	<meta property="og:description" content="Consigue tus entradas para 31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG en Passline. Encuentra detalles, asegura tu asistencia y prepárate para disfrutar de una experiencia inolvidable." />
+
+	<title>Passline - 31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG</title>
+
+	<link rel="canonical" href="https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg" />
+
+	<base href="https://www.passline.com/eventos-ficha.php" target="_top" />
+	<meta name="viewport" content="width=device-width">
+	<!-- favicon -->
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+	<!-- slick -->
+	<link rel="stylesheet" type="text/css" href="js/slick/slick.css" />
+	<link rel="stylesheet" type="text/css" href="js/slick/slick-theme.css" />
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/estilo.css">
+	<!-- Jquery -->
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/slick/slick.min.js"></script>
+
+	<style>
+		@media only screen and (max-width: 700px) {
+			.cont-det section#slide {
+				width: 50%;
+				min-width: 92%;
+				margin-left: 4%;
+			}
+		}
+	</style>
+	<!-- Formulario -->
+	<link href="css/tooltipster.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/jquery.form.js"></script>
+	<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/additional-methods.min.js"></script>
+	<script type="text/javascript" src="js/jquery.rut.js"></script>
+	<script type="text/javascript" src="js/jquery.tooltipster.js"></script>
+
+	<script type="text/javascript">
+		// MOSTRAR CAMPOS DE REGION Y COMUNA 
+		function mostrarRegion(pais_seleccionado) {
+			if (pais_seleccionado == '46') {
+				$("#div_region").css("display", "inline");
+			} else {
+				$("#div_region").css("display", "none");
+			}
+		}
+
+		// CARGA DE COMUNAS 
+		function cargarComuna(region_seleccionada) {
+			$("#comunaInicial").css("display", "none");
+			$("#campoComuna").css("display", "none");
+			$("#cargandoComuna").css("display", "inline");
+			$.post("inc/inc-comunas.php", {
+				region: region_seleccionada
+			}, function(data) {
+				$("#cargandoComuna").css("display", "none");
+				$("#campoComuna").css("display", "inline");
+				$("#campoComuna").html(data);
+			});
+		}
+
+		jQuery(document).ready(function($) {
+			$('#formulario_info input,textarea,select').tooltipster({
+				trigger: 'custom',
+				position: 'right',
+				touchDevices: true
+			});
+
+			$('#formulario_info').validate({
+				errorPlacement: function(error, element) {
+					$(element).tooltipster('update', $(error).text());
+					$(element).tooltipster('show');
+				},
+				success: function(label, element) {
+					$(element).tooltipster('hide');
+				},
+				rules: {
+					nombre: {
+						required: true
+					},
+					apellido: {
+						required: true
+					},
+					email: {
+						required: true,
+						email: true
+					}
+				},
+				messages: {
+					nombre: {
+						required: "Debes ingresar tu nombre."
+					},
+					apellido: {
+						required: "Debes ingresar tu apellido."
+					},
+					email: {
+						required: "Debes ingresar tu email.",
+						email: "Debes ingresar un email válido."
+					}
+				}
+			});
+
+			$('#formulario_info').ajaxForm({
+				target: '.box-formulario',
+				success: function() {
+					$('.box-formulario').fadeIn('slow');
+				}
+			});
+
+			$('#formulario_info').validate({
+				errorPlacement: function(error, element) {
+					$(element).tooltipster('update', $(error).text());
+					$(element).tooltipster('show');
+				},
+				success: function(label, element) {
+					$(element).tooltipster('hide');
+				},
+				rules: {
+					nombre: {
+						required: true
+					},
+					apellido: {
+						required: true
+					},
+					email: {
+						required: true,
+						email: true
+					}
+				},
+				messages: {
+					nombre: {
+						required: "Debes ingresar tu nombre."
+					},
+					apellido: {
+						required: "Debes ingresar tu apellido."
+					},
+					email: {
+						required: "Debes ingresar tu email.",
+						email: "Debes ingresar un email válido."
+					}
+				}
+			});
+
+			$("#form_val").submit(function(event) {
+									if ($("#cod_compra").val() == "") {
+						alert("Ingrese el código de compra para continuar.-");
+						event.preventDefault();
+						return;
+					}
+							});
+
+			//$("#val_compra").click(function() {
+			//	$("#codigo_compra").val($("#cod_compra").val());
+			//	$("#form_val").submit();
+			//});
+
+			$("#val_cortesy").click(function() {
+				$("#cortesy_form").submit();
+			});
+
+		});
+	</script>
+
+
+	
+	<!-- Nivo -->
+	<link href="css/nivo-slider.css?=1" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="css/themes/default/default.css?=1" type="text/css" />
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.nivo.slider.pack.js"></script>
+	<script type="text/javascript">
+		$(window).load(function() {
+			$('#slider').nivoSlider({
+				effect: 'slideInRight',
+				controlNav: false,
+				pauseTime: 4000,
+				directionNav: false
+			});
+		});
+
+			</script>
+	<!-- Menu -->
+	<link href="css/estilo-menu.css" rel="stylesheet" type="text/css" />
+	<!-- Menu responsive -->
+	<link rel="stylesheet" href="css/slicknav.css">
+	<script src="js/jquery.slicknav.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#menu-principal').slicknav();
+		});
+	</script>
+	<!-- nivo-lightbox -->
+	<link rel="stylesheet" href="nivo-lightbox/nivo-lightbox.css" type="text/css" />
+	<link rel="stylesheet" href="nivo-lightbox/themes/default/default.css" type="text/css" />
+	<script src="nivo-lightbox/nivo-lightbox.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('.lightbox').nivoLightbox({
+				effect: 'fade',
+				theme: 'default',
+			});
+			$('#mas-informacion').nivoLightbox();
+		});
+	</script>
+	<!-- Fancybox -->
+	<script src="https://www.passline.com/js/fancybox.v4.0.7/fancybox.umd.js"></script>
+	<link rel="stylesheet" href="https://www.passline.com/js/fancybox.v4.0.7/fancybox.css" />
+	<link rel="stylesheet" type="text/css" href="../site-static/vendor/magnific-popup/magnific-popup.min.css">
+
+	<!-- Font -->
+	<link rel="stylesheet" href="font/css/iconos.css">
+	<link rel="stylesheet" href="font/css/animation.css"><!--[if IE 7]><link rel="stylesheet" href="css/prediktium-ie7.css"><![endif]-->
+	<script language="javascript">
+		
+		$(document).ready(function() {
+			$("#mas-info").click(function() {
+				$("#cont-form-info").toggleClass('mas-info-open');
+			});
+			$(".mas-info").click(function() {
+				$(".cont-form-info").toggleClass('mas-info-open');
+			});
+		});
+
+		function vf() {
+			console.log("vf()");
+							var elem = document.getElementsByTagName("select");
+				var nom = String("");
+				var valid = false;
+				for (x = 0; x < elem.length; x++) {
+					if (elem.item(x).name.substr(0, 8) == "cantidad") {
+						nom = String(elem.item(x).value);
+						if (nom.substr(0, 1) != "0") {
+							valid = true;
+						}
+					}
+				}
+			
+			if (!valid) {
+				var elem = document.getElementsByTagName("input");
+				var nom = String("");
+				for (x = 0; x < elem.length; x++) {
+					if (elem.item(x).id.indexOf("valor_") > -1) {
+						val = parseFloat(elem.item(x).value);
+						if (val > 0) {
+							valid = true;
+						}
+					}
+				}
+			}
+
+
+			
+			if (valid) {
+				document.getElementById("agregar_al_carro").submit();
+			} else {
+				alert("Seleccione la cantidad de entradas");
+			}
+		}
+		
+		function vf2() {
+
+			document.getElementById("agregar_al_carro2").submit();
+		}
+
+		function vf11() {
+			console.log("vf11()");
+			
+			document.getElementById("agregar_al_carro11").submit();
+		}
+
+		function verificar_codigo() {
+			console.log("verificar_codigo()");
+			if ($("#cod_compra").val() == "") {
+				alert("Ingrese el código de compra para continuar.");
+				event.preventDefault();
+				return;
+			}
+
+		}
+
+		function seleccionar_funcion(sid) {
+			var h_select = "https://www.passline.com/eventos/" + sid;
+			window.location.href = h_select;
+		}
+
+			</script>
+
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+
+
+			<script type="application/ld+json">
+									{
+							"@context": "http://schema.org",
+							"@type": "Event",
+							"name": "31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG",
+							"image": "https://www.passline.com/imagenes/eventos/-805432-rec.jpg",
+							"startDate": "2026-10-31T23:30:00-03:00",
+							"endDate": "2026-11-01T06:00:00-03:00",
+							"eventStatus": "https://schema.org/EventScheduled",
+							"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+							"location": {
+								"@type": "Place",
+								"name": "ROOMIE CLUB",
+                                "address": {
+                                    "@type": "PostalAddress",
+                                    "streetAddress": "Av. Colón y el Mar, Mar del Plata, Provincia de Buenos Aires, Argentina",
+                                    "addressLocality": "ROOMIE CLUB",
+                                    "addressRegion": "I Regi&oacute;n",
+                                    "addressCountry": ""
+                                }
+							},
+							"description": "",
+							"performer": {
+							    "@type": "Person",
+							    "name": ""
+							},
+							"organizer": {
+							    "@type": "Organization",
+							    "name": "Guillermo Sebastián Arauz"
+							},
+							"offers": {
+								"@type": "AggregateOffer",
+								"category": "primary",
+								"availability": "https://schema.org/InStock",
+								"price": "7000.00",
+								"validFrom": "2026-10-01 17:54:25",
+								"lowPrice": "7000.00",
+								"highPrice": "250000.00",
+								"priceCurrency": "ARS",
+								"url": "https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg"
+							}
+						}
+						</script>
+	
+	<style type="text/css">
+		.row-margin {
+			margin-bottom: 18px;
+		}
+
+		@media only screen and (max-width: 600px) {
+			.text-mobile {
+				margin-left: 10px !important;
+			}
+		}
+	</style>
+	<!-- slick -->
+<link rel="stylesheet" type="text/css" href="js/slick/slick.css" />
+<link rel="stylesheet" type="text/css" href="js/slick/slick-theme.css" />
+<!-- Bootstrap -->
+<link rel="stylesheet" href="css/bootstrap.css">
+<!-- Nivo -->
+<link href="css/nivo-slider.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="css/themes/default/default.css" type="text/css" />
+<!-- Font -->
+<link rel="stylesheet" href="font/css/iconos.css">
+<link rel="stylesheet" href="font/css/animation.css">
+<!-- Pin -->
+<link rel="stylesheet" type="text/css" href="css/component.css" />
+<link href="css/tooltipster.css" rel="stylesheet" type="text/css" />
+<!-- Lightbox -->
+<link rel="stylesheet" href="nivo-lightbox/nivo-lightbox.css" type="text/css" />
+<link rel="stylesheet" href="nivo-lightbox/themes/default/default.css" type="text/css" />
+<!-- Fancybox -->
+<link rel="stylesheet" href="lib/fancybox/jquery.fancybox.min.css" type="text/css" />
+<!-- Nivo -->
+<link rel="stylesheet" href="css/themes/default/default.css" type="text/css" />
+<!-- Menu -->
+	<link href="css/estilo-menu.css" rel="stylesheet" type="text/css" />
+<!-- Eazy Mobile -->
+<link rel="stylesheet" type="text/css" href="css/EazyMobile/styles/style.css">
+<link rel="stylesheet" type="text/css" href="css/EazyMobile/styles/framework.css">
+<link rel="stylesheet" type="text/css" href="css/EazyMobile/fonts/css/fontawesome-all.min.css">
+<!-- icheck -->
+<link rel="stylesheet" href="css/skins/flat/green.css">
+<!-- CSS PRINCIPAL -->
+<link rel="stylesheet" href="css/estilo.css">
+<!-- Slicknav -->
+<link rel="stylesheet" href="css/slicknav.css">
+<!-- dropzone -->
+<link rel="stylesheet" href="css/dropzone.css" type="text/css" />
+
+<!-- Jquery -->
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/slick/slick.min.js"></script>
+<script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+
+<script src="https://use.fontawesome.com/304569cf28.js"></script>
+<script type="text/javascript" src="js/jquery.nivo.slider.pack.js"></script>
+	<!-- <script charset="UTF-8" src="//cdn.sendpulse.com/js/push/50e5db6d7d6764faf2104c15fc64f485_1.js" async></script> -->
+<script type="text/javascript" src="js/jquery.tooltipster.js"></script>
+<script type="text/javascript" src="js/EazyMobile/scripts/plugins.js" async></script>
+<script type="text/javascript" src="js/EazyMobile/scripts/custom.js" async></script>
+<script type="text/javascript" src="js/solicitud-ticket.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.rut.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script type="text/javascript" src="js/addthisevent.1.5.8.min.js"></script>
+<!-- Formulario -->
+<script type="text/javascript" src="js/jquery.form.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/additional-methods.min.js"></script>
+<script type="text/javascript" src="js/dropzone.js"></script>
+<!-- Nivo -->
+<script src="nivo-lightbox/nivo-lightbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.nivo.slider.pack.js"></script>
+<script src="lib/fancybox/jquery.fancybox.min.js"></script>
+<script src="https://unpkg.com/sweetalert2@7.0.10/dist/sweetalert2.all.js"></script>
+<script src="js/icheck.js"></script>
+	<style type="text/css">
+		.more-info {
+			background: #ffffff !important;
+			display: block !important;
+			width: 100%;
+			text-align: center;
+			padding: 14px 0;
+			font-size: 13px;
+			border-radius: 0 !important;
+			border-bottom: 0 !important;
+			color: #333;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.more-info:hover {
+			color: #333;
+		}
+
+		select {
+			width: 100% !important;
+		}
+
+		.btn {
+			width: 100% !important;
+			margin: 0 !important;
+			float: right !important;
+			margin-left: 0px !important;
+			font-size: 12px !important;
+			text-align: center !important;
+			padding: 10px 0px !important;
+		}
+
+		.btn-proximamente {
+			width: 100% !important;
+			margin: 0 !important;
+			float: right !important;
+			margin-left: 0px !important;
+			text-align: center !important;
+			padding: 10px 0px !important;
+			font-size: 0.9em !important;
+			font-weight: bold;
+		}
+
+		.txt {
+			height: 30px;
+			width: 100%;
+			border-radius: .25rem;
+		}
+
+		.td-modify {
+			padding-left: 0px !important;
+		}
+
+		.goog-te-combo {
+			width: auto !important;
+		}
+
+		.boton-comprar {
+			height: 40px !important;
+			font-size: 15px !important
+		}
+
+        .ticket-alert {
+            margin-top: 5px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+		@media only screen and (max-width: 480px) {
+			.boton-comprar {
+				width: 100% !important
+			}
+		}
+
+		a {
+			cursor: context-menu;
+		}
+
+		.calendar_table_td {
+			text-align: center;
+		}
+
+		.calendar-day,
+		.calendar-day-head {
+			/*border: 1px solid #dddddd;*/
+			padding: 2px;
+			width: 42px;
+			height: 42px;
+			font-weight: 800;
+		}
+
+		.calendar-day-head {
+			width: 46px;
+			background: #F3F3F3;
+		}
+
+		.day-number:hover {
+			background: #FFFFFF;
+		}
+
+		.day-number-selected {
+			background: #F3F3F3;
+			cursor: pointer;
+			width: 40px !important;
+			height: 40px !important;
+			font-size: 14px;
+			font-weight: 800;
+			/*padding-top: 24%;*/
+		}
+
+		.day-number-active {
+			background: #FFB700;
+			width: 40px !important;
+			height: 40px !important;
+			font-size: 14px;
+			border-radius: 50%;
+		}
+
+		.a-day-number-active {
+			color: #000000;
+			cursor: pointer;
+			padding-top: 24%;
+		}
+
+		.day-not-select {
+			background: #F3F3F3;
+			width: 40px !important;
+			Color: #ACAFBD;
+		}
+
+		.btn_month,
+		.btn_year {
+			/*width: 10% !important;*/
+			width: 21px !important;
+			height: 21px !important;
+			padding: 2px 0px !important;
+			background-color: #FFB700 !important;
+			color: #000000 !important;
+			border-radius: 50% !important;
+			margin-left: 5px !important;
+		}
+
+		.monthyear {
+			display: block;
+			float: left !important;
+			width: auto;
+			margin-left: 15px !important;
+		}
+
+		.calendar {
+			width: 316px !important;
+			float: left;
+			margin-right: 22% !important;
+			margin-bottom: 15px;
+			background-color: #F3F3F3 !important;
+			border-radius: 14px !important;
+		}
+
+		.titulo_evento {
+			font-family: 'Open Sans', sans-serif;
+			font-size: 2em;
+			line-height: 1.3em;
+			margin-bottom: 20px;
+			color: #424040;
+			font-style: normal;
+			font-weight: normal;
+			margin-top: 0px;
+			display: block;
+			width: 100%;
+			font-size: 20px;
+			line-height: 24px;
+			margin-bottom: 5px;
+			letter-spacing: -0.3px;
+			font-weight: 500;
+			margin-block-start: 1em;
+			margin-block-end: 1em;
+			margin-inline-start: 0px;
+			margin-inline-end: 0px;
+			font-weight: bold;
+			unicode-bidi: isolate;
+		}
+
+		@media only screen and (max-width: 768px) {
+		    .cont-head-ficha div h1 {
+				margin-bottom: 20px;
+			}
+
+			#li_fecha_inicio{
+				font-size: 16px !important;
+				color: #000 !important;
+				font-family: 'Roboto', sans-serif !important;
+				
+			}
+			.icon-location{
+				display: none !important;
+			}
+
+			#primer_contenedor{
+				margin-top: -5% !important;
+				/*margin-left: 8% !important;*/
+				
+			}
+			#segundo_contenedor{
+				margin-top: -1% !important;
+				/*margin-left: 8% !important;*/
+			}
+
+			table tr td {
+				padding: 5px 2px !important;
+			}
+
+			.btn_year {
+				width: 30% !important;
+			}
+
+			.calendar {
+				width: 80% !important;
+				margin-bottom: 10px;
+				margin-left: 10% !important;
+			}
+
+			.calendar-row {
+				height: 30px;
+			}
+
+			.cont-desc {
+				width: 100% !important;
+			}
+
+			.cont-head-ficha div:last-child {
+				width: 100% !important;
+				padding-left: 10px !important;
+				padding-right: 10px !important;
+				padding: 2%;
+				margin-top: 10px !important;
+			}
+
+			.cont-head-ficha div:first-child {
+				border-right: #c5c5c5 0px solid;
+				width: 100% !important;
+			}
+		}
+
+		div#contenedor-funciones {
+			display: block;
+			clear: both;
+		}
+
+		.cont-funciones a {
+			display: flex;
+			flex-direction: row;
+			gap: 8px;
+			border: 1px solid #d5d5d5;
+			margin: 10px;
+			height: 60px;
+			border-radius: 8px;
+			cursor: pointer;
+			width: 90%;
+		}
+
+		.fecha-funciones {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			border-right: 1px solid #d5d5d5;
+			width: 200px;
+
+		}
+
+		.dia-f {
+			color: #000;
+			/*padding: 10px;*/
+			text-align: center;
+			vertical-align: middle;
+			font-size: 16px;
+			font-weight: bold;
+			/*padding-top: 0px;*/
+			align-items: center;
+		}
+
+		.dia2-f {
+			color: #000;
+			padding-top: 5px;
+			text-align: center;
+			vertical-align: middle;
+			font-size: 12px;
+			font-weight: bold;
+			align-items: center;
+		}
+
+		.hora-f {
+			color: #000;
+			padding: 0px;
+			text-align: center;
+			vertical-align: middle;
+			font-size: 12px;
+			font-weight: bold;
+			align-items: center;
+		}
+
+		.til-funciones {
+			display: flex;
+			/*flex-direction: column;*/
+			gap: 8px;
+			align-items: center;
+			padding: 5px;
+		}
+
+		.til-f {
+			color: #000;
+			font-size: 14px;
+			font-weight: bold;
+			line-height: 1.4;
+		}
+
+		.til2-f {
+			color: #000;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.boton-comprarf {
+		width: 31px;
+		height: 31px;
+		background-color: #afafafff;
+		border-radius: 50%;
+		position: relative;
+		}
+
+		.boton-comprarf::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 8.4px;   /* 13 * 0.646 */
+		height: 15.5px; /* 24 * 0.646 */
+		border: solid white;
+		border-width: 0 2.6px 2.6px 0; /* 4 * 0.646 */
+		transform: translate(-50%, -50%) rotate(45deg);
+		}
+
+		.botones-f {
+			display: flex;
+			align-items: center;
+			margin-left: auto;
+			padding-right: 10px;
+		}
+
+		.icon-f {
+			float: right;
+			background: #ffb700;
+			margin-bottom: 20px;
+			padding: 3px;
+			border-radius: 8px;
+		}
+
+		.icon-f2 {
+			float: right;
+			background: #ffb700;
+			margin-bottom: 20px;
+			padding: 3px;
+			border-radius: 8px;
+		}
+
+		#fmostrar {
+
+			text-align: center;
+			margin: 0px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+
+		}
+
+		@media only screen and (max-width: 450px) {
+
+			.cont-funciones a {
+					height: auto !important;
+			}
+
+			.fecha-funciones {
+				flex-direction: column;
+				width: 100px;
+				gap: 0px;
+				flex-basis: 120px;
+				padding: 8px;
+			}
+
+
+			h3#fmostrar{
+				    margin: 20px 0 !important;
+			}
+
+			.dia-f {
+				padding-top: 5px !important;
+				font-size: 14px !important;				
+			}
+
+			.hora-f {
+				padding-top: 5px !important;
+			}
+
+			
+
+			.til-f,
+			.boton-comprarf {
+				font-size: 12px;
+			}
+
+			
+		}
+
+		@media only screen and (max-width: 480px) {
+			.cont-head-ficha div li {
+				font-size: 14px;
+			}
+
+			.fecha-funciones {
+				flex-direction: column;
+				width: 100px;
+				gap: 0px;
+				flex-basis: 120px;
+				padding: 8px;
+			}
+		}
+	</style>
+
+	<!--style registro hinchas-->
+	<style type="text/css">
+		.registro-hinchas-banner {
+			background: #ffb700;
+		}
+
+		.banner__icon {
+			margin: 3px;
+			margin-right: 10px;
+		}
+
+		.banner__content {
+			padding: 16px;
+			max-width: 1170px;
+			margin: 0 auto;
+			display: flex;
+		}
+
+		.banner__text {
+			line-height: 1.4;
+			font-family: "Quicksand", sans-serif;
+		}
+
+		.banner__text a {
+			color: #33331c;
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+		.banner__text a:hover {
+			color: #33331c;
+		}
+
+		.banner__close {
+			background: none;
+			border: none;
+			cursor: pointer;
+		}
+
+		input#button.boton-comprar{
+			border-radius:10px !important;
+		}
+	</style>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const iconF = document.querySelector('.icon-f');
+			const iconF2 = document.querySelector('.icon-f2');
+			if (iconF) {
+				iconF.addEventListener('click', function() {
+					
+					const verCalendario = document.getElementById('vercalendario');
+					const contenedorFunciones = document.getElementById('contenedor-funciones');
+
+					// Verificamos si el calendario está visible
+					if (verCalendario.style.display === 'none') {
+						// Mostrar el calendario y ocultar las funciones
+						verCalendario.style.display = 'block';
+						contenedorFunciones.style.display = 'none';
+					} else {
+						// Ocultar el calendario y mostrar las funciones
+						verCalendario.style.display = 'none';
+						contenedorFunciones.style.display = 'block';
+					}
+
+				});
+			}
+			if (iconF2) {
+				iconF2.addEventListener('click', function() {
+					
+					const verCalendario = document.getElementById('vercalendario');
+					const contenedorFunciones = document.getElementById('contenedor-funciones');
+
+					// Verificamos si el calendario está visible
+					if (verCalendario.style.display === 'none') {
+						// Mostrar el calendario y ocultar las funciones
+						verCalendario.style.display = 'block';
+						contenedorFunciones.style.display = 'none';
+					} else {
+						// Ocultar el calendario y mostrar las funciones
+						verCalendario.style.display = 'none';
+						contenedorFunciones.style.display = 'block';
+					}
+
+				});
+			}
+		});
+	</script>
+		
+</head>
+
+<body data-date="2026-10-23 21:33:10" data-referer="" data-uri="https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg">
+
+	
+	<header>
+		
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NZLNCS8');</script>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZLNCS8"height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<header>
+    <div id="cont-header">
+        <figure id="logo">
+            <a href="https://www.passline.com/home"><img style="cursor:pointer" src="https://www.passline.com/imagenes/logo-passline.png" /></a>
+            <a href="https://www.passline.com/inicio" class="cambiar" style="position: sticky; display: flex;">
+                Argentina            </a>
+        </figure><!-- Fin #logo -->
+        <nav id="menu-principal">
+            <ul id="menu">
+                                    <li>
+                        <a href="https://home.passline.com/eventos.php">Eventos</a>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="https://www.passline.com/eventos-ondemand.php">OnDemand</a>
+                    </li> -->
+                    <li>
+                        <a href="https://home.passline.com/eventos-de-la-semana">Cartelera</a>
+                    </li>
+                                        <li>
+                                                <a href="https://www.passline.com/servicios_passline.php">¿Sos Productor?</a>
+                                            </li>
+                                <li>
+                    <a href="https://home.passline.com/help">Contacto</a>
+                </li>
+                                    <li>
+                        <a href="https://www.passline.com/registro">
+                            Regístrate                        </a>
+                    </li>
+                    <li><a href="https://www.passline.com/iniciar-sesion-passline">Iniciar sesión</a></li>
+                                        <li><a href="https://www.passline.com/crear-evento-seleccion.php" class="boton-menu">CREAR EVENTO</a></li>
+                                        <li style="margin-left:4px;vertical-align:middle;">
+                        <span class="top-language" style="color:#ffb700;"><i class="icon-globe"></i>ES<i class="icon-down-open"></i></span>
+                        <div id="sm-normal" class="desaparecer-768" style="min-width: 100px !important; max-width: 112px !important; top: 21px !important; padding-top: 1px !important;">
+                            <ul class="language-items" style="padding: 7px 0;">
+                                                                        <li class="li-language" style="cursor:pointer;" data-lang="en_US" onmouseup="clear_cookies()" data-country="argentina">
+                                            <a style=""> Inglés</a>
+                                        </li>
+                                                                            <li class="li-language" style="cursor:pointer;" data-lang="pt_BR" onmouseup="clear_cookies()" data-country="argentina">
+                                            <a style=""> Portugués</a>
+                                        </li>
+                                                                            <li class="li-language" style="cursor:pointer;" data-lang="ca_ES" onmouseup="clear_cookies()" data-country="argentina">
+                                            <a style=""> Catalán</a>
+                                        </li>
+                                                                            <li class="li-language" style="cursor:pointer;" data-lang="it_IT" onmouseup="clear_cookies()" data-country="argentina">
+                                            <a style="border-bottom: 0px solid #292b36 !important;"> Italian</a>
+                                        </li>
+                                                                </ul>
+                            <script type="text/javascript">
+                                function clear_cookies() { 
+                                    document.cookie = 'language=; Path=.www.passline.com; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                                    document.cookie = 'language=; Path=.passline.com;Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                                    document.cookie = 'language=; Path=www.passline.com;Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                                }
+                            </script>
+                        </div>
+                    </li>
+                
+            </ul>
+        </nav>
+        <!-- Fin #menu-principal-->
+    </div>
+</header>
+<!-- FIN div#cont-header -->
+	</header>
+	<script type="text/javascript">
+		(function testMetaDataLayerPush() {
+		  window.dataLayer = window.dataLayer || [];
+
+		
+		 const mockData = {
+		    event: 'page_context',
+		    event_id: '563492',
+		    country: 'argentina',
+			pixel_ids_meta: [''],
+		    pixel_ids_tiktok: [], 
+		    currency: 'ARS'
+		  };
+
+		  //console.log('Enviando dataLayer push de prueba:', mockData);
+		  dataLayer.push(mockData);
+
+		  // Confirmar visualmente
+		  console.log(' Último push en dataLayer:', dataLayer[dataLayer.length - 1]);
+
+			dataLayer.push({
+				event: "view_item",
+				country: "argentina",
+				event_id: "563492", // ID del evento en Passline
+				ecommerce: {
+					items: [ { item_id: "563492", item_name: "31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG", quantity: 1 } ]
+				}
+			});
+
+		})();
+		
+	</script>
+
+	
+
+	
+	<div class="wrap">
+		
+		
+		
+		
+		
+		<style>
+			@media only screen and (max-width: 768px) {
+				.cont-head-ficha div li {
+					margin-left: 0px !important;
+				}
+				.cont-det section#slide {
+					width: 100%;
+					min-width: 100%;
+					margin-right: auto !important;
+					margin-left: auto !important;
+				}
+				.cont-det section#slide {
+					margin-right: auto !important;
+					margin-left: auto !important;
+				}
+
+				.nivoSlider img {
+					width: 88% !important;
+					margin-right: auto !important;
+					margin-left: auto !important;
+					padding-left: 0 !important;
+					padding-right: 0 !important;
+					border-radius: 20px !important;
+				}
+				#button{
+					max-width: 88% !important;
+					margin-right: auto !important;
+					margin-left: auto !important;
+					float: inherit !important;
+					border-radius: 10px !important;
+					margin-top: 20px !important;
+				}
+				    #primer_contenedor, #segundo_contenedor{
+						        padding: 0 23px !important;
+					}
+			}
+		</style>
+
+
+					
+		<section class="cont-head-ficha contenedor">
+			<div id="primer_contenedor">
+								<h1 class="titulo_evento">31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG (+18)</h1>
+									<li id="li_fecha_inicio">
+						<i class="icon-calendar"></i>Sábado 31 de Octubre 2026 - 23:30 hrs.					</li>
+								</div>
+			<div id="segundo_contenedor" class="donde  desaparecer-768 " style="position: relative;margin-bottom: 10px;margin-top:10px !important;">
+											<a href="javascript:void(0);" style="display: flex;">
+														<i class="icon-location" style="margin-top:-7px"></i>
+							<p style="position: inherit;width: 100% !important;">
+																	<strong style="font-size: 14px;">ROOMIE CLUB</strong><br>
+								Av. Colón y el Mar, Mar del Plata, Provincia de Buenos Aires, Argentina								<br>Buenos Aires, MAR DEL PLATA							</p>
+							</a>
+									</div>
+		</section>
+		<!--cont-head-ficha-->
+		<div class="cont-detalle-ficha contenedor">
+			<section class="cont-det">
+													<section id="slide">
+						<div class="slider-wrapper theme-default">
+							<div class="ribbon"></div>
+							<div id="slider" class="nivoSlider">
+																				<img src="https://imagenes.passline.com/eventos/-805432-rec.jpg" alt="31.10 BIG HALLOWEEN 🎃 MATTCITY (Matt32 & Vice city) - BRANCO SIMON - GUILLE REBOREDO - MANU BIGNAMI - CMG" />
+															</div>
+						</div>
+					</section>
+					
+
+				<!--
+				<section class="cont-head-ficha contenedor aparecer-768">
+					<div class="donde">
+						
+					</div>
+				</section>
+-->
+				<!-- 01 -->
+				<article class="desaparecer-768" style="width:100%;">
+					<div class="organiza">
+														<h5 style="text-align: center;">
+									<a style="color:#000" href="https://www.passline.com/productora/4522666-guillermo-sebastian-arauz">
+										Roomie Club									</a>
+								</h5>
+								<p style="text-align: center;">Club de música electrónica</p>
+												</div>
+				</article>
+
+										<article class="desaparecer-768" style="width: 100%;">
+							<div>
+								<a href="productora/4522666-guillermo-sebastian-arauz" class="more-info">Más Eventos de esta Productora </a>
+							</div>
+															<div>
+									<a href="venue/roomie-club" class="more-info">Más Eventos en ROOMIE CLUB</a>
+								</div>
+													</article>
+													<article class="desaparecer-768" style="width: 100%;">
+								<div class="b-b">
+									<section class="cont-eventos">
+										<div class="grid-wrap slick-eventos" style="display:none;">
+																							<div>
+													<a href="https://www.passline.com/eventos/2310-artfriendsbeat-melodic-festival">
+														<img src="https://imagenes.passline.com/eventos/-813778-rec.jpg" style="height:130px;width:130px" />
+													</a>
+												</div>
+																							<div>
+													<a href="https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg">
+														<img src="https://imagenes.passline.com/eventos/-805432-rec.jpg" style="height:130px;width:130px" />
+													</a>
+												</div>
+																							<div>
+													<a href="https://www.passline.com/eventos/2410-dich-brothers-niktrax-open-call">
+														<img src="https://imagenes.passline.com/eventos/-806225-rec.jpg" style="height:130px;width:130px" />
+													</a>
+												</div>
+																							<div>
+													<a href="https://www.passline.com/eventos/2811-roomie-x-noiss">
+														<img src="https://imagenes.passline.com/eventos/-812475-rec.jpg" style="height:130px;width:130px" />
+													</a>
+												</div>
+																							<div>
+													<a href="https://www.passline.com/eventos/3010-blackween-beta-samuturkush-b2b-joseph-chap-joaxcs-artesano">
+														<img src="https://imagenes.passline.com/eventos/3010-blackween-beta-samuturkush-b2b-joseph-chap-joaxcs-artesano-571068-rec.jpg" style="height:130px;width:130px" />
+													</a>
+												</div>
+																					</div>
+									</section>
+								</div>
+							</article>
+										<!-- <article class="desaparecer-768">
+		    	<div>
+		    		<img src="imagenes/service_295.jpg">
+		    	</div>
+		    </article> -->
+				
+			</section>
+			<section class="cont-desc">
+				
+					<style type="text/css">
+		.accordion-container {width: 100%;margin: 0 0 20px;clear:both; }
+		.accordion-titulo {position: relative;display: block;padding: 10px;font-size: 1.4em;font-weight: 300;background: #5988D6;color: #FFF;text-decoration: none;}
+		.accordion-titulo.open { background: #6651A2;color: #fff !important; }
+		.accordion-titulo:hover { background: #6651A2; color: #fff !important; }
+		.accordion-titulo span.toggle-icon:before { content:"+"; }
+		.accordion-titulo.open span.toggle-icon:before { content:"-"; }
+		.accordion-titulo span.toggle-icon { font-family: monospace; font-style: normal; color: #000; position: absolute;top: 10px;right: 20px;font-size: 38px; font-weight:bold;}
+		.accordion-content { display: none;padding: 20px;overflow: auto; }
+		.accordion-content p{ margin:0; }
+		.accordion-content img { display: block;float: left;margin: 0 15px 10px 0;width: 50%; height: auto; }
+		@media (max-width: 767px) {
+			.accordion-content { padding: 10px 0; }
+		}
+		.text_more { display: none; }
+	</style>	
+		 
+		<form name="agregar_al_carro" id="agregar_al_carro" action="carro-agregar-productos" method="post" enctype="multipart/form-data" onsubmit="">
+			<input name="id_evento" type="hidden" value="563492" >
+			    	<style type="text/css">
+				.accordion-container {width: 100%;margin: 0 0 20px;clear:both; }
+				.accordion-titulo {position: relative;display: block;padding: 10px;font-size: 1.4em;font-weight: 300;background: #5988D6;color: #FFF;text-decoration: none;}
+				.accordion-titulo.open { background: #6651A2;color: #fff !important; }
+				.accordion-titulo:hover { background: #6651A2; color: #fff !important; }
+				.accordion-titulo span.toggle-icon:before { content:"+"; }
+				.accordion-titulo.open span.toggle-icon:before { content:"-"; }
+				.accordion-titulo span.toggle-icon { font-family: monospace; font-style: normal; color: #000; position: absolute;top: 10px;right: 20px;font-size: 38px; font-weight:bold;}
+				.accordion-content { display: none;padding: 20px;overflow: auto; }
+				.accordion-content p{ margin:0; }
+				.accordion-content img { display: block;float: left;margin: 0 15px 10px 0;width: 50%; height: auto; }
+				@media (max-width: 767px) {
+				    .accordion-content { padding: 10px 0; }
+				}
+				.text_more { display: none; }
+	    	</style>
+	    	<script>
+			function vermas(id) {
+			  var dots = document.getElementById("dots_"+id);
+			  var moreText = document.getElementById("more"+id);
+			  var btnText = document.getElementById("verBtn"+id);
+
+			  if (dots.style.display === "none") {
+			    dots.style.display = "inline";
+			    btnText.innerHTML = "[ Ver + ]"; 
+			    moreText.style.display = "none";
+			  } else {
+			    dots.style.display = "none";
+			    btnText.innerHTML = "[ Ver - ]"; 
+			    moreText.style.display = "inline";
+			  }
+			}
+			</script>
+		    <table id="tabla_tickets_sin_codigo">
+											<tr id="tr_lh_th"  >
+																<th width="55%" class="td-modify"  colspan='2' >
+									Tipo de Ticket								</th>
+								<th width="23%" class="td-modify">Valor </th>
+								<th width="22%" class="td-modify">
+									Cantidad								</th>
+							</tr>
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4650414"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												MESA VIP<br>
+												<span>
+													Incluye 10 accesos VIP + 200.000 en consumo	
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="1-1">
+									$250.000.-										<br>
+																												</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																						
+													<select name="cantidad[]"
+														class="js-validar-disponibilidad-producto"
+														data-disponibles-reales="4"
+														data-factor-promocion="1"
+														data-producto-nombre="MESA VIP"
+														 >
+														<option value="0|4650414">0</option>
+																														<option value="1|4650414">1</option>
+																															<option value="2|4650414">2</option>
+																															<option value="3|4650414">3</option>
+																															<option value="4|4650414">4</option>
+																												</select>
+																					</td>
+															</tr class="sin-margen">
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4650416"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												EXCLUSIVE VIP STANDING<br>
+												<span>
+														
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="1-1">
+									$20.000.-										<br>
+																												</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																						
+													<select name="cantidad[]"
+														class="js-validar-disponibilidad-producto"
+														data-disponibles-reales="20"
+														data-factor-promocion="1"
+														data-producto-nombre="EXCLUSIVE VIP STANDING"
+														 >
+														<option value="0|4650416">0</option>
+																														<option value="1|4650416">1</option>
+																															<option value="2|4650416">2</option>
+																															<option value="3|4650416">3</option>
+																															<option value="4|4650416">4</option>
+																															<option value="5|4650416">5</option>
+																															<option value="6|4650416">6</option>
+																												</select>
+																					</td>
+															</tr class="sin-margen">
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4650413"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												TANDA 1<br>
+												<span>
+														
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="1-1">
+									$10.000.-										<br>
+																												</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																						
+													<select name="cantidad[]"
+														class="js-validar-disponibilidad-producto"
+														data-disponibles-reales="19"
+														data-factor-promocion="1"
+														data-producto-nombre="TANDA 1"
+														 >
+														<option value="0|4650413">0</option>
+																														<option value="1|4650413">1</option>
+																															<option value="2|4650413">2</option>
+																															<option value="3|4650413">3</option>
+																															<option value="4|4650413">4</option>
+																															<option value="5|4650413">5</option>
+																															<option value="6|4650413">6</option>
+																												</select>
+																					</td>
+															</tr class="sin-margen">
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4707344"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												BIG 2X1 (LIMITADOS)<br>
+												<span>
+														
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="1-1">
+									$10.000.-										<br>
+																												</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																						
+													<select name="cantidad[]"
+														class="js-validar-disponibilidad-producto"
+														data-disponibles-reales="18"
+														data-factor-promocion="1"
+														data-producto-nombre="BIG 2X1 (LIMITADOS)"
+														 >
+														<option value="0|4707344">0</option>
+																														<option value="1|4707344">1</option>
+																															<option value="2|4707344">2</option>
+																															<option value="3|4707344">3</option>
+																															<option value="4|4707344">4</option>
+																															<option value="5|4707344">5</option>
+																															<option value="6|4707344">6</option>
+																												</select>
+																					</td>
+															</tr class="sin-margen">
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4650411"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												BIG EARLY SOLO 72HS<br>
+												<span>
+														
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="1-1">
+									$7.000.-										<br>
+																												</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																						
+													<select name="cantidad[]"
+														class="js-validar-disponibilidad-producto"
+														data-disponibles-reales="14"
+														data-factor-promocion="1"
+														data-producto-nombre="BIG EARLY SOLO 72HS"
+														 >
+														<option value="0|4650411">0</option>
+																														<option value="1|4650411">1</option>
+																															<option value="2|4650411">2</option>
+																															<option value="3|4650411">3</option>
+																															<option value="4|4650411">4</option>
+																															<option value="5|4650411">5</option>
+																															<option value="6|4650411">6</option>
+																												</select>
+																					</td>
+															</tr class="sin-margen">
+													<tr class="sin-borde" data-nuevo-tag="  -  0" id="td_tck_4650408"   style="text-align: center;" >
+																	<td class="td-modify" valign="top"  colspan='2'  >
+										
+										<div>
+																						<div style="vertical-align: top; float: left;">
+												BIG LADIE EXCLUSIVE<br>
+												<span>
+													Se abona derecho espectaculo/civil 5000$ valido hasta 01:30	
+												</span>
+												
+											</div>
+										</div>
+									</td>
+									<td class="td-modify" valign="top" estado="0-0">
+									Entrada Liberada</br>									</td>
+									<td align="center" class="td-modify" valign="top" data-nor-prod="1">
+																					<div class="btn" style="background:#999;">AGOTADO</div>
+																			</td>
+															</tr class="sin-margen">
+						
+					<style type="text/css">
+						.consumo_categoria {
+							font-size: 1em !important; background-color: #eee !important; padding-left: 10px !important; font-weight: 800;padding: 5px;
+    						border-radius: 7px !important;						}
+						.fila_mostrar_mas {
+							text-align:center;cursor:pointer;
+						}
+						.titulo_carta {
+							text-align: center; font-weight: 800;
+						}
+					</style>
+										    <tr class="sin-borde"  style="text-align: center;" >
+							<th colspan="5" class="td-modify titulo_carta">Carta QR Passline</td>
+					    </tr class="sin-margen">
+					     
+							<tr class="sin-borde" id="td_img_1" style="text-align: center;">
+								<td class="td-modify desaparecer-768" valign="top" colspan="5" style="padding-right: 0px;">
+																		<img src="https://www.passline.com/imagenes/Banner-app.png" width="100%">
+																		</td>
+							</tr>
+					    
+					
+				    <style type="text/css">
+				    						    	.hide_product_18389 { display: none; } 
+				    						    	.hide_product_17750 { display: none; } 
+				    						    	.hide_product_18387 { display: none; } 
+				    						    	.hide_product_18388 { display: none; } 
+				    						    	.hide_product_18390 { display: none; } 
+				    						    	.hide_product_18742 { display: none; } 
+				    					    </style>
+				    <script type="text/javascript">
+				    	function display_cat_elements(id) {
+							if ( $('.hide_product_'+id).is(':visible') ){ 
+								$('.hide_product_'+id).hide(); 
+								$('#toggle_'+id).html("<i class='fas fa-plus-circle' style='color:#ffb700;'></i> Mostrar más productos");
+							} else { 
+								$('.hide_product_'+id).show(); 
+								$('#toggle_'+id).html("<i class='fas fa-minus-circle' style='color:#ffb700;' ></i> Ocultar productos");
+							}
+				    	}
+				    </script>
+											    <tr class="sin-borde" >
+								<td colspan="5" class="td-modify consumo_categoria">PROMOS EXCLUSIVAS VENTA WEB</td>
+						    </tr class="sin-margen">
+						   						    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/pack-4-aguas-74502.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/pack-4-aguas-74502-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/pack-4-aguas-74502-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								PACK 4 AGUAS<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$20.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650891" >
+										<option value="0|4650891">0</option>
+																						<option value="1|4650891">1</option>
+																							<option value="2|4650891">2</option>
+																							<option value="3|4650891">3</option>
+																							<option value="4|4650891">4</option>
+																							<option value="5|4650891">5</option>
+																							<option value="6|4650891">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/2-porron-miller-74503.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/2-porron-miller-74503-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/2-porron-miller-74503-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								2 PORRON MILLER<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$15.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650892" >
+										<option value="0|4650892">0</option>
+																						<option value="1|4650892">1</option>
+																							<option value="2|4650892">2</option>
+																							<option value="3|4650892">3</option>
+																							<option value="4|4650892">4</option>
+																							<option value="5|4650892">5</option>
+																							<option value="6|4650892">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/2-tragos-clasicos-74504_3.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/2-tragos-clasicos-74504-rec_3.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/2-tragos-clasicos-74504-rec_3.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								2 TRAGOS CLASICOS<br>
+								<span>FERNET C/COCA - GIN TONIC - VODKA C/GASEOSA</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$15.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650893" >
+										<option value="0|4650893">0</option>
+																						<option value="1|4650893">1</option>
+																							<option value="2|4650893">2</option>
+																							<option value="3|4650893">3</option>
+																							<option value="4|4650893">4</option>
+																							<option value="5|4650893">5</option>
+																							<option value="6|4650893">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+											    <tr class="sin-borde" >
+								<td colspan="5" class="td-modify consumo_categoria">SIN ALCOHOL</td>
+						    </tr class="sin-margen">
+						   						    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/caja-de-jugo-75274.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/caja-de-jugo-75274-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/caja-de-jugo-75274-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								CAJA DE JUGO<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$15.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650906" >
+										<option value="0|4650906">0</option>
+																						<option value="1|4650906">1</option>
+																							<option value="2|4650906">2</option>
+																							<option value="3|4650906">3</option>
+																							<option value="4|4650906">4</option>
+																							<option value="5|4650906">5</option>
+																							<option value="6|4650906">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/botella-de-gaseosa-75275.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/botella-de-gaseosa-75275-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/botella-de-gaseosa-75275-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								BOTELLA DE GASEOSA<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$15.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650907" >
+										<option value="0|4650907">0</option>
+																						<option value="1|4650907">1</option>
+																							<option value="2|4650907">2</option>
+																							<option value="3|4650907">3</option>
+																							<option value="4|4650907">4</option>
+																							<option value="5|4650907">5</option>
+																							<option value="6|4650907">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/agua-500ml-74510.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/agua-500ml-74510-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/agua-500ml-74510-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								AGUA 500ML<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$7.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650899" >
+										<option value="0|4650899">0</option>
+																						<option value="1|4650899">1</option>
+																							<option value="2|4650899">2</option>
+																							<option value="3|4650899">3</option>
+																							<option value="4|4650899">4</option>
+																							<option value="5|4650899">5</option>
+																							<option value="6|4650899">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/lata-speed-74511.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/lata-speed-74511-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/lata-speed-74511-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								LATA SPEED<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$7.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650900" >
+										<option value="0|4650900">0</option>
+																						<option value="1|4650900">1</option>
+																							<option value="2|4650900">2</option>
+																							<option value="3|4650900">3</option>
+																							<option value="4|4650900">4</option>
+																							<option value="5|4650900">5</option>
+																							<option value="6|4650900">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+											    <tr class="sin-borde" >
+								<td colspan="5" class="td-modify consumo_categoria">CERVEZAS</td>
+						    </tr class="sin-margen">
+						   						    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/porron-corona-74507.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/porron-corona-74507-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/porron-corona-74507-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								PORRON CORONA<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$12.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650896" >
+										<option value="0|4650896">0</option>
+																						<option value="1|4650896">1</option>
+																							<option value="2|4650896">2</option>
+																							<option value="3|4650896">3</option>
+																							<option value="4|4650896">4</option>
+																							<option value="5|4650896">5</option>
+																							<option value="6|4650896">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/porron-miller-74506.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/porron-miller-74506-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/porron-miller-74506-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								PORRON MILLER<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$10.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650895" >
+										<option value="0|4650895">0</option>
+																						<option value="1|4650895">1</option>
+																							<option value="2|4650895">2</option>
+																							<option value="3|4650895">3</option>
+																							<option value="4|4650895">4</option>
+																							<option value="5|4650895">5</option>
+																							<option value="6|4650895">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/porron-stella-artois-75269.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/porron-stella-artois-75269-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/porron-stella-artois-75269-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								PORRON STELLA ARTOIS<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$10.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650901" >
+										<option value="0|4650901">0</option>
+																						<option value="1|4650901">1</option>
+																							<option value="2|4650901">2</option>
+																							<option value="3|4650901">3</option>
+																							<option value="4|4650901">4</option>
+																							<option value="5|4650901">5</option>
+																							<option value="6|4650901">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/lata-amstel-74505.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/lata-amstel-74505-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/lata-amstel-74505-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								LATA AMSTEL<br>
+								<span></span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$9.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650894" >
+										<option value="0|4650894">0</option>
+																						<option value="1|4650894">1</option>
+																							<option value="2|4650894">2</option>
+																							<option value="3|4650894">3</option>
+																							<option value="4|4650894">4</option>
+																							<option value="5|4650894">5</option>
+																							<option value="6|4650894">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+											    <tr class="sin-borde" >
+								<td colspan="5" class="td-modify consumo_categoria">BOTELLAS (INCLUYE 2 TICKETS SIN CARGO)</td>
+						    </tr class="sin-margen">
+						   						    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-4-speed-75273.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-4-speed-75273-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-4-speed-75273-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JHONNIE WALKER BLACK + 4 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$180.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650905" >
+										<option value="0|4650905">0</option>
+																						<option value="1|4650905">1</option>
+																							<option value="2|4650905">2</option>
+																							<option value="3|4650905">3</option>
+																							<option value="4|4650905">4</option>
+																							<option value="5|4650905">5</option>
+																							<option value="6|4650905">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-gaseosa-75272.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-gaseosa-75272-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-black-gaseosa-75272-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JHONNIE WALKER BLACK + GASEOSA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$170.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650904" >
+										<option value="0|4650904">0</option>
+																						<option value="1|4650904">1</option>
+																							<option value="2|4650904">2</option>
+																							<option value="3|4650904">3</option>
+																							<option value="4|4650904">4</option>
+																							<option value="5|4650904">5</option>
+																							<option value="6|4650904">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jager-4-speed-74509.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jager-4-speed-74509-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jager-4-speed-74509-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JAGER + 4 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$150.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650898" >
+										<option value="0|4650898">0</option>
+																						<option value="1|4650898">1</option>
+																							<option value="2|4650898">2</option>
+																							<option value="3|4650898">3</option>
+																							<option value="4|4650898">4</option>
+																							<option value="5|4650898">5</option>
+																							<option value="6|4650898">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-4-speed-75271.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-4-speed-75271-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-4-speed-75271-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JHONNIE WALKER RED + 4 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$150.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650903" >
+										<option value="0|4650903">0</option>
+																						<option value="1|4650903">1</option>
+																							<option value="2|4650903">2</option>
+																							<option value="3|4650903">3</option>
+																							<option value="4|4650903">4</option>
+																							<option value="5|4650903">5</option>
+																							<option value="6|4650903">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jager-1-gaseosa-74508.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jager-1-gaseosa-74508-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jager-1-gaseosa-74508-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JAGER + 1 GASEOSA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$140.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650897" >
+										<option value="0|4650897">0</option>
+																						<option value="1|4650897">1</option>
+																							<option value="2|4650897">2</option>
+																							<option value="3|4650897">3</option>
+																							<option value="4|4650897">4</option>
+																							<option value="5|4650897">5</option>
+																							<option value="6|4650897">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-gaseosa-75270.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-gaseosa-75270-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/jhonnie-walker-red-gaseosa-75270-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								JHONNIE WALKER RED + GASEOSA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$140.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650902" >
+										<option value="0|4650902">0</option>
+																						<option value="1|4650902">1</option>
+																							<option value="2|4650902">2</option>
+																							<option value="3|4650902">3</option>
+																							<option value="4|4650902">4</option>
+																							<option value="5|4650902">5</option>
+																							<option value="6|4650902">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/fernet-branca-2-coca-cola-74496.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/fernet-branca-2-coca-cola-74496-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/fernet-branca-2-coca-cola-74496-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								FERNET BRANCA + 2 COCA COLA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$99.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650885" >
+										<option value="0|4650885">0</option>
+																						<option value="1|4650885">1</option>
+																							<option value="2|4650885">2</option>
+																							<option value="3|4650885">3</option>
+																							<option value="4|4650885">4</option>
+																							<option value="5|4650885">5</option>
+																							<option value="6|4650885">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/vodka-4-speed-74499.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/vodka-4-speed-74499-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/vodka-4-speed-74499-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								VODKA + 4 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$99.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650888" >
+										<option value="0|4650888">0</option>
+																						<option value="1|4650888">1</option>
+																							<option value="2|4650888">2</option>
+																							<option value="3|4650888">3</option>
+																							<option value="4|4650888">4</option>
+																							<option value="5|4650888">5</option>
+																							<option value="6|4650888">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/gin-heraclito-1-tonica-74497.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/gin-heraclito-1-tonica-74497-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/gin-heraclito-1-tonica-74497-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								GIN HERACLITO + 1 TONICA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$89.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650886" >
+										<option value="0|4650886">0</option>
+																						<option value="1|4650886">1</option>
+																							<option value="2|4650886">2</option>
+																							<option value="3|4650886">3</option>
+																							<option value="4|4650886">4</option>
+																							<option value="5|4650886">5</option>
+																							<option value="6|4650886">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde  hide_product_17750"  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/vodka-1-jugo-o-1-gaseosa-74498.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/vodka-1-jugo-o-1-gaseosa-74498-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/vodka-1-jugo-o-1-gaseosa-74498-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								VODKA + 1 JUGO o 1 GASEOSA<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$89.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650887" >
+										<option value="0|4650887">0</option>
+																						<option value="1|4650887">1</option>
+																							<option value="2|4650887">2</option>
+																							<option value="3|4650887">3</option>
+																							<option value="4|4650887">4</option>
+																							<option value="5|4650887">5</option>
+																							<option value="6|4650887">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+												    <tr class="sin-borde" >
+									<td colspan="5" class="td-modify fila_mostrar_mas" onclick="display_cat_elements('17750');">
+										<b style="color:black;" id="toggle_17750"><i class='fas fa-plus-circle' style='color:#ffb700'></i> Mostrar más productos</b>
+									</td>
+							    </tr class="sin-margen">
+													    <tr class="sin-borde" >
+								<td colspan="5" class="td-modify consumo_categoria">ESPUMANTES (INCLUYE 2 TICKETS SIN CARGO)</td>
+						    </tr class="sin-margen">
+						   						    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/baron-b-2-speed-74501.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/baron-b-2-speed-74501-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/baron-b-2-speed-74501-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								BARON B + 2 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$99.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650890" >
+										<option value="0|4650890">0</option>
+																						<option value="1|4650890">1</option>
+																							<option value="2|4650890">2</option>
+																							<option value="3|4650890">3</option>
+																							<option value="4|4650890">4</option>
+																							<option value="5|4650890">5</option>
+																							<option value="6|4650890">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/chandon-2-speed-74500.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/chandon-2-speed-74500-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/chandon-2-speed-74500-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								CHANDON + 2 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$75.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650889" >
+										<option value="0|4650889">0</option>
+																						<option value="1|4650889">1</option>
+																							<option value="2|4650889">2</option>
+																							<option value="3|4650889">3</option>
+																							<option value="4|4650889">4</option>
+																							<option value="5|4650889">5</option>
+																							<option value="6|4650889">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+										    <tr class="sin-borde "  style="text-align: center;" >
+							<td class="td-modify" style="width:15% !important;">
+							<div class="lightbox pull-left">
+							<a href="https://www.passline.com/imagenes/maquinas_productos/champagne-gambei-2-speed-74495.jpg" >
+                                                <img src="https://www.passline.com/imagenes/maquinas_productos/champagne-gambei-2-speed-74495-rec.jpg" title="" alt="" class="img-w" style="width: 90px; height: 90px"/>
+                                            </a>
+                            	<!--<img style="width: 50px; margin-right: 2%;" 
+								src="https://www.passline.com/imagenes/maquinas_productos/champagne-gambei-2-speed-74495-rec.jpg"> -->
+							</div>
+							</td>
+							<td class="td-modify" style="width:40% !important;">
+								CHAMPAGNE GAMBEI + 2 SPEED<br>
+								<span>INCLUYE 2 TICKETS SIN CARGO</span>
+							</td>
+							<td class="td-modify" style="width:20% !important;padding-left:5px;">
+	                			$30.000.-							</td>
+							<td class="td-modify" style="width:15% !important;">
+																	<select name="cantidad[]" id="cantidad_4650884" >
+										<option value="0|4650884">0</option>
+																						<option value="1|4650884">1</option>
+																							<option value="2|4650884">2</option>
+																							<option value="3|4650884">3</option>
+																							<option value="4|4650884">4</option>
+																							<option value="5|4650884">5</option>
+																							<option value="6|4650884">6</option>
+																				</select>
+															</td>
+					    </tr class="sin-margen">
+					
+					<!--benner registro hinchas-->
+					
+					<!--benner registro biometrico passline-->
+					
+					<!--benner registro biometrico facepass-->
+					
+					<!--benner registro biometrico trucrowd-->
+					
+											<tr>
+					    						    			<td class="td-modify" colspan="3"></td>
+					    			<td class="td-modify" style="text-align: right;">
+					    				<input type="button" name="button" id="button" class="btn f-r m-0" style="font-size: 15px; margin-right: 52px;" onClick="return vf_submit_validado();" value="ADQUIRIR">
+					    			</td>
+													    </tr>
+							    </table>
+		
+	<div id="msg_disponibilidad_productos" class="msg-disponibilidad-productos"></div>
+	<style>
+		.msg-disponibilidad-productos {
+			display: none;
+			width: auto;
+			max-width: 95%;
+			margin: 10px auto;
+			padding: 12px 16px;
+			color: #b30000;
+			font-weight: bold;
+			background: rgba(179, 0, 0, 0.20);
+			text-align: center;
+			border-radius: 8px;
+			clear: both;
+			box-sizing: border-box;
+		}
+	</style>
+	<script type="text/javascript">
+		function limpiarMensajeDisponibilidadProductos() {
+			var box = document.getElementById('msg_disponibilidad_productos');
+			if (box) {
+				box.innerHTML = '';
+				box.style.display = 'none';
+			}
+		}
+
+		// Se mantiene este alias para no romper llamadas previas relacionadas con Italia.
+		function limpiarMensajeDisponibilidadItalia() {
+			limpiarMensajeDisponibilidadProductos();
+		}
+
+		function mostrarMensajeDisponibilidadProductos(mensajes) {
+			var box = document.getElementById('msg_disponibilidad_productos');
+			if (box) {
+				box.innerHTML = mensajes.join('<br>');
+				box.style.display = 'table';
+				box.scrollIntoView();
+			} else {
+				alert(mensajes.join("\n"));
+			}
+		}
+
+		function obtenerCantidadRealSeleccionada($el) {
+			var valor = String($el.val() || '0|0').split('|');
+			var cantidad = parseInt(valor[0], 10) || 0;
+			var factorPromocion = parseInt($el.data('factor-promocion'), 10) || 1;
+
+			if (factorPromocion <= 0) {
+				factorPromocion = 1;
+			}
+
+			return cantidad * factorPromocion;
+		}
+
+		function validarDisponibilidadProductosPromocion() {
+			
+			limpiarMensajeDisponibilidadProductos();
+
+			var mensajes = [];
+
+			jQuery('.js-validar-disponibilidad-producto').each(function () {
+				var $el = jQuery(this);
+				var cantidadReal = obtenerCantidadRealSeleccionada($el);
+				var disponibles = parseInt($el.data('disponibles-reales'), 10) || 0;
+				var factorPromocion = parseInt($el.data('factor-promocion'), 10) || 1;
+				var nombre = $el.data('producto-nombre') || 'este ticket';
+
+				if (cantidadReal > 0 && cantidadReal > disponibles) {
+					if (factorPromocion > 1) {
+						mensajes.push('No hay entradas disponibles para ' + nombre + '. La promoción multiplica la cantidad seleccionada y estás intentando comprar ' + cantidadReal + ' entradas reales. Selecciona una cantidad menor.');
+					} else {
+						mensajes.push('No hay entradas disponibles para ' + nombre + '. Selecciona una cantidad menor.');
+					}
+				}
+			});
+
+			if (mensajes.length > 0) {
+				mostrarMensajeDisponibilidadProductos(mensajes);
+				return false;
+			}
+
+			return true;
+		}
+
+		function validarDisponibilidadCategoriasItalia() {
+							return true;
+			
+			var categorias = {};
+
+			jQuery('.js-validar-cat-italia').each(function () {
+				var $el = jQuery(this);
+				var cantidadReal = obtenerCantidadRealSeleccionada($el);
+				var catId = String($el.data('cat-id') || '');
+
+				if (catId === '') {
+					return;
+				}
+
+				if (!categorias[catId]) {
+					categorias[catId] = {
+						nombre: $el.data('cat-nombre') || '',
+						disponibles: parseInt($el.data('cat-disponibles'), 10) || 0,
+						solicitadas: 0
+					};
+				}
+
+				categorias[catId].solicitadas += cantidadReal;
+			});
+
+			var mensajes = [];
+			for (var catId in categorias) {
+				if (!categorias.hasOwnProperty(catId)) continue;
+				if (categorias[catId].solicitadas > categorias[catId].disponibles) {
+					mensajes.push("La quantità selezionata non è disponibile per l'Ordine di posto " + categorias[catId].nombre);
+				}
+			}
+
+			if (mensajes.length > 0) {
+				mostrarMensajeDisponibilidadProductos(mensajes);
+				return false;
+			}
+
+			return true;
+		}
+
+		function vf_submit_validado() {
+			if (!validarDisponibilidadProductosPromocion()) {
+				return false;
+			}
+			if (!validarDisponibilidadCategoriasItalia()) {
+				return false;
+			}
+			return vf();
+		}
+
+		jQuery(document).on('change', '.js-validar-disponibilidad-producto, .js-validar-cat-italia', function () {
+			limpiarMensajeDisponibilidadProductos();
+		});
+	</script>
+	</form>
+			<script type="text/javascript">
+			$(".accordion-titulo").click(function(){
+				var contenido=$(this).next(".accordion-content");
+				if(contenido.css("display")=="none"){ //open
+			    	contenido.slideDown(250);
+			    	$(this).addClass("open");
+				} else { //close
+			    	contenido.slideUp(250);
+			    	$(this).removeClass("open");
+			  	}
+			});
+			$(".accordion-titulo").first().click();
+		</script>
+		<script type="text/javascript">
+		function ow(id) {
+			document.getElementById("gal_tck_"+id).firstElementChild.click();
+		}
+	</script>
+
+											<h5 class="text-mobile" style="color:#ff0047;font-weight: bold;text-align:center">Evento solo para Mayores de 18 Años.</h5>
+					
+				<div class="contenedor aparecer-768" style="width: 80%;">
+									</div>
+
+				
+
+								<div class="aparecer-768"> 
+									</div>
+								<p style="height:10px ">&nbsp;</p>
+									<div class="aparecer-768">
+						<div>
+							<a href="productora/4522666-guillermo-sebastian-arauz" class="more-info" style="margin-top: 5px !important;">Más Eventos de esta Productora</a>
+						</div>
+					</div>
+								<p>&nbsp;</p>
+				<p style="text-align: justify;">
+					<i style="font-size: 11px;">
+						Los comentarios y/o textos ingresados son de exclusiva responsabilidad del Productor y/o Organizador del Evento. Passline no se hace responsable por declaraciones emitidas por estos en lo relativo a los Eventos. El Productor/Organizador es el único y exclusivo responsable de la producción y organización del Evento, en forma oportuna y en conformidad a la ley.					</i>
+				</p>
+			</section>
+		</div>
+
+				<!--cont-detalle-ficha-->
+	</div><!-- fin wrap -->
+	<form name="form_val" id="form_val" method="post" action="https://www.passline.com/eventos/3110-big-halloween-mattcity-matt32-vice-city-branco-simon-guille-reboredo-manu-bignami-cmg">
+		<input type="hidden" name="codigo_compra" id="codigo_compra" value="">
+		<input type="hidden" name="sel_cantidad" id="sel_cantidad" value="">
+	</form>
+			<footer>
+				<style>
+		.solocel {
+			display: none;
+		}
+
+		@media only screen and (max-width: 700px) {
+			.solocel {
+				display: block;
+			}
+			.cont-der-foot .redes{
+				justify-content: center !important;
+			}
+		}
+
+		@media only screen and (max-width: 768px) {
+			footer span a {
+				display: contents !important;
+			}
+		}
+	</style>
+	<section class="contenedor">
+		
+					<span class="select-idioms" style="display:none;visibility: hidden;" data-route='lib/change_language.php'></span>
+							<p style="color:#4a4a4a; filter:invert()">
+				Importante: Passline no se hace responsable de la calidad o satisfacción de los eventos publicados. Passline es un sistema que presta el servicio de venta de entradas online. Al usar este sitio usted acepta los términos y condiciones de la aplicación.				Copyright © 2026 Passline. 	</section>
+
+	<!-- contenedor -->
+	<script>
+		$(document).ready(function() {
+
+			$(document).on('click', '.li-language', function() {
+				console.log('Cambio');
+				var lang = $(this).data('lang');
+				var country = $(this).data('country');
+				var route = $('.select-idioms').data('route');
+				$.ajax({
+					url: route,
+					type: 'post',
+					data: {
+						idioma: lang,
+						pais: country
+					}
+				}).done(function(request) {
+					var data = JSON.parse(request);
+					console.log(data.pais);
+					if (data.responses == 200) {
+						$('.language-items').html(data.language);
+						$('.top-language').replaceWith(data.active);
+						window.location.reload();
+					}
+				});
+			});
+
+			$('#idioms').on('change', function() {
+
+				var route = $('.select-idioms').data('route');
+				$.ajax({
+					url: route,
+					type: 'post',
+					data: {
+						idioma: $('#idioms').val(),
+					}
+				}).done(function(request) {
+					var data = JSON.parse(request);
+					if (data.responses == 200) {
+						window.location.reload();
+					}
+				}).fail(function(data) {
+
+				});
+			});
+		});
+	</script>
+
+
+			</footer>
+		<!-- FIN footer -->
+		</div>
+
+			<script type="text/javascript">
+			$(document).ready(function() {
+				$('.slick-eventos').fadeIn();
+				$('.slick-arrow').fadeOut();
+				$('.slick-prev').fadeOut();
+			});
+
+			$(document).ready(function() {
+				$('.slick-eventos').slick({
+					slidesToShow: 2,
+					slidesToScroll: 1,
+					infinite: true,
+					autoplay: true,
+					autoplaySpeed: 3000,
+				});
+			});
+		</script>
+		<!-- <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5c34e53004561d14" async></script> -->
+	<script type="text/javascript" src="../site-static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('.lightbox').magnificPopup({
+				type: 'image',
+				delegate: 'a',
+				closeOnContentClick: true,
+				image: {
+					verticalFit: false
+				}
+			});
+			$('.lightbox-map').magnificPopup({
+				type: 'iframe',
+				delegate: 'a',
+				closeOnContentClick: true,
+				image: {
+					verticalFit: false
+				}
+			});
+		});
+
+		// Galería de imágenes
+		Fancybox.bind('[data-fancybox="galeria-de-imagenes"]', {
+			infinite: true,
+			l10n: {
+				CLOSE: "Cerrar",
+				NEXT: "Siguiente",
+				PREV: "Anterior",
+				MODAL: "Puedes cerrar este contenido con la tecla ESC",
+				ERROR: "Algo salió mal, inténtalo de nuevo más tarde",
+				IMAGE_ERROR: "Imagen no encontrada",
+				ELEMENT_NOT_FOUND: "Elemento HTML no encontrado",
+				AJAX_NOT_FOUND: "Error cargando AJAX : No encontrado",
+				AJAX_FORBIDDEN: "Error cargando AJAX : No disponible",
+				IFRAME_ERROR: "Error al cargar la página",
+				TOGGLE_ZOOM: "Ampliar imagen",
+				TOGGLE_THUMBS: "Visualización de miniaturas",
+				TOGGLE_SLIDESHOW: "Modo Presentación",
+				TOGGLE_FULLSCREEN: "Modo Pantalla Completa",
+				DOWNLOAD: "Descargar",
+			}
+		});
+
+		
+	</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4f4e3711f3d322d',t:'MTc5MjgwMTk4OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>
