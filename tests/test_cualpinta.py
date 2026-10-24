@@ -516,6 +516,15 @@ class TestNormalize:
         assert cualpinta.normalize([]) == []
 
 
-def test_blocked_categories_cover_non_music_shows():
-    for category in ("Cine", "Festival de cine", "Preestreno", "Stand-up", "Danza", "Teatro", "Teatro infantil"):
+def test_blocked_categories_cover_the_product_exclusions():
+    for category in (
+        "Cine",
+        "Festival de cine",
+        "Preestreno",
+        "Stand-up",
+        "Danza",
+        "Teatro",
+        "Teatro infantil",
+        "Fiesta",
+    ):
         assert category in cualpinta.BLOCKED_CATEGORIES

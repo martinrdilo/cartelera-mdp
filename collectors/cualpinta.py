@@ -59,6 +59,7 @@ BLOCKED_CATEGORIES = frozenset(
         "Danza",
         "Teatro",
         "Teatro infantil",
+        "Fiesta",
     }
 )
 
