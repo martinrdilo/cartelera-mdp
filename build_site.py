@@ -805,45 +805,7 @@ def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]
     return venue_options(events)[:limit]
 
 
-def render_venue_filter(events: list[dict]) -> str:
-    options = ['<option value="">Todas las salas</option>']
-    for name, venue_id, count in venue_options(events):
-        options.append(
-            f'<option value="{esc(venue_id)}" data-name="{esc(name)}">{esc(name)} ({count})</option>'
-        )
-    return (
-        '<label class="filter-select" for="venue-filter">'
-        '<span class="filter-select__label">Sala</span>'
-        f'<select id="venue-filter" aria-label="Filtrar por sala">{"".join(options)}</select>'
-        "</label>"
-    )
-
-
-def render_day_filter(groups: list[tuple[str, list[dict]]], today: date) -> str:
-    options = ['<option value="">Todos los días</option>']
-    current_month = None
-    for iso, day_events in groups:
-        month_key = iso[:7]
-        if month_key != current_month:
-            if current_month is not None:
-                options.append("</optgroup>")
-            options.append(f'<optgroup label="{esc(format_month_tab(month_key, today))}">')
-            current_month = month_key
-        label = format_day_long(iso)
-        options.append(
-            f'<option value="{iso}" data-label="{esc(label)}">{esc(label)} ({len(day_events)})</option>'
-        )
-    if current_month is not None:
-        options.append("</optgroup>")
-    return (
-        '<label class="filter-select" for="day-filter">'
-        '<span class="filter-select__label">Día</span>'
-        f'<select id="day-filter" aria-label="Filtrar por día">{"".join(options)}</select>'
-        "</label>"
-    )
-
-
-def render_toolbar(events: list[dict], groups: list[tuple[str, list[dict]]], today: date) -> str:
+def render_toolbar(events: list[dict]) -> str:
     free = sum(1 for event in events if event["is_free"])
     chips = [
         f'<button type="button" class="chip" data-filter="free" aria-pressed="false">'
@@ -856,12 +818,132 @@ def render_toolbar(events: list[dict], groups: list[tuple[str, list[dict]]], tod
         )
     return (
         '<div class="toolbar" role="group" aria-label="Filtros de la agenda">'
-        f'{"".join(chips[:1])}'
-        f"{render_day_filter(groups, today)}"
-        f"{render_venue_filter(events)}"
-        f'{"".join(chips[1:])}'
+        '<button type="button" class="toolbar__toggle" id="filters-toggle" aria-haspopup="dialog" '
+        'aria-expanded="false" aria-controls="filters-panel">'
+        '<svg class="toolbar__toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        '<path d="M4 6h16M7 12h10M10 18h4"/></svg>'
+        "<span>Filtros</span>"
+        "</button>"
+        '<div class="toolbar__active" id="active-filter-pills" hidden>'
+        '<button type="button" class="filter-pill" id="active-day-filter" hidden>'
+        '<span id="active-day-label"></span><i aria-hidden="true">×</i>'
+        "</button>"
+        '<button type="button" class="filter-pill" id="active-venue-filter" hidden>'
+        '<span id="active-venue-label"></span><i aria-hidden="true">×</i>'
+        "</button>"
+        "</div>"
+        f'<div class="toolbar__chips">{"".join(chips)}</div>'
         '<p class="toolbar__count" id="filter-count" aria-live="polite"></p>'
         "</div>"
+    )
+
+
+def render_filters_panel(
+    events: list[dict],
+    groups: list[tuple[str, list[dict]]],
+    today: date,
+    default_view: str,
+) -> str:
+    start, end = weekend_window(today)
+    weekend_dates = [(start + timedelta(days=offset)).isoformat() for offset in range((end - start).days + 1)]
+    next_start, next_end = next_weekend_window(today)
+    next_dates = [(next_start + timedelta(days=offset)).isoformat() for offset in range((next_end - next_start).days + 1)]
+    by_date = dict(groups)
+    weekend_count = sum(len(by_date.get(iso, [])) for iso in weekend_dates)
+    next_count = sum(len(by_date.get(iso, [])) for iso in next_dates)
+    total = sum(len(day_events) for _, day_events in groups)
+    initial_visible = {
+        "weekend": weekend_count,
+        "next-weekend": next_count,
+        "all": total,
+    }.get(default_view, total)
+
+    quick = []
+    for value, label, count in (
+        ("weekend", "Este finde", weekend_count),
+        ("next-weekend", "Próximo finde", next_count),
+        ("all", "Todo", total),
+    ):
+        on = default_view == value
+        quick.append(
+            f'<button type="button" class="filters-option filters-option--quick{" is-on" if on else ""}" '
+            f'data-panel-kind="quick" data-panel-view="{value}" aria-pressed="{"true" if on else "false"}">'
+            f"{label} <em>{count}</em></button>"
+        )
+
+    months = []
+    counts = month_counts(events)
+    for key in sorted(counts)[:MONTH_NAV_LIMIT]:
+        label = format_month_tab(key, today)
+        on = default_view == f"month:{key}"
+        months.append(
+            f'<button type="button" class="filters-option filters-option--month{" is-on" if on else ""}" '
+            f'data-panel-kind="month" data-panel-view="month:{key}" aria-pressed="{"true" if on else "false"}">'
+            f"{esc(label)} <em>{counts[key]}</em></button>"
+        )
+
+    days = []
+    current_month = None
+    for iso, day_events in groups:
+        month_key = iso[:7]
+        if month_key != current_month:
+            days.append(f'<p class="filters-sublabel">{esc(format_month_tab(month_key, today))}</p>')
+            current_month = month_key
+        label = format_day_long(iso)
+        on = default_view == iso
+        days.append(
+            f'<button type="button" class="filters-option filters-option--row{" is-on" if on else ""}" '
+            f'data-panel-kind="day" data-panel-view="{iso}" aria-pressed="{"true" if on else "false"}">'
+            f"<span>{esc(label)}</span><em>{len(day_events)}</em></button>"
+        )
+
+    venues = [
+        f'<button type="button" class="filters-option filters-option--row is-on" '
+        f'data-panel-kind="venue" data-panel-venue="" data-search="" aria-pressed="true">'
+        f"<span>Todas las salas</span><em>{total}</em></button>"
+    ]
+    for name, venue_id, count in venue_options(events):
+        venues.append(
+            f'<button type="button" class="filters-option filters-option--row" '
+            f'data-panel-kind="venue" data-panel-venue="{esc(venue_id)}" data-search="{esc(name)}" '
+            f'data-label="{esc(name)}" aria-pressed="false"><span>{esc(name)}</span><em>{count}</em></button>'
+        )
+
+    return (
+        '<div class="filters-overlay" id="filters-overlay" hidden></div>'
+        '<section class="filters-panel" id="filters-panel" role="dialog" aria-modal="true" '
+        'aria-labelledby="filters-title" tabindex="-1" hidden>'
+        '<header class="filters-panel__head">'
+        '<h2 id="filters-title">Filtrar la agenda</h2>'
+        '<button type="button" class="filters-panel__close" id="filters-close" '
+        'aria-label="Cerrar filtros">×</button>'
+        "</header>"
+        '<div class="filters-panel__body">'
+        '<section class="filters-group" aria-labelledby="filters-when">'
+        '<h3 class="filters-label" id="filters-when">Cuándo</h3>'
+        f'<div class="filters-quick">{"".join(quick)}</div>'
+        f'<div class="filters-months">{"".join(months)}</div>'
+        f'<div class="filters-days" id="filters-days">{"".join(days)}</div>'
+        "</section>"
+        '<section class="filters-group filters-group--where" aria-labelledby="filters-where">'
+        '<h3 class="filters-label" id="filters-where">Sala</h3>'
+        '<label class="filters-search">'
+        '<span class="search__icon" aria-hidden="true">⌕</span>'
+        '<input type="search" id="venue-search" placeholder="Buscar sala" '
+        'aria-label="Buscar sala" autocomplete="off">'
+        "</label>"
+        '<div class="filters-venues" id="filters-venues">'
+        f'{"".join(venues)}'
+        '<p class="filters-empty" id="venue-empty" hidden>No hay salas con ese nombre.</p>'
+        "</div>"
+        "</section>"
+        "</div>"
+        '<footer class="filters-panel__foot">'
+        '<button type="button" class="btn btn--ghost" id="filters-clear">Limpiar filtros</button>'
+        f'<button type="button" class="btn btn--primary" id="filters-apply">'
+        f"Ver {initial_visible} eventos</button>"
+        "</footer>"
+        "</section>"
     )
 
 
@@ -1272,6 +1354,7 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
     has_weekend = bool(weekend)
     default_view = "weekend" if has_weekend else "all"
     featured = render_featured(pick_featured(events, today), today)
+    filters_panel = render_filters_panel(events, groups, today, default_view)
     if events:
         empty_html = (
             '<p class="empty-state" id="empty-state" hidden>'
@@ -1313,7 +1396,8 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 {render_intro(events, today)}
 {render_day_nav(groups, today)}
 {render_month_nav(events, today)}
-{render_toolbar(events, groups, today)}
+{render_toolbar(events)}
+{filters_panel}
 {featured}
 {render_agenda(groups, today, default_view)}
 {empty_html}
