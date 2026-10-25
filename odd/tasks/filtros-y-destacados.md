@@ -1,0 +1,34 @@
+# Filtros inline y carrusel de destacados
+
+Objetivo: reemplazar el modal de filtros por una barra inline con panel de salas colapsable, sumar un carrusel de 8 destacados y corregir la ventana de "próximo finde" de los domingos.
+Rama: `feat/filtros-destacados`. Estrategia de entrega: `ask-on-risk`. Runner: `.venv/bin/python -m pytest -q`.
+
+## Specs
+
+- **S1 — Barra inline, sin modal.** La parte de los lugares deja de vivir en una ventana: la barra de filtros queda debajo de la navegación de meses, alineada a la izquierda, con `Gratis`, 6 salas representativas y `Más salas`. Cita: "la parte de los lugares no me gusta... quedó a la derecha, eso no me gusta. Y por otro lado, hay muy pocos lugares y no sé, son pocos representativos. Me gustaría que haya más."
+- **S2 — Sin diálogo ni overlay.** Se elimina el botón `Filtros`, el `role="dialog"`, el overlay, el focus trap y el footer "Ver N eventos". El panel de salas es una sección inline. Cita: "la parte que dice 'filtros' no me gusta cómo quedó... no me gusta la parte del filtro, o sea, la ventana que abre de filtrar la agenda."
+- **S3 — Salas colapsables.** El panel de salas arranca cerrado, `Más salas` lo abre y lo cierra, el `×` y `Escape` también. Cita: "eso no estaría fijo, sino que se podría colapsar lo de filtrar por sala porque ocupa un poco de espacio."
+- **S4 — Salas representativas.** Solo se ofrecen salas de `data/venues.json` con eventos próximos. Se excluyen los pseudo-lugares que hoy aparecen como sala (`Mar del Plata`, `Mar de Plata`, `Playa Grande`, `Santa (Playa Grande)`, `Av. Luro 2451`, `Antesala`, `Museum MDQ`, `Cars & Coffee Mar del Plata`). Los contadores de sala son sobre toda la agenda próxima, no sobre el finde, para que no queden casi todos en cero. El contador de resultados sigue reflejando la vista actual.
+- **S5 — Se conserva cuándo.** La navegación por finde (`Finde`, `Sáb`, `Dom`, `Próx. finde`, `Todo`) y por mes queda igual. Supuesto: la lista de todos los días del panel viejo desaparece; el acceso por día suelto no forma parte de este cambio.
+- **S6 — Criterio de destacados.** No cambia el algoritmo de `featured_score`: horizonte de 10 días, afiche/venta/precio/fechas/cercanía/horario, una sala por evento. Solo sube el límite de 3 a 8.
+- **S7 — Carrusel de destacados.** El destacado principal queda fijo y la columna derecha pagea de a 2 tarjetas con flechas y contador `1 / N`, sin autoplay. En mobile las tarjetas se apilan. Cita: "los destacados, ¿en base a qué los elegiste?... ¿Y podría haber un carrusel en esa parte, para que no haya solo tres?"
+- **S8 — Bug del finde de domingo.** En domingo, `next_weekend_window` debe devolver sábado y domingo del finde siguiente, no solo el domingo. Afecta el filtro `Próx. finde`, el puntaje de destacados y la etiqueta `Próximo finde`.
+- **S9 — Regresiones.** Búsqueda, filtro gratis, filtro por sala, contadores de pestañas, auto-cambio a `Todo`, estado vacío, ocultamiento de destacados con filtros, links de venta y compartir siguen funcionando. Los tests existentes se actualizan donde el marcado cambió.
+
+## Tasks
+
+- **T1** ✅ Fix `next_weekend_window` de domingo + tests. Route: inline. `S8`. Commit `0bc7689`.
+- **T2** ✅ Barra inline, panel de salas colapsable, salas curadas y reescritura de filtros en `app.js` + CSS + tests. Route: inline. `S1-S5, S9`. Commit `0bc7689`.
+- **T3** ✅ Carrusel de 8 destacados con páginas de 2, flechas y contador + tests. Route: inline. `S6-S7`. Commit `0bc7689`.
+- **T4** ✅ Suite completa, build determinista, smoke visual en navegador embebido y documento/mirror. Route: inline. `S1-S9`. Commit `0bc7689`.
+
+## Log
+
+- **L1** (pedido original, verbatim): "La verdad es que la parte de los filtros no me gusta mucho, no quedó muy buena. Necesito que apliquemos un rediseño ahí. Lo de filtrar por mes me parece bien, lo de filtrar por el fin de semana, sábado, domingo, próximo fin de semana, también está bien. Pero la parte de los lugares no me gusta. Por un lado, quedó a la derecha, eso no me gusta. Y por otro lado, hay muy pocos lugares y no sé, son pocos representativos. Me gustaría que haya más. Y por otro lado, la parte que dice "filtros" no me gusta cómo quedó. O sea, por ahí la parte de las alas, no sé, no me gusta la parte del filtro, o sea, la ventana que abre de filtrar la agenda. Proponeme algún otro rediseño más lindo, más intuitivo, a ver qué se te ocurre que podemos hacer con esa parte. Parate en la rama main y sali desde ahi."
+- **L2** (seguimiento, verbatim): "No está tan mal, pero me imagino que eso no estaría fijo, sino que se podría colapsar lo de filtrar por sala porque ocupa un poco de espacio. Te hago otra pregunta: los destacados, ¿en base a qué los elegiste? Porque están esos tres y no otros. ¿Y podría haber un carrusel en esa parte, para que no haya solo tres?"
+- **L3** (aprobación): "dale".
+- **L4** (diagnóstico): el panel actual tiene dos columnas; la de salas está a la derecha y lista 61 filas planas. 53 de esos `venue_id` están en el registro; 8 son pseudo-lugares. Los contadores se recalculan sobre la vista (finde), por eso casi todas las salas quedan en 0. El toolbar solo muestra 3 salas. La ventana suma overlay, focus trap y un footer de confirmación.
+- **L5** (destacados): con el build del 24/10 los elegidos fueron Babasónicos 112, Cirkus Cirkor 111 y C4 104; Ángela Torres 103 y Nepal 101 quedaron afuera por la regla de una sala por evento, y KOINO 99 fue el siguiente distinto. Con 8 entran Tango furia, Nico Urquiza, Duratierra, Mar del Plata Attitude y Luciana Teixido.
+- **L6** (bug): `next_weekend_window` usa `weekend_window(today) + 7`. En domingo, `weekend_window` se recorta a ese día, así que el finde siguiente queda en un solo domingo y se pierde el sábado. Fix: caso especial domingo (`today + 6` a `today + 7`).
+- **L7** (implementación, 2026-10-25): barra inline con 6 chips + `Más salas`; drawer colapsable con buscador, 12 salas de preview y `Ver todas las salas (N)`; 49 salas curadas en el build del 25/10 (256 eventos, 9 del finde). Los contadores de sala son sobre toda la agenda; el contador de resultados sigue la vista. `Salas` del intro ahora cuenta solo el registro (49, antes 61). Carrusel de 8 destacados en 4 páginas de 2, con `1 / 4`, flechas y sin autoplay. El bug de domingo deja `Próx. finde` en 25 eventos (31/10 + 01/11). Suite completa: **557 tests en verde**. Smoke en navegador embebido: abrir/cerrar drawer, buscar (`radio` → 1), ver todas (49), seleccionar Sheraton (2 eventos, pill activa), limpiar (256), Escape y click afuera, carrusel 1/4 → 2/4, sin errores de consola.
+- **L8** (determinismo): dos builds con `--today 2026-10-25` producen hashes idénticos de `index.html`, `style.css` y `app.js`. Build con `--today 2026-10-24`: 282 eventos, 36 del finde, 53 salas. Build con `--today 2026-10-25`: 256 eventos, 9 del finde, 49 salas.

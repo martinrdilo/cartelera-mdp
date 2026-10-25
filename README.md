@@ -53,9 +53,9 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 
 - **Temas claro y oscuro.** El botón del encabezado alterna el tema y recuerda la elección en `localStorage`; sin elección previa se respeta la preferencia del sistema. Los tokens de ambos temas viven en `site_assets/style.css`.
 - **Navegación por día.** Las pestañas muestran "Finde" (jueves–domingo), cada día del finde con eventos y "Todo". Cada pestaña trae su cantidad y los contadores se recalculan al filtrar.
-- **Filtros y búsqueda.** Chips de gratis y de las tres salas con más eventos, más búsqueda por banda, sala o dirección, todo en el navegador y sin recargar.
+- **Filtros y búsqueda.** Barra inline con gratis y seis salas representativas; "Más salas" despliega un buscador con todas las salas del registro, sin modal. Búsqueda por banda, sala o dirección, todo en el navegador y sin recargar.
 - **Detalle en la fila.** Cada evento expande sus fechas completas, la dirección con link a mapas, el origen de los datos y las acciones de compra y de compartir.
-- **Flyers reales.** El destacado usa 4:5 y las miniaturas son cuadradas; si falta el flyer o falla la carga, se muestra una miniatura tipográfica con las iniciales.
+- **Destacados.** Ocho eventos elegidos por afiche, venta, precio y cercanía al finde, con un destacado principal y un carrusel de a dos. Los flyers usan 4:5 y las miniaturas son cuadradas; si falta el flyer o falla la carga, se muestra una miniatura tipográfica con las iniciales.
 - **Títulos legibles.** La ticketera suele mandar títulos en mayúsculas con la fecha pegada ("SANTO PECADO EN ABBEY ROAD 16-10"); el sitio muestra una versión legible y conserva el título crudo en los datos.
 
 
