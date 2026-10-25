@@ -62,38 +62,33 @@
 
   /* ---------------------------------------------------------------- state */
 
-  var rows = Array.prototype.slice.call(document.querySelectorAll("[data-row]"));
-  var groups = Array.prototype.slice.call(document.querySelectorAll(".daygroup"));
-  var dayButtons = Array.prototype.slice.call(document.querySelectorAll(".day"));
-  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  function slice(list) {
+    return Array.prototype.slice.call(list);
+  }
+
+  var rows = slice(document.querySelectorAll("[data-row]"));
+  var groups = slice(document.querySelectorAll(".daygroup"));
+  var dayButtons = slice(document.querySelectorAll(".day"));
   var searchInput = document.getElementById("search");
   var countLabel = document.getElementById("filter-count");
   var emptyState = document.getElementById("empty-state");
   var clearButton = document.getElementById("clear-filters");
   var featured = document.querySelector(".featured");
-  var filtersToggle = document.getElementById("filters-toggle");
-  var filtersPanel = document.getElementById("filters-panel");
-  var filtersOverlay = document.getElementById("filters-overlay");
-  var filtersClose = document.getElementById("filters-close");
-  var filtersClear = document.getElementById("filters-clear");
-  var filtersApply = document.getElementById("filters-apply");
-  var activePills = document.getElementById("active-filter-pills");
-  var activeDayPill = document.getElementById("active-day-filter");
-  var activeDayLabel = document.getElementById("active-day-label");
-  var activeVenuePill = document.getElementById("active-venue-filter");
-  var activeVenueLabel = document.getElementById("active-venue-label");
-  var chipVenueIds = chips
-    .filter(function (chip) {
-      return chip.dataset.filter === "venue";
-    })
-    .map(function (chip) {
-      return chip.dataset.value;
-    });
-  var panelViewButtons = Array.prototype.slice.call(document.querySelectorAll("[data-panel-view]"));
-  var panelVenueButtons = Array.prototype.slice.call(document.querySelectorAll("[data-panel-venue]"));
+  var freeButton = document.getElementById("filter-free");
+  var venueChips = slice(document.querySelectorAll(".fchip[data-venue]"));
+  var salaToggle = document.getElementById("sala-toggle");
+  var salaDrawer = document.getElementById("sala-drawer");
+  var salaClose = document.getElementById("sala-close");
+  var salaOptions = slice(document.querySelectorAll(".sala-option"));
+  var salaShowAll = document.getElementById("sala-show-all");
+  var salaClear = document.getElementById("sala-clear");
   var venueSearch = document.getElementById("venue-search");
   var venueEmpty = document.getElementById("venue-empty");
-  var lastFocused = null;
+  var activePills = document.getElementById("active-filters");
+  var activeVenuePill = document.getElementById("active-venue-filter");
+  var activeVenueLabel = document.getElementById("active-venue-label");
+  var filterbar = document.querySelector(".filterbar");
+  var previewLimit = salaDrawer ? parseInt(salaDrawer.dataset.preview, 10) || 12 : 12;
 
   var defaultView = "all";
   dayButtons.forEach(function (button) {
@@ -102,6 +97,7 @@
 
   var state = { view: defaultView, free: false, venue: null, query: "" };
   var autoSwitched = false;
+  var showAllVenues = false;
 
   function normalize(value) {
     return (value || "")
@@ -160,101 +156,43 @@
   }
 
   function syncControls() {
-    chips.forEach(function (chip) {
-      if (chip.dataset.filter === "free") {
-        chip.classList.toggle("is-on", state.free);
-        chip.setAttribute("aria-pressed", String(state.free));
-        return;
-      }
-      var on = chip.dataset.value === state.venue;
+    if (freeButton) {
+      freeButton.classList.toggle("is-on", state.free);
+      freeButton.setAttribute("aria-pressed", String(state.free));
+    }
+    var chipHasVenue = false;
+    venueChips.forEach(function (chip) {
+      var on = chip.dataset.venue === state.venue;
       chip.classList.toggle("is-on", on);
       chip.setAttribute("aria-pressed", String(on));
+      if (on) chipHasVenue = true;
     });
-    panelViewButtons.forEach(function (button) {
-      var on = button.dataset.panelView === state.view;
-      button.classList.toggle("is-on", on);
-      button.setAttribute("aria-pressed", String(on));
+    salaOptions.forEach(function (option) {
+      var on = option.dataset.venue === state.venue;
+      option.classList.toggle("is-on", on);
+      option.setAttribute("aria-pressed", String(on));
     });
-    panelVenueButtons.forEach(function (button) {
-      var on = (button.dataset.panelVenue || "") === (state.venue || "");
-      button.classList.toggle("is-on", on);
-      button.setAttribute("aria-pressed", String(on));
-    });
-    var dayKey = /^\d{4}-\d{2}-\d{2}$/.test(state.view) ? state.view : "";
-    var dayButton = panelViewButtons.filter(function (button) {
-      return button.dataset.panelView === dayKey;
-    })[0];
-    if (activeDayPill) {
-      activeDayPill.hidden = !dayButton;
-      if (dayButton && activeDayLabel) {
-        activeDayLabel.textContent = dayButton.querySelector("span").textContent;
-      }
+
+    var selected = null;
+    if (state.venue) {
+      selected = salaOptions.filter(function (option) {
+        return option.dataset.venue === state.venue;
+      })[0] || null;
     }
-    var venueButton = null;
-    if (state.venue && chipVenueIds.indexOf(state.venue) === -1) {
-      venueButton = panelVenueButtons.filter(function (button) {
-        return button.dataset.panelVenue === state.venue;
-      })[0];
-    }
+    var showPill = Boolean(selected) && !chipHasVenue;
     if (activeVenuePill) {
-      activeVenuePill.hidden = !venueButton;
-      if (venueButton && activeVenueLabel) {
-        activeVenueLabel.textContent = venueButton.dataset.label;
+      activeVenuePill.hidden = !showPill;
+      if (showPill && activeVenueLabel) {
+        activeVenueLabel.textContent =
+          selected.dataset.label || selected.querySelector(".sala-option__name").textContent;
       }
     }
-    if (activePills) activePills.hidden = !dayButton && !venueButton;
+    if (activePills) activePills.hidden = !showPill;
   }
 
-  function updateFilterCounts(visible) {
-    chips.forEach(function (chip) {
-      var count;
-      if (chip.dataset.filter === "free") {
-        count = rows.filter(function (row) {
-          return (
-            row.dataset.free === "1" &&
-            matchesFilters(row, { free: false }) &&
-            inView(row, state.view)
-          );
-        }).length;
-      } else {
-        count = rows.filter(function (row) {
-          return (
-            row.dataset.venue === chip.dataset.value &&
-            matchesFilters(row, { venue: null }) &&
-            inView(row, state.view)
-          );
-        }).length;
-      }
-      var badge = chip.querySelector("em");
-      if (badge) badge.textContent = count;
-    });
-
-    panelViewButtons.forEach(function (button) {
-      var view = button.dataset.panelView;
-      var count = rows.filter(function (row) {
-        return matches(row) && inView(row, view);
-      }).length;
-      var badge = button.querySelector("em");
-      if (badge) badge.textContent = count;
-      button.classList.toggle("is-empty", count === 0);
-    });
-
-    panelVenueButtons.forEach(function (button) {
-      var venue = button.dataset.panelVenue;
-      var count = rows.filter(function (row) {
-        return (
-          (!venue || row.dataset.venue === venue) &&
-          matchesFilters(row, { venue: null }) &&
-          inView(row, state.view)
-        );
-      }).length;
-      var badge = button.querySelector("em");
-      if (badge) badge.textContent = count;
-      button.classList.toggle("is-empty", count === 0);
-    });
-
-    if (filtersApply) {
-      filtersApply.textContent = "Ver " + visible + (visible === 1 ? " evento" : " eventos");
+  function updateResultCount(visible) {
+    if (countLabel) {
+      countLabel.textContent = visible + (visible === 1 ? " evento" : " eventos");
     }
   }
 
@@ -262,7 +200,7 @@
     var visible = 0;
 
     groups.forEach(function (group) {
-      var groupRows = Array.prototype.slice.call(group.querySelectorAll("[data-row]"));
+      var groupRows = slice(group.querySelectorAll("[data-row]"));
       var shown = 0;
       groupRows.forEach(function (row) {
         var show = matches(row);
@@ -283,11 +221,7 @@
     });
 
     updateTabCounts();
-    updateFilterCounts(visible);
-
-    if (countLabel) {
-      countLabel.textContent = visible + (visible === 1 ? " evento" : " eventos");
-    }
+    updateResultCount(visible);
 
     /* Filters can empty the current day while matches exist elsewhere: land on
        "Todo" instead of a dead end. Runs once per user action. */
@@ -318,45 +252,63 @@
     });
   }
 
+  function setDrawer(open) {
+    if (!salaDrawer || !salaToggle) return;
+    salaDrawer.hidden = !open;
+    salaToggle.setAttribute("aria-expanded", String(open));
+    salaToggle.classList.toggle("is-open", open);
+    if (filterbar) filterbar.classList.toggle("filterbar--open", open);
+    if (open) {
+      if (venueSearch) venueSearch.value = "";
+      showAllVenues = false;
+      applyVenueVisibility();
+    }
+  }
+
+  function applyVenueVisibility() {
+    var query = normalize(venueSearch ? venueSearch.value : "");
+    var shown = 0;
+    salaOptions.forEach(function (option, index) {
+      var match = !query || normalize(option.dataset.search || "").indexOf(query) !== -1;
+      var inPreview = Boolean(query) || showAllVenues || index < previewLimit;
+      var visible = match && inPreview;
+      option.hidden = !visible;
+      if (visible) shown += 1;
+    });
+    if (venueEmpty) venueEmpty.hidden = !(query && shown === 0);
+    if (salaShowAll) {
+      salaShowAll.hidden = Boolean(query) || salaOptions.length <= previewLimit;
+      salaShowAll.setAttribute("aria-expanded", String(showAllVenues));
+      salaShowAll.textContent = showAllVenues
+        ? "Ver solo las más activas"
+        : "Ver todas las salas (" + salaOptions.length + ")";
+    }
+  }
+
+  function focusToggle() {
+    if (!salaToggle) return;
+    try {
+      salaToggle.focus({ preventScroll: true });
+    } catch (error) {
+      salaToggle.focus();
+    }
+  }
+
   function resetFilters() {
     state.free = false;
     state.venue = null;
     state.query = "";
     state.view = "all";
     if (searchInput) searchInput.value = "";
+    if (venueSearch) venueSearch.value = "";
+    showAllVenues = false;
+    applyVenueVisibility();
     render("clear");
   }
 
   function scrollToAgenda() {
     var agenda = document.getElementById("agenda");
     if (agenda) agenda.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function openFilters() {
-    if (!filtersPanel || !filtersPanel.hidden) return;
-    lastFocused = document.activeElement;
-    filtersOverlay.hidden = false;
-    filtersPanel.hidden = false;
-    if (filtersToggle) filtersToggle.setAttribute("aria-expanded", "true");
-    document.body.classList.add("has-dialog");
-    if (venueSearch) {
-      venueSearch.value = "";
-      panelVenueButtons.forEach(function (button) {
-        button.hidden = false;
-      });
-      if (venueEmpty) venueEmpty.hidden = true;
-    }
-    filtersPanel.focus();
-  }
-
-  function closeFilters() {
-    if (!filtersPanel || filtersPanel.hidden) return;
-    filtersPanel.hidden = true;
-    filtersOverlay.hidden = true;
-    if (filtersToggle) filtersToggle.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("has-dialog");
-    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
-    else if (filtersToggle) filtersToggle.focus();
   }
 
   dayButtons.forEach(function (button) {
@@ -367,38 +319,55 @@
     });
   });
 
-  panelViewButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      state.view = button.dataset.panelView;
-      render("panel-view");
-    });
-  });
-
-  panelVenueButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      state.venue = button.dataset.panelVenue || null;
-      render("panel-venue");
-    });
-  });
-
-  chips.forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      if (chip.dataset.filter === "free") {
-        state.free = !state.free;
-      } else {
-        state.venue = state.venue === chip.dataset.value ? null : chip.dataset.value;
-      }
-      render("chip");
-    });
-  });
-
-  if (activeDayPill) {
-    activeDayPill.addEventListener("click", function () {
-      state.view = "all";
-      render("clear-day");
+  if (freeButton) {
+    freeButton.addEventListener("click", function () {
+      state.free = !state.free;
+      render("free");
     });
   }
 
+  venueChips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      state.venue = state.venue === chip.dataset.venue ? null : chip.dataset.venue;
+      render("venue");
+    });
+  });
+
+  salaOptions.forEach(function (option) {
+    option.addEventListener("click", function () {
+      var venue = option.dataset.venue || null;
+      state.venue = state.venue === venue ? null : venue;
+      render("venue");
+      setDrawer(false);
+      focusToggle();
+    });
+  });
+
+  if (salaToggle) {
+    salaToggle.addEventListener("click", function () {
+      setDrawer(Boolean(salaDrawer && salaDrawer.hidden));
+    });
+  }
+  if (salaClose) {
+    salaClose.addEventListener("click", function () {
+      setDrawer(false);
+      focusToggle();
+    });
+  }
+  if (salaShowAll) {
+    salaShowAll.addEventListener("click", function () {
+      showAllVenues = !showAllVenues;
+      applyVenueVisibility();
+    });
+  }
+  if (venueSearch) venueSearch.addEventListener("input", applyVenueVisibility);
+  if (salaClear) {
+    salaClear.addEventListener("click", function () {
+      resetFilters();
+      setDrawer(false);
+      focusToggle();
+    });
+  }
   if (activeVenuePill) {
     activeVenuePill.addEventListener("click", function () {
       state.venue = null;
@@ -406,62 +375,19 @@
     });
   }
 
-  if (filtersToggle) {
-    filtersToggle.addEventListener("click", function () {
-      if (filtersPanel && filtersPanel.hidden) openFilters();
-      else closeFilters();
-    });
-  }
-  if (filtersOverlay) filtersOverlay.addEventListener("click", closeFilters);
-  if (filtersClose) filtersClose.addEventListener("click", closeFilters);
-  if (filtersClear) filtersClear.addEventListener("click", resetFilters);
-  if (filtersApply) {
-    filtersApply.addEventListener("click", function () {
-      closeFilters();
-      scrollToAgenda();
-    });
-  }
-
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && filtersPanel && !filtersPanel.hidden) closeFilters();
+    if (event.key === "Escape" && salaDrawer && !salaDrawer.hidden) {
+      setDrawer(false);
+      focusToggle();
+    }
   });
 
-  if (filtersPanel) {
-    filtersPanel.addEventListener("keydown", function (event) {
-      if (event.key !== "Tab") return;
-      var focusable = Array.prototype.filter.call(
-        filtersPanel.querySelectorAll(
-          'button:not([hidden]), input:not([hidden]), [href], [tabindex]:not([tabindex="-1"])'
-        ),
-        function (element) {
-          return !element.disabled;
-        }
-      );
-      if (!focusable.length) return;
-      var first = focusable[0];
-      var last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    });
-  }
-
-  if (venueSearch) {
-    venueSearch.addEventListener("input", function () {
-      var query = normalize(venueSearch.value);
-      var shown = 0;
-      panelVenueButtons.forEach(function (button) {
-        var match = normalize(button.dataset.search || "").indexOf(query) !== -1;
-        button.hidden = !match;
-        if (match) shown += 1;
-      });
-      if (venueEmpty) venueEmpty.hidden = shown !== 0;
-    });
-  }
+  document.addEventListener("click", function (event) {
+    if (!salaDrawer || salaDrawer.hidden) return;
+    if (salaDrawer.contains(event.target)) return;
+    if (salaToggle && salaToggle.contains(event.target)) return;
+    setDrawer(false);
+  });
 
   if (searchInput) {
     searchInput.addEventListener("input", function () {
@@ -477,7 +403,45 @@
     });
   }
 
-  if (clearButton) clearButton.addEventListener("click", resetFilters);
+  if (clearButton) {
+    clearButton.addEventListener("click", function () {
+      resetFilters();
+      setDrawer(false);
+    });
+  }
+
+  /* ------------------------------------------------------------- carousel */
+
+  var featuredPages = slice(document.querySelectorAll(".featured__page"));
+  var featuredPrev = document.getElementById("featured-prev");
+  var featuredNext = document.getElementById("featured-next");
+  var featuredPageCount = document.getElementById("featured-page-count");
+  var featuredIndex = 0;
+
+  function showFeaturedPage(index) {
+    if (!featuredPages.length) return;
+    featuredIndex = Math.max(0, Math.min(index, featuredPages.length - 1));
+    featuredPages.forEach(function (page, position) {
+      page.hidden = position !== featuredIndex;
+    });
+    if (featuredPageCount) {
+      featuredPageCount.textContent = featuredIndex + 1 + " / " + featuredPages.length;
+    }
+    if (featuredPrev) featuredPrev.disabled = featuredIndex === 0;
+    if (featuredNext) featuredNext.disabled = featuredIndex === featuredPages.length - 1;
+  }
+
+  if (featuredPrev) {
+    featuredPrev.addEventListener("click", function () {
+      showFeaturedPage(featuredIndex - 1);
+    });
+  }
+  if (featuredNext) {
+    featuredNext.addEventListener("click", function () {
+      showFeaturedPage(featuredIndex + 1);
+    });
+  }
+  showFeaturedPage(0);
 
   /* -------------------------------------------------------------- details */
 

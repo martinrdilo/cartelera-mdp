@@ -96,9 +96,14 @@ MAX_CARD_DATES = 3
 
 # Featured board: a small, deterministic editorial selection. Candidates must
 # start within this horizon; one card per venue keeps the strip varied.
-FEATURED_LIMIT = 3
+FEATURED_LIMIT = 8
 FEATURED_HORIZON_DAYS = 10
 MONTH_NAV_LIMIT = 6
+
+# Filter bar: a few representative venues stay visible; the rest live behind
+# the collapsible "Más salas" drawer.
+FILTER_VENUE_LIMIT = 6
+SALA_PREVIEW_LIMIT = 12
 
 
 # ---------------------------------------------------------------------------
@@ -128,7 +133,15 @@ def weekend_window(today: date) -> tuple[date, date]:
 
 
 def next_weekend_window(today: date) -> tuple[date, date]:
-    """The weekend after the one returned by weekend_window."""
+    """The weekend after the one returned by weekend_window.
+
+    `weekend_window` clips Sunday to that single day (the rest of the weekend
+    is already past), so adding seven days would leave Saturday out. The next
+    weekend from a Sunday is the following Saturday and Sunday.
+    """
+    if today.weekday() == 6:  # Sunday
+        start = today + timedelta(days=6)
+        return start, start + timedelta(days=1)
     start, end = weekend_window(today)
     return start + timedelta(days=7), end + timedelta(days=7)
 
@@ -701,8 +714,8 @@ def render_header() -> str:
     )
 
 
-def render_intro(events: list[dict], today: date) -> str:
-    venues = len({event["venue_id"] for event in events})
+def render_intro(events: list[dict], today: date, venue_count: int | None = None) -> str:
+    venues = venue_count if venue_count is not None else len({event["venue_id"] for event in events})
     free = sum(1 for event in events if event["is_free"])
     has_weekend = any(in_weekend(primary_date(event), today) for event in events)
     if has_weekend:
@@ -788,161 +801,131 @@ def render_month_nav(events: list[dict], today: date) -> str:
     )
 
 
-def venue_options(events: list[dict]) -> list[tuple[str, str, int]]:
-    """Every venue in the catalog with its event count, busiest first."""
+def venue_options(
+    events: list[dict], registry: list[dict] | None = None
+) -> list[tuple[str, str, int]]:
+    """Catalog venues with their event count, busiest first.
+
+    `registry` limits the list to curated venues; events that failed to resolve
+    to a registry entry (city names, bare addresses) are not filterable.
+    """
+    registry_ids = {venue["id"] for venue in registry} if registry is not None else None
     counts: dict[str, int] = {}
     names: dict[str, str] = {}
     for event in events:
-        counts[event["venue_id"]] = counts.get(event["venue_id"], 0) + 1
-        names[event["venue_id"]] = event["venue_name"]
+        venue_id = event["venue_id"]
+        if registry_ids is not None and venue_id not in registry_ids:
+            continue
+        counts[venue_id] = counts.get(venue_id, 0) + 1
+        names[venue_id] = event["venue_name"]
     return sorted(
         ((names[venue_id], venue_id, count) for venue_id, count in counts.items()),
         key=lambda row: (-row[2], row[0].casefold()),
     )
 
 
-def top_venues(events: list[dict], limit: int = 3) -> list[tuple[str, str, int]]:
-    return venue_options(events)[:limit]
+def top_venues(
+    events: list[dict],
+    limit: int = FILTER_VENUE_LIMIT,
+    registry: list[dict] | None = None,
+) -> list[tuple[str, str, int]]:
+    return venue_options(events, registry)[:limit]
 
 
-def render_toolbar(events: list[dict]) -> str:
+def render_toolbar(
+    events: list[dict],
+    today: date,
+    default_view: str,
+    registry: list[dict] | None = None,
+) -> str:
+    """Inline filter bar: free toggle, six venue chips and a drawer toggle."""
+    venues = venue_options(events, registry)
     free = sum(1 for event in events if event["is_free"])
-    chips = [
-        f'<button type="button" class="chip" data-filter="free" aria-pressed="false">'
-        f"Gratis <em>{free}</em></button>"
-    ]
-    for name, venue_id, count in top_venues(events):
+    weekend_count = sum(1 for event in events if matches_window(event["dates"], "weekend", today))
+    initial_visible = weekend_count if default_view == "weekend" else len(events)
+
+    chips = []
+    for name, venue_id, count in venues[:FILTER_VENUE_LIMIT]:
         chips.append(
-            f'<button type="button" class="chip" data-filter="venue" data-value="{esc(venue_id)}" '
+            f'<button type="button" class="fchip" data-venue="{esc(venue_id)}" '
             f'aria-pressed="false">{esc(name)} <em>{count}</em></button>'
         )
+    more = ""
+    if venues:
+        more = (
+            '<button type="button" class="fchip fchip--more" id="sala-toggle" '
+            'aria-expanded="false" aria-controls="sala-drawer">'
+            f"<span>Más salas</span> <em>{len(venues)}</em>"
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+            '<path d="M6 9l6 6 6-6"/></svg></button>'
+        )
+    venues_html = ""
+    if venues:
+        venues_html = (
+            '<div class="filterbar__venues">'
+            '<span class="filterbar__label">Salas</span>'
+            f'{"".join(chips)}'
+            "</div>"
+        )
     return (
-        '<div class="toolbar" role="group" aria-label="Filtros de la agenda">'
-        '<button type="button" class="toolbar__toggle" id="filters-toggle" aria-haspopup="dialog" '
-        'aria-expanded="false" aria-controls="filters-panel">'
-        '<svg class="toolbar__toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
-        '<path d="M4 6h16M7 12h10M10 18h4"/></svg>'
-        "<span>Filtros</span>"
-        "</button>"
-        '<div class="toolbar__active" id="active-filter-pills" hidden>'
-        '<button type="button" class="filter-pill" id="active-day-filter" hidden>'
-        '<span id="active-day-label"></span><i aria-hidden="true">×</i>'
-        "</button>"
+        '<div class="filterbar" role="group" aria-label="Filtros de la agenda">'
+        '<button type="button" class="fchip fchip--free" id="filter-free" '
+        'data-filter="free" aria-pressed="false">'
+        f"Gratis <em>{free}</em></button>"
+        f"{venues_html}"
+        f"{more}"
+        '<div class="filterbar__active" id="active-filters" hidden>'
         '<button type="button" class="filter-pill" id="active-venue-filter" hidden>'
         '<span id="active-venue-label"></span><i aria-hidden="true">×</i>'
         "</button>"
         "</div>"
-        f'<div class="toolbar__chips">{"".join(chips)}</div>'
-        '<p class="toolbar__count" id="filter-count" aria-live="polite"></p>'
+        '<p class="filterbar__count" id="filter-count" aria-live="polite">'
+        f'{plural(initial_visible, "evento", "eventos")}</p>'
         "</div>"
     )
 
 
-def render_filters_panel(
-    events: list[dict],
-    groups: list[tuple[str, list[dict]]],
-    today: date,
-    default_view: str,
-) -> str:
-    start, end = weekend_window(today)
-    weekend_dates = [(start + timedelta(days=offset)).isoformat() for offset in range((end - start).days + 1)]
-    next_start, next_end = next_weekend_window(today)
-    next_dates = [(next_start + timedelta(days=offset)).isoformat() for offset in range((next_end - next_start).days + 1)]
-    by_date = dict(groups)
-    weekend_count = sum(len(by_date.get(iso, [])) for iso in weekend_dates)
-    next_count = sum(len(by_date.get(iso, [])) for iso in next_dates)
-    total = sum(len(day_events) for _, day_events in groups)
-    initial_visible = {
-        "weekend": weekend_count,
-        "next-weekend": next_count,
-        "all": total,
-    }.get(default_view, total)
-
-    quick = []
-    for value, label, count in (
-        ("weekend", "Este finde", weekend_count),
-        ("next-weekend", "Próximo finde", next_count),
-        ("all", "Todo", total),
-    ):
-        on = default_view == value
-        quick.append(
-            f'<button type="button" class="filters-option filters-option--quick{" is-on" if on else ""}" '
-            f'data-panel-kind="quick" data-panel-view="{value}" aria-pressed="{"true" if on else "false"}">'
-            f"{label} <em>{count}</em></button>"
+def render_sala_drawer(venues: list[tuple[str, str, int]]) -> str:
+    """Collapsible inline venue picker; the first SALA_PREVIEW_LIMIT stay visible."""
+    if not venues:
+        return ""
+    options = []
+    show_all = ""
+    if len(venues) > SALA_PREVIEW_LIMIT:
+        show_all = (
+            '<button type="button" class="sala-all" id="sala-show-all" '
+            f'aria-expanded="false">Ver todas las salas ({len(venues)})</button>'
         )
-
-    months = []
-    counts = month_counts(events)
-    for key in sorted(counts)[:MONTH_NAV_LIMIT]:
-        label = format_month_tab(key, today)
-        on = default_view == f"month:{key}"
-        months.append(
-            f'<button type="button" class="filters-option filters-option--month{" is-on" if on else ""}" '
-            f'data-panel-kind="month" data-panel-view="month:{key}" aria-pressed="{"true" if on else "false"}">'
-            f"{esc(label)} <em>{counts[key]}</em></button>"
+    for index, (name, venue_id, count) in enumerate(venues):
+        hidden = " hidden" if index >= SALA_PREVIEW_LIMIT else ""
+        options.append(
+            f'<button type="button" class="sala-option" data-venue="{esc(venue_id)}" '
+            f'data-search="{esc(name)}" data-label="{esc(name)}" aria-pressed="false"{hidden}>'
+            f'<span class="sala-option__name">{esc(name)}</span>'
+            f'<span class="sala-option__count">{count}</span></button>'
         )
-
-    days = []
-    current_month = None
-    for iso, day_events in groups:
-        month_key = iso[:7]
-        if month_key != current_month:
-            days.append(f'<p class="filters-sublabel">{esc(format_month_tab(month_key, today))}</p>')
-            current_month = month_key
-        label = format_day_long(iso)
-        on = default_view == iso
-        days.append(
-            f'<button type="button" class="filters-option filters-option--row{" is-on" if on else ""}" '
-            f'data-panel-kind="day" data-panel-view="{iso}" aria-pressed="{"true" if on else "false"}">'
-            f"<span>{esc(label)}</span><em>{len(day_events)}</em></button>"
-        )
-
-    venues = [
-        f'<button type="button" class="filters-option filters-option--row is-on" '
-        f'data-panel-kind="venue" data-panel-venue="" data-search="" aria-pressed="true">'
-        f"<span>Todas las salas</span><em>{total}</em></button>"
-    ]
-    for name, venue_id, count in venue_options(events):
-        venues.append(
-            f'<button type="button" class="filters-option filters-option--row" '
-            f'data-panel-kind="venue" data-panel-venue="{esc(venue_id)}" data-search="{esc(name)}" '
-            f'data-label="{esc(name)}" aria-pressed="false"><span>{esc(name)}</span><em>{count}</em></button>'
-        )
-
     return (
-        '<div class="filters-overlay" id="filters-overlay" hidden></div>'
-        '<section class="filters-panel" id="filters-panel" role="dialog" aria-modal="true" '
-        'aria-labelledby="filters-title" tabindex="-1" hidden>'
-        '<header class="filters-panel__head">'
-        '<h2 id="filters-title">Filtrar la agenda</h2>'
-        '<button type="button" class="filters-panel__close" id="filters-close" '
-        'aria-label="Cerrar filtros">×</button>'
-        "</header>"
-        '<div class="filters-panel__body">'
-        '<section class="filters-group" aria-labelledby="filters-when">'
-        '<h3 class="filters-label" id="filters-when">Cuándo</h3>'
-        f'<div class="filters-quick">{"".join(quick)}</div>'
-        f'<div class="filters-months">{"".join(months)}</div>'
-        f'<div class="filters-days" id="filters-days">{"".join(days)}</div>'
-        "</section>"
-        '<section class="filters-group filters-group--where" aria-labelledby="filters-where">'
-        '<h3 class="filters-label" id="filters-where">Sala</h3>'
-        '<label class="filters-search">'
+        f'<section class="sala-drawer" id="sala-drawer" data-preview="{SALA_PREVIEW_LIMIT}" '
+        'aria-labelledby="sala-title" hidden>'
+        '<div class="sala-drawer__head">'
+        "<div>"
+        '<h2 class="sala-drawer__title" id="sala-title">Filtrar por sala</h2>'
+        '<p class="sala-drawer__hint">Las más activas primero. Usa el buscador para encontrar el resto.</p>'
+        "</div>"
+        '<label class="sala-search">'
         '<span class="search__icon" aria-hidden="true">⌕</span>'
         '<input type="search" id="venue-search" placeholder="Buscar sala" '
         'aria-label="Buscar sala" autocomplete="off">'
         "</label>"
-        '<div class="filters-venues" id="filters-venues">'
-        f'{"".join(venues)}'
-        '<p class="filters-empty" id="venue-empty" hidden>No hay salas con ese nombre.</p>'
+        '<button type="button" class="sala-drawer__close" id="sala-close" '
+        'aria-label="Cerrar salas">×</button>'
         "</div>"
-        "</section>"
+        f'<div class="sala-grid" id="sala-grid">{"".join(options)}</div>'
+        '<p class="sala-empty" id="venue-empty" hidden>No hay salas con ese nombre.</p>'
+        '<div class="sala-drawer__foot">'
+        f"{show_all}"
+        '<button type="button" class="sala-clear" id="sala-clear">Limpiar filtros</button>'
         "</div>"
-        '<footer class="filters-panel__foot">'
-        '<button type="button" class="btn btn--ghost" id="filters-clear">Limpiar filtros</button>'
-        f'<button type="button" class="btn btn--primary" id="filters-apply">'
-        f"Ver {initial_visible} eventos</button>"
-        "</footer>"
         "</section>"
     )
 
@@ -1105,23 +1088,43 @@ def render_featured(events: list[dict] | None, today: date) -> str:
     if not events:
         return ""
     lead, rest = events[0], events[1:]
-    stack = ""
-    if rest:
-        stack = (
-            '<div class="featured__stack">'
-            + "".join(render_featured_card(event, today, "mini") for event in rest)
-            + "</div>"
+    minis = [rest[index : index + 2] for index in range(0, len(rest), 2)]
+    pages = []
+    for index, page in enumerate(minis, start=1):
+        hidden = "" if index == 1 else " hidden"
+        cards = "".join(render_featured_card(event, today, "mini") for event in page)
+        pages.append(
+            f'<div class="featured__stack featured__page" data-count="{len(page)}"{hidden}>'
+            f"{cards}</div>"
         )
-    single = " featured__grid--single" if not rest else ""
+
+    pager = ""
+    if len(pages) > 1:
+        pager = (
+            f'<span class="featured__count" id="featured-page-count" aria-live="polite">'
+            f"1 / {len(pages)}</span>"
+            '<button type="button" class="featured__arrow" id="featured-prev" '
+            'aria-label="Destacados anteriores" disabled>'
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+            '<path d="M15 6l-6 6 6 6"/></svg></button>'
+            '<button type="button" class="featured__arrow" id="featured-next" '
+            'aria-label="Más destacados">'
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+            '<path d="M9 6l6 6-6 6"/></svg></button>'
+        )
+    single = " featured__grid--single" if not pages else ""
     return (
         '<section class="featured" aria-labelledby="featured-title">'
         '<div class="featured__head">'
         '<h2 class="kicker" id="featured-title">Destacados</h2>'
+        '<div class="featured__head-right">'
         "<span>Del finde y la semana</span>"
+        f"{pager}"
+        "</div>"
         "</div>"
         f'<div class="featured__grid{single}">'
         f'{render_featured_card(lead, today, "lead")}'
-        f"{stack}"
+        f'{"".join(pages)}'
         "</div>"
         "</section>"
     )
@@ -1347,14 +1350,21 @@ def events_payload(events: list[dict], today: date) -> dict:
     }
 
 
-def render_index(events: list[dict], last_run: dict, today: date) -> str:
+def render_index(
+    events: list[dict],
+    last_run: dict,
+    today: date,
+    registry: list[dict] | None = None,
+) -> str:
     groups = group_by_date(events)
     start, end = weekend_window(today)
     weekend = [event for event in events if matches_window(event["dates"], "weekend", today)]
     has_weekend = bool(weekend)
     default_view = "weekend" if has_weekend else "all"
     featured = render_featured(pick_featured(events, today), today)
-    filters_panel = render_filters_panel(events, groups, today, default_view)
+    venue_options_html = venue_options(events, registry)
+    venue_count = len(venue_options_html) if registry is not None else None
+    filters_panel = render_sala_drawer(venue_options_html)
     if events:
         empty_html = (
             '<p class="empty-state" id="empty-state" hidden>'
@@ -1393,10 +1403,10 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 <a class="skip-link" href="#agenda">Saltar a la agenda</a>
 {render_header()}
 <main class="shell">
-{render_intro(events, today)}
+{render_intro(events, today, venue_count)}
 {render_day_nav(groups, today)}
 {render_month_nav(events, today)}
-{render_toolbar(events)}
+{render_toolbar(events, today, default_view, registry)}
 {filters_panel}
 {featured}
 {render_agenda(groups, today, default_view)}
@@ -1418,12 +1428,14 @@ def render_index(events: list[dict], last_run: dict, today: date) -> str:
 def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, today: date | None = None) -> dict:
     """Generate the static site; returns a small stats summary."""
     today = today or today_in_art()
-    events, _registry, last_run = collect_site_events(data_dir, today)
+    events, registry, last_run = collect_site_events(data_dir, today)
     weekend_count = sum(1 for event in events if matches_window(event["dates"], "weekend", today))
 
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "assets").mkdir(exist_ok=True)
-    (out_dir / "index.html").write_text(render_index(events, last_run, today), encoding="utf-8")
+    (out_dir / "index.html").write_text(
+        render_index(events, last_run, today, registry=registry), encoding="utf-8"
+    )
     shutil.copyfile(ASSETS_SRC / "style.css", out_dir / "assets" / "style.css")
     shutil.copyfile(ASSETS_SRC / "app.js", out_dir / "assets" / "app.js")
     shutil.copyfile(ASSETS_SRC / "favicon.svg", out_dir / "favicon.svg")
@@ -1432,7 +1444,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         "today": today.isoformat(),
         "upcoming": len(events),
         "weekend": weekend_count,
-        "venues": len({event["venue_id"] for event in events}),
+        "venues": len(venue_options(events, registry)),
         "files": ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"],
     }
 

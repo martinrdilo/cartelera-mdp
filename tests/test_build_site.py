@@ -79,6 +79,28 @@ class TestWeekendWindow:
         for today, start, _ in self.CASES:
             assert start >= today
 
+    def test_next_weekend_keeps_saturday_on_sunday(self):
+        # weekend_window clips Sunday to Sunday only; the next weekend must
+        # still include the following Saturday.
+        assert build_site.next_weekend_window(date(2026, 10, 18)) == (
+            date(2026, 10, 24),
+            date(2026, 10, 25),
+        )
+        assert build_site.next_weekend_window(date(2026, 10, 25)) == (
+            date(2026, 10, 31),
+            date(2026, 11, 1),
+        )
+
+    def test_next_weekend_on_other_days_is_the_following_window(self):
+        assert build_site.next_weekend_window(date(2026, 10, 17)) == (
+            date(2026, 10, 24),
+            date(2026, 10, 25),
+        )
+        assert build_site.next_weekend_window(date(2026, 10, 22)) == (
+            date(2026, 10, 29),
+            date(2026, 11, 1),
+        )
+
 
 class TestWindowBounds:
     def test_seven_days_window(self):
@@ -541,7 +563,7 @@ class TestRedesignMarkup:
     def test_every_row_has_a_share_action(self, tmp_path):
         stats, html, _, _, _ = self.build(tmp_path)
         featured_cards = html.count('data-feature="1"')
-        assert featured_cards == 3
+        assert featured_cards == build_site.FEATURED_LIMIT
         assert html.count('js-share') == stats["upcoming"] + featured_cards
         assert "Compartir" in html
 
@@ -581,18 +603,29 @@ class TestRedesignMarkup:
         assert "@media (min-width: 1680px)" in css
         assert "--shell: 1560px" in css
 
-    def test_search_and_filter_controls(self, tmp_path):
+    def test_filter_and_carousel_css_replaces_the_modal(self, tmp_path):
+        _, _, css, _, _ = self.build(tmp_path)
+        assert ".filterbar" in css
+        assert ".sala-drawer" in css
+        assert ".sala-option" in css
+        assert ".featured__page" in css
+        assert ".filters-panel" not in css
+        assert ".filters-overlay" not in css
+
+    def test_filter_bar_is_inline_and_collapsible(self, tmp_path):
         _, html, _, app_js, _ = self.build(tmp_path)
-        assert 'id="search"' in html
-        assert 'data-filter="free"' in html
-        assert 'data-filter="venue"' in html
-        assert 'id="filters-toggle"' in html
-        assert 'class="toolbar__chips"' in html
-        assert 'id="filters-panel"' in html
-        assert 'role="dialog"' in html and 'aria-modal="true"' in html
-        assert 'id="filters-days"' in html
-        assert 'id="filters-venues"' in html
+        assert 'class="filterbar"' in html
+        assert 'id="filter-free"' in html
+        assert 'id="sala-toggle"' in html
+        assert 'aria-controls="sala-drawer"' in html
+        assert 'id="sala-drawer"' in html
+        assert re.search(r'id="sala-drawer"[^>]*hidden', html)
+        assert 'role="dialog"' not in html
+        assert 'id="filters-panel"' not in html
+        assert 'filters-overlay' not in html
+        assert 'id="filters-days"' not in html
         assert 'id="venue-search"' in html
+        assert 'id="sala-grid"' in html
         assert 'id="filter-count"' in html
         assert 'id="empty-state"' in html
         assert 'id="clear-filters"' in html
@@ -602,61 +635,57 @@ class TestRedesignMarkup:
             "auto-todo",
             "outbound_ticket",
             "share_whatsapp",
-            "filters-panel",
-            "updateFilterCounts",
+            "sala-drawer",
+            "sala-toggle",
+            "showFeaturedPage",
         ):
             assert hook in app_js
 
-    def test_toolbar_chips_keep_the_quick_order(self, tmp_path):
-        _, html, _, _, payload = self.build(tmp_path)
-        chips = re.findall(
-            r'class="chip[^"]*" data-filter="([^"]+)"(?: data-value="([^"]*)")?', html
-        )
-        assert chips[0][0] == "free"
-        assert chips[0][1] == ""
-        expected = [venue_id for _, venue_id, _ in build_site.top_venues(payload["events"], 3)]
-        assert [value for _kind, value in chips[1:]] == expected
-        assert len(chips) == 4
-
-    def test_venue_chips_are_the_three_busiest_venues(self, tmp_path):
-        _, html, _, _, payload = self.build(tmp_path)
-        expected = build_site.top_venues(payload["events"], 3)
-        chips = re.findall(r'class="chip" data-filter="venue" data-value="([^"]+)"', html)
-        assert chips == [venue_id for _, venue_id, _ in expected]
-        assert len(chips) == 3
-
-    def test_filters_panel_lists_every_venue(self, tmp_path):
-        _, html, _, _, payload = self.build(tmp_path)
-        panel = html.split('id="filters-panel"', 1)[1]
-        values = re.findall(r'data-panel-kind="venue" data-panel-venue="([^"]*)"', panel)
-        expected = [venue_id for _, venue_id, _ in build_site.venue_options(payload["events"])]
-        assert values == [""] + expected
-        assert len(values) == len(expected) + 1
-
-    def test_filters_panel_lists_every_date(self, tmp_path):
+    def test_venue_chips_are_the_six_busiest_registered_venues(self, tmp_path):
         _, html, _, _, _ = self.build(tmp_path)
-        panel = html.split('id="filters-panel"', 1)[1]
-        values = re.findall(r'data-panel-kind="day" data-panel-view="([^"]+)"', panel)
-        dates = [iso for iso, _, _ in day_groups(html)]
-        assert values == dates
+        events, registry, _ = build_site.collect_site_events(DATA_DIR, BUILD_TODAY)
+        expected = build_site.top_venues(events, 6, registry)
+        chips = re.findall(r'class="fchip" data-venue="([^"]+)"', html)
+        assert chips == [venue_id for _, venue_id, _ in expected]
+        assert len(chips) == 6
 
-    def test_filters_panel_lists_months_and_quick_views(self, tmp_path):
-        _, html, _, _, payload = self.build(tmp_path)
-        panel = html.split('id="filters-panel"', 1)[1]
-        months = re.findall(r'data-panel-kind="month" data-panel-view="month:([^"]+)"', panel)
-        expected = sorted({event["dates"][0][:7] for event in payload["events"]})[: build_site.MONTH_NAV_LIMIT]
-        assert months == expected
-        quick = re.findall(r'data-panel-kind="quick" data-panel-view="([^"]+)"', panel)
-        assert quick == ["weekend", "next-weekend", "all"]
+    def test_sala_drawer_lists_every_registered_venue(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        events, registry, _ = build_site.collect_site_events(DATA_DIR, BUILD_TODAY)
+        expected = build_site.venue_options(events, registry)
+        drawer = html.split('id="sala-drawer"', 1)[1].split("</section>", 1)[0]
+        assert f'data-preview="{build_site.SALA_PREVIEW_LIMIT}"' in drawer
+        tags = re.findall(
+            r'<button type="button" class="sala-option[^"]*" data-venue="[^"]*"[^>]*>',
+            drawer,
+        )
+        assert len(tags) == len(expected)
+        assert sum(" hidden" not in tag for tag in tags) == build_site.SALA_PREVIEW_LIMIT
+        venue_ids = re.findall(r'data-venue="([^"]+)"', drawer)
+        assert venue_ids == [venue_id for _, venue_id, _ in expected]
+        assert f"Ver todas las salas ({len(expected)})" in drawer
+        assert 'role="dialog"' not in drawer
 
-    def test_featured_board_uses_three_events_from_distinct_venues(self, tmp_path):
-        _, html, _, _, payload = self.build(tmp_path)
+    def test_intro_venue_stat_uses_the_registered_catalog(self, tmp_path):
+        stats, html, _, _, _ = self.build(tmp_path)
+        events, registry, _ = build_site.collect_site_events(DATA_DIR, BUILD_TODAY)
+        assert stats["venues"] == len(build_site.venue_options(events, registry))
+        assert f'<span data-label="Salas"><b>{stats["venues"]}</b></span>' in html
+
+    def test_featured_carousel_pages_eight_events(self, tmp_path):
+        _, html, _, app_js, payload = self.build(tmp_path)
         venue_names = re.findall(
             r'<article class="feature feature--(?:lead|mini)"[^>]*data-feature="1"[^>]*data-venue-name="([^"]+)"',
             html,
         )
-        assert len(venue_names) == 3
-        assert len(set(venue_names)) == 3
+        assert len(venue_names) == build_site.FEATURED_LIMIT == 8
+        assert len(set(venue_names)) == 8
+        pages = re.findall(r'class="featured__stack featured__page"[^>]*', html)
+        assert len(pages) == 4
+        assert sum("hidden" in page for page in pages) == 3
+        assert 'id="featured-prev"' in html and 'id="featured-next"' in html
+        assert 'id="featured-page-count"' in html
+        assert "showFeaturedPage" in app_js
         assert 'id="featured-title">Destacados<' in html
         known = {event["venue_name"] for event in payload["events"]}
         assert set(venue_names) <= known
@@ -757,6 +786,9 @@ class TestRedesignMarkup:
         assert ".row[hidden]" in css
         assert ".daygroup[hidden]" in css
         assert ".featured[hidden]" in css
+        assert ".sala-drawer[hidden]" in css
+        assert ".sala-option[hidden]" in css
+        assert ".featured__page[hidden]" in css
 
     def test_inlined_payload_is_parseable(self, tmp_path):
         stats, _, _, _, payload = self.build(tmp_path)
