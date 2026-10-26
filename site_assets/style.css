@@ -333,9 +333,6 @@ img { max-width: 100%; }
 /* ------------------------------------------------------------------ day nav */
 
 .daynav {
-  position: sticky;
-  top: 52px;
-  z-index: 35;
   display: flex;
   align-items: stretch;
   gap: 0.3rem;
@@ -343,7 +340,6 @@ img { max-width: 100%; }
   margin-bottom: 0.2rem;
   overflow-x: auto;
   scrollbar-width: none;
-  background: linear-gradient(to bottom, var(--bg) 62%, transparent);
 }
 .daynav::-webkit-scrollbar { display: none; }
 
@@ -384,13 +380,9 @@ img { max-width: 100%; }
 .day--all { margin-left: auto; }
 
 .daynav--months {
-  position: static;
-  top: auto;
-  z-index: auto;
   gap: 0.2rem;
   padding: 0.05rem 0 0.6rem;
   margin-bottom: 0;
-  background: none;
 }
 .daynav__label {
   align-self: center;
@@ -688,12 +680,7 @@ img { max-width: 100%; }
   margin-bottom: 0.7rem;
 }
 .featured__head h2 { margin: 0; }
-.featured__head-right {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-.featured__head-right > span:first-child {
+.featured__note {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.05em;
@@ -747,8 +734,14 @@ img { max-width: 100%; }
   gap: 0.8rem;
   min-width: 0;
 }
+.featured__stack[data-count="1"] { grid-auto-rows: auto; align-content: start; }
 .featured__page[hidden] { display: none; }
-.featured__page[data-count="1"] { grid-auto-rows: auto; align-content: start; }
+.featured__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
 
 .feature {
   display: grid;
@@ -907,9 +900,9 @@ img { max-width: 100%; }
 
 /* ------------------------------------------------------------------ agenda */
 
-.agenda { display: flex; flex-direction: column; gap: 1.5rem; scroll-margin-top: 128px; }
+.agenda { display: flex; flex-direction: column; gap: 1.5rem; scroll-margin-top: 64px; }
 
-.daygroup { scroll-margin-top: 104px; }
+.daygroup { scroll-margin-top: 88px; }
 .daygroup[hidden] { display: none; }
 
 .daygroup__head {
@@ -920,7 +913,7 @@ img { max-width: 100%; }
   padding: 0.1rem 0 0.45rem;
   border-bottom: 1px solid var(--line-2);
   position: sticky;
-  top: 105px;
+  top: 55px;
   z-index: 20;
   background: linear-gradient(to bottom, var(--bg) 70%, transparent);
 }
@@ -1191,8 +1184,7 @@ img { max-width: 100%; }
   .intro { padding-top: 1.7rem; gap: 1.2rem; }
   .intro__stats { gap: 0.9rem; }
 
-  .daynav { top: 52px; }
-  .daygroup__head { top: 105px; }
+  .daygroup__head { top: 53px; }
 
   .row {
     grid-template-columns: 44px 48px minmax(0, 1fr) 28px;
@@ -1259,7 +1251,7 @@ img { max-width: 100%; }
   .sala-search { grid-column: 1 / -1; grid-row: 2; margin: 0.6rem 0 0; max-width: none; }
   .sala-grid { grid-template-columns: 1fr; }
 
-  .featured__head-right > span:first-child { display: none; }
+  .featured__note { display: none; }
 
   .row__title {
     white-space: normal;

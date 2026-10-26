@@ -511,6 +511,23 @@ class TestRedesignMarkup:
         assert stats["weekend"] > 0
         assert re.search(r'class="day is-on" data-view="weekend"', html)
 
+    def test_day_and_month_chips_toggle_without_scrolling(self, tmp_path):
+        _, _, _, app_js, _ = self.build(tmp_path)
+        # Clicking the active chip clears it back to "Todo"; no auto-scroll.
+        assert "scrollIntoView" not in app_js
+        assert 'state.view === view && view !== "all" ? "all" : view' in app_js
+
+    def test_featured_stays_visible_when_filters_change(self, tmp_path):
+        _, _, _, app_js, _ = self.build(tmp_path)
+        assert "keepFeatured" not in app_js
+        assert "featured.hidden" not in app_js
+
+    def test_day_nav_is_not_sticky(self, tmp_path):
+        _, _, css, _, _ = self.build(tmp_path)
+        daynav = css.split(".daynav {", 1)[1].split("}", 1)[0]
+        assert "position: sticky" not in daynav
+        assert ".featured__foot" in css
+
     def test_month_navigation_markup(self, tmp_path):
         _, html, _, _, payload = self.build(tmp_path)
         month_nav = html.split('aria-label="Filtrar por mes">', 1)[1].split("</nav>", 1)[0]
@@ -680,15 +697,29 @@ class TestRedesignMarkup:
         )
         assert len(venue_names) == build_site.FEATURED_LIMIT == 8
         assert len(set(venue_names)) == 8
-        pages = re.findall(r'class="featured__stack featured__page"[^>]*', html)
-        assert len(pages) == 4
-        assert sum("hidden" in page for page in pages) == 3
+        pages = re.findall(r'<div class="featured__page featured__grid[^"]*"[^>]*>', html)
+        assert len(pages) == 3
+        assert sum("hidden" in page for page in pages) == 2
+        # Every page carries its own lead, so the arrows rotate the main card too.
+        assert html.count('class="feature feature--lead"') == 3
         assert 'id="featured-prev"' in html and 'id="featured-next"' in html
         assert 'id="featured-page-count"' in html
         assert "showFeaturedPage" in app_js
         assert 'id="featured-title">Destacados<' in html
+        assert html.index('class="featured__foot"') > html.index('class="featured__pages"')
         known = {event["venue_name"] for event in payload["events"]}
         assert set(venue_names) <= known
+
+    def test_featured_single_page_has_no_pager(self):
+        event = build_site.merge_members(
+            [make_member("articket", occurrences=["2026-10-18"], date_start="2026-10-18")],
+            empty_index(),
+            SNAPSHOT_TODAY,
+        )
+        html = build_site.render_featured([event], SNAPSHOT_TODAY)
+        assert "featured__grid--single" in html
+        assert "featured__foot" not in html
+        assert "featured-page-count" not in html
 
     def test_featured_prefers_a_poster_ticket_and_a_bigger_show(self):
         plain = build_site.merge_members(

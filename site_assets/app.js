@@ -73,7 +73,6 @@
   var countLabel = document.getElementById("filter-count");
   var emptyState = document.getElementById("empty-state");
   var clearButton = document.getElementById("clear-filters");
-  var featured = document.querySelector(".featured");
   var freeButton = document.getElementById("filter-free");
   var venueChips = slice(document.querySelectorAll(".fchip[data-venue]"));
   var salaToggle = document.getElementById("sala-toggle");
@@ -237,9 +236,6 @@
     }
 
     if (emptyState) emptyState.hidden = visible !== 0;
-    var keepFeatured =
-      state.view === "weekend" || state.view === "next-weekend" || state.view === "all";
-    if (featured) featured.hidden = activeFilters() || !keepFeatured;
     syncControls();
 
     track("filter_change", {
@@ -306,16 +302,11 @@
     render("clear");
   }
 
-  function scrollToAgenda() {
-    var agenda = document.getElementById("agenda");
-    if (agenda) agenda.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   dayButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      state.view = button.dataset.view;
+      var view = button.dataset.view;
+      state.view = state.view === view && view !== "all" ? "all" : view;
       render("view");
-      scrollToAgenda();
     });
   });
 

@@ -1085,24 +1085,32 @@ def render_featured_card(event: dict, today: date, variant: str = "lead") -> str
 
 
 def render_featured(events: list[dict] | None, today: date) -> str:
+    """Featured board paginated in threes so the lead rotates with its page."""
     if not events:
         return ""
-    lead, rest = events[0], events[1:]
-    minis = [rest[index : index + 2] for index in range(0, len(rest), 2)]
+    chunks = [events[index : index + 3] for index in range(0, len(events), 3)]
     pages = []
-    for index, page in enumerate(minis, start=1):
+    for index, page in enumerate(chunks, start=1):
         hidden = "" if index == 1 else " hidden"
-        cards = "".join(render_featured_card(event, today, "mini") for event in page)
+        lead, rest = page[0], page[1:]
+        stack = ""
+        if rest:
+            stack = (
+                f'<div class="featured__stack" data-count="{len(rest)}">'
+                f'{"".join(render_featured_card(event, today, "mini") for event in rest)}'
+                "</div>"
+            )
+        single = " featured__grid--single" if not rest else ""
         pages.append(
-            f'<div class="featured__stack featured__page" data-count="{len(page)}"{hidden}>'
-            f"{cards}</div>"
+            f'<div class="featured__page featured__grid{single}" data-count="{len(page)}"{hidden}>'
+            f'{render_featured_card(lead, today, "lead")}'
+            f"{stack}</div>"
         )
 
     pager = ""
     if len(pages) > 1:
         pager = (
-            f'<span class="featured__count" id="featured-page-count" aria-live="polite">'
-            f"1 / {len(pages)}</span>"
+            '<div class="featured__foot">'
             '<button type="button" class="featured__arrow" id="featured-prev" '
             'aria-label="Destacados anteriores" disabled>'
             '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
@@ -1111,21 +1119,18 @@ def render_featured(events: list[dict] | None, today: date) -> str:
             'aria-label="Más destacados">'
             '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
             '<path d="M9 6l6 6-6 6"/></svg></button>'
+            f'<span class="featured__count" id="featured-page-count" aria-live="polite">'
+            f"1 / {len(pages)}</span>"
+            "</div>"
         )
-    single = " featured__grid--single" if not pages else ""
     return (
         '<section class="featured" aria-labelledby="featured-title">'
         '<div class="featured__head">'
         '<h2 class="kicker" id="featured-title">Destacados</h2>'
-        '<div class="featured__head-right">'
-        "<span>Del finde y la semana</span>"
+        '<span class="featured__note">Del finde y la semana</span>'
+        "</div>"
+        f'<div class="featured__pages">{"".join(pages)}</div>'
         f"{pager}"
-        "</div>"
-        "</div>"
-        f'<div class="featured__grid{single}">'
-        f'{render_featured_card(lead, today, "lead")}'
-        f'{"".join(pages)}'
-        "</div>"
         "</section>"
     )
 
