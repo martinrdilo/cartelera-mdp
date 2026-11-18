@@ -59,6 +59,35 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 - **Títulos legibles.** La ticketera suele mandar títulos en mayúsculas con la fecha pegada ("SANTO PECADO EN ABBEY ROAD 16-10"); el sitio muestra una versión legible y conserva el título crudo en los datos.
 
 
+## Verificación de datos
+
+`verify/` audita la fidelidad de lo publicado —precio, fecha y link de compra— contra el payload de origen, y busca duplicados que el dedupe dejó pasar. Es de solo lectura: nunca escribe `data/` ni `site/`.
+
+```bash
+.venv/bin/python -m verify                # suite offline: snapshot + rebuild + duplicados
+.venv/bin/python -m verify snapshot       # invariantes del snapshot versionado
+.venv/bin/python -m verify rebuild        # re-deriva desde data/raw/ (si existe)
+.venv/bin/python -m verify duplicates     # pares que quedaron fuera de todo cluster
+.venv/bin/python -m verify links          # red: estado HTTP de cada link
+.venv/bin/python -m verify live --source ticketek   # red: re-colecta una fuente y compara
+```
+
+| Capa | Red | Qué prueba |
+|---|---|---|
+| `snapshot` | no | Esquema, fechas, ocurrencias, precio, moneda, link/vendedor, unicidad de `source_event_id`, contadores y membresía del dedupe, y coherencia del merge multi-fuente del sitio (precio de un vendedor con link de otro). |
+| `rebuild` | no | Re-ejecuta `normalize` sobre `data/raw/*.json` y compara campo por campo contra `events_normalized.json`: detecta ediciones manuales y drift de parsers. Se saltea si `data/raw/` no existe (es gitignored). |
+| `duplicates` | no | Mismo slug de ticket en clusters distintos (error) y mismo venue + fecha + título parecido entre fuentes (warning). Reusa el guard de series del dedupe. |
+| `links` | sí | `HTTP >= 400`, fallos de red, esquemas inválidos y redirecciones que abandonan la ficha. |
+| `live` | sí | Colecta una fuente ahora y la compara con el snapshot; respeta el pacing de cada collector. |
+
+Salida y códigos: `0` sin errores (los warnings no fallan), `1` con al menos un `error`, `2` por fallo interno o entrada inválida. `--strict` promueve los warnings a falla y `--json` emite `version`, `summary` y `findings` con evidencia por hallazgo.
+
+Límites conocidas:
+
+- `rebuild` re-parsea fechas relativas ("sábado 14 de noviembre") contra la fecha de hoy. Los eventos con año inferido se reportan como `rebuild.time_dependent` (warning), no como error.
+- Articket multi-fecha toma `occurrences` y `date_end` de la página de detalle: la reconstrucción offline los exime por evento y lo informa como `rebuild.network_derived`.
+- `links` y `live` quedan fuera de la suite offline y de CI: son diagnóstico manual, no gates de publicación.
+
 ## Deploy
 
 `.github/workflows/deploy.yml` publica el sitio en GitHub Pages:
@@ -96,6 +125,7 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 | `run_pipeline.py` | Orquesta collect → normalize → enrich → dedupe y escribe `data/` (atómico; no pisa outputs si una fuente falla). |
 | `scripts/daily.sh` | Corrida diaria con log; insumo para cron/systemd. |
 | `build_site.py` | Genera el sitio estático en `site/`: merge de clusters, agenda por día, destacado, títulos legibles, SEO y assets. |
+| `verify/` | Verificador de solo lectura: invariantes del snapshot, re-derivación desde `data/raw/`, duplicados no detectados y chequeos de red opt-in. |
 | `site_assets/` | Fuente del CSS (temas claro/oscuro), el JS (pestañas de día, filtros, búsqueda, detalle, compartir) y el favicon; `build_site.py` los copia a `site/`. |
 | `.github/workflows/deploy.yml` | Deploy diario del sitio a GitHub Pages (pipeline best-effort + build + Pages). |
 | `tests/` | Pytest: venues, fechas, ocurrencias, municipal, dedupe, runner y sitio. |

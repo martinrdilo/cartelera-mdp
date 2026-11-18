@@ -191,7 +191,7 @@ def _single_token_match(event_a, event_b):
     return round(float(score), 1) if score >= 90 else None
 
 
-def _series_prefix_conflict(event_a, event_b):
+def series_prefix_conflict(event_a, event_b):
     """True when two titles share a long series prefix but differ in the entry.
 
     A film festival publishes every screening under the same prefix
@@ -267,7 +267,7 @@ def _pair_evidence(event_a, event_b, threshold):
         if single_score is not None:
             return {"kind": "title_core", "score": single_score}
         return None
-    if _series_prefix_conflict(event_a, event_b):
+    if series_prefix_conflict(event_a, event_b):
         return None
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
