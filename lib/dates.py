@@ -34,6 +34,31 @@ _TIME_HHMM_RE = re.compile(r"(\d{1,2})[:.](\d{2})")
 _TIME_HOUR_RE = re.compile(r"(\d{1,2})\s*(?:hs?|horas)\b", re.IGNORECASE)
 _TIME_BARE_RE = re.compile(r"^\s*(\d{1,2})\s*$")
 
+# Sources print the weekday next to a year-less date ("Sáb 14 de Noviembre").
+# When present it disambiguates the year: a stale agenda entry must keep the
+# year whose weekday matches the text, not roll forward just because it passed.
+_WEEKDAYS = {
+    "lun": 0,
+    "lunes": 0,
+    "mar": 1,
+    "martes": 1,
+    "mie": 2,
+    "miercoles": 2,
+    "jue": 3,
+    "jueves": 3,
+    "vie": 4,
+    "viernes": 4,
+    "sab": 5,
+    "sabado": 5,
+    "dom": 6,
+    "domingo": 6,
+}
+_WEEKDAY_RE = re.compile(
+    r"\b(lunes|martes|miercoles|jueves|viernes|sabado|domingo|"
+    r"lun|mar|mie|jue|vie|sab|dom)\b",
+    re.IGNORECASE,
+)
+
 
 def _strip_accents(value):
     decomposed = unicodedata.normalize("NFKD", value)
@@ -54,12 +79,20 @@ def parse_ddmmyyyy(text):
         return None
 
 
+def _weekday_from_text(text):
+    """Return the weekday index printed in the text (Monday=0), or None."""
+    cleaned = _strip_accents(text).lower()
+    match = _WEEKDAY_RE.search(cleaned)
+    return _WEEKDAYS.get(match.group(1)) if match else None
+
+
 def parse_spanish_date(text, today=None):
     """Parse a "14 de Octubre" style date, inferring the year.
 
-    Year inference: current year; when the candidate is more than one day in
-    the past it rolls to the next year (agendas often list the year-less date
-    of an upcoming season).
+    When the text prints a weekday, the year that matches that weekday wins:
+    a stale listing of the past Saturday stays in the current year instead of
+    jumping twelve months ahead. Without a weekday, the agenda rule still
+    applies: current year, rolled forward when the candidate is clearly past.
     """
     if not text:
         return None
@@ -71,9 +104,18 @@ def parse_spanish_date(text, today=None):
     if month is None:
         return None
     today = today or date.today()
+    expected_weekday = _weekday_from_text(text)
     try:
         if year_text:
             return date(int(year_text), month, int(day_text))
+        if expected_weekday is not None:
+            for year in (today.year, today.year + 1):
+                try:
+                    option = date(year, month, int(day_text))
+                except ValueError:
+                    continue
+                if option.weekday() == expected_weekday:
+                    return option
         candidate = date(today.year, month, int(day_text))
     except ValueError:
         return None

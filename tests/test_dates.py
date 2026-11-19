@@ -30,8 +30,21 @@ class TestParseSpanishDate:
     def test_weekday_accent_is_optional(self):
         assert parse_spanish_date("Mie 14 de Octubre", today=TODAY) == date(2026, 10, 14)
 
-    def test_past_date_rolls_to_next_year(self):
-        assert parse_spanish_date("Mié 14 de Octubre", today=date(2026, 10, 20)) == date(2027, 10, 14)
+    def test_past_date_keeps_the_year_that_matches_the_weekday(self):
+        # "Mié 14 de Octubre" is Wednesday 2026-10-14; 2027-10-14 is Thursday.
+        # The weekday printed by the source wins over the "roll when past" rule.
+        assert parse_spanish_date("Mié 14 de Octubre", today=date(2026, 10, 20)) == date(2026, 10, 14)
+
+    def test_stale_listing_does_not_jump_a_year(self):
+        # Club TRI still lists the past Saturday: 2027-11-14 is a Sunday.
+        assert parse_spanish_date("Sáb 14 de Noviembre", today=date(2026, 11, 18)) == date(2026, 11, 14)
+
+    def test_weekday_can_select_the_next_year(self):
+        # 2026-11-14 is Saturday, so "Dom 14 de Noviembre" must be 2027.
+        assert parse_spanish_date("Dom 14 de Noviembre", today=date(2026, 11, 18)) == date(2027, 11, 14)
+
+    def test_without_weekday_a_past_date_still_rolls(self):
+        assert parse_spanish_date("14 de Octubre", today=date(2026, 10, 20)) == date(2027, 10, 14)
 
     def test_yesterday_is_kept_in_current_year(self):
         # Agendas may still list an event that happened yesterday.
