@@ -1,6 +1,6 @@
 """Tests for cross-source dedupe (venue+date fingerprint, slug join, fuzzy title)."""
 
-from lib.dedupe import cluster_events, extract_slug, normalize_text, title_similarity
+from lib.dedupe import cluster_events, extract_slug, normalize_text, strip_title_noise, title_similarity
 from lib.schema import Event
 
 
@@ -27,6 +27,71 @@ class TestNormalizeText:
 
     def test_collapses_whitespace(self):
         assert normalize_text("  Jam   de  Jazz & Dibujo ") == "jam de jazz dibujo"
+
+
+class TestSpanishDatePhrase:
+    """A date stamped into the title names the same event, not a new one."""
+
+    def test_date_phrase_is_stripped_for_matching(self):
+        assert strip_title_noise("Colyn 21 noviembre 2026") == "Colyn"
+        assert strip_title_noise("Solomun 2 de enero de 2027") == "Solomun"
+
+    def test_single_artist_title_matches_the_date_stamped_copy(self):
+        stamped = make_event("quehacemos", "Colyn 21 noviembre 2026", "Mute", "2026-11-21")
+        opening = make_event("bombo", "OPENING COLYN, COEUS, CROMIND", "Mute", "2026-11-21")
+        clusters = cluster_events([stamped, opening])
+        assert len(clusters) == 1
+
+
+class TestSameSourceCorroboration:
+    """A third source can prove two same-source titles are one event."""
+
+    def test_two_quehacemos_titles_join_through_bombo(self):
+        opening = make_event("quehacemos", "MUTE OPENING", "Mute", "2026-11-21")
+        bombo = make_event("bombo", "OPENING COLYN, COEUS, CROMIND", "Mute", "2026-11-21")
+        stamped = make_event(
+            "quehacemos",
+            "Colyn 21 noviembre 2026",
+            "Mute",
+            "2026-11-21",
+            event_id="quehacemos-2",
+        )
+        clusters = cluster_events([opening, bombo, stamped])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 3
+
+    def test_two_distinct_same_source_titles_stay_apart_without_a_bridge(self):
+        first = make_event("quehacemos", "MUTE OPENING", "Mute", "2026-11-21")
+        second = make_event("quehacemos", "Colyn 21 noviembre 2026", "Mute", "2026-11-21", event_id="q2")
+        assert cluster_events([first, second]) == []
+
+    def test_other_show_at_the_venue_does_not_pull_a_single_title_in(self):
+        fabiana = make_event(
+            "cultutickets",
+            "SAB 21 DE NOV FABIANA CANTILO EN MAR DEL PLATA",
+            "Brew House",
+            "2026-11-21",
+        )
+        pepo = make_event("cultutickets", "SAB 21 NOV EL PEPO", "Brew House", "2026-11-21", event_id="c2")
+        bridge = make_event("cualpinta", "Fabiana Cantilo", "Brew House", "2026-11-21")
+        clusters = cluster_events([fabiana, pepo, bridge])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+        assert {event["source"] for event in clusters[0]["events"]} == {"cultutickets", "cualpinta"}
+
+    def test_supermerk_single_token_needs_its_own_corroboration(self):
+        rastone = make_event("cultutickets", "NOCHE RASTONE", "Brew House", "2026-11-27")
+        supermerk = make_event(
+            "cultutickets",
+            "VIER 27 DE NOV SUPERMERK2",
+            "Brew House",
+            "2026-11-27",
+            event_id="c2",
+        )
+        bridge = make_event("elevenflow", "NOCHE RASTONE", "Brew House", "2026-11-27")
+        clusters = cluster_events([rastone, supermerk, bridge])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
 
 
 class TestExtractSlug:

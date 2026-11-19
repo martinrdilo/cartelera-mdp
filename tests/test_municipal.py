@@ -90,3 +90,15 @@ class TestNormalizeOccurrences:
         event = normalize([record])[0]
         assert event.occurrences == ["2026-10-24"]
         assert event.recurrence_unknown is False
+
+
+class TestSellerFromEntryText:
+    def test_venti_com_ar_is_venti(self):
+        event = normalize([make_record(entry_text="$65000 en venta en www.venti.com.ar")])[0]
+        assert event.seller == "Venti"
+
+    def test_chauvin_and_app_bombo(self):
+        chauvin = normalize([make_record(entry_text="$45000, en venta en www.chauvin.com.ar")])[0]
+        bombo = normalize([make_record(entry_text="en venta desde App. Bombo")])[0]
+        assert chauvin.seller == "Chauvin"
+        assert bombo.seller == "Bombo"

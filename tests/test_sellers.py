@@ -42,3 +42,8 @@ def test_does_not_match_a_lookalike_suffix():
 
 def test_every_entry_has_a_domain_and_seller():
     assert all(domain and seller for domain, seller in SELLERS)
+
+
+def test_maps_venti_com_ar_and_entrada_uno():
+    assert seller_from_url("https://www.venti.com.ar/evento/x") == "Venti"
+    assert seller_from_url("https://www.entradauno.com/x") == "Entrada Uno"

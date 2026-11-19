@@ -196,6 +196,10 @@ class TestPriceFormatting:
         event = {"is_free": False, "price_min": None, "price_text": "Comprar"}
         assert build_site.price_label(event) is None
 
+    def test_label_ignores_a_sale_note_without_a_price(self):
+        event = {"is_free": False, "price_min": None, "price_text": "en venta desde App. Bombo"}
+        assert build_site.price_label(event) is None
+
 
 class TestMergeRule:
     """Seller members win event fields; municipal wins the address; dates union."""
@@ -287,6 +291,61 @@ class TestMergeRule:
         assert event["title"] == "Evento articket"
         assert event["venue_name"] == "Club TRI"
         assert event["dates"] == ["2026-10-17"]
+
+
+class TestTicketLinkSelection:
+    """The buy link must be the event page, never a ticketera homepage."""
+
+    def test_homepage_does_not_beat_a_deep_link(self):
+        members = [
+            make_member(
+                "cualpinta",
+                ticket_url="https://alpogo.com",
+                seller="Alpogo",
+                raw_url="https://www.cualpinta.com/mar-del-plata/eventos/attack",
+            ),
+            make_member(
+                "elevenflow",
+                ticket_url="https://alpogo.com/evento/attack-28691",
+                seller="Alpogo",
+                raw_url="https://elevenflow.app/events/attack",
+            ),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["ticket_url"] == "https://alpogo.com/evento/attack-28691"
+        assert event["seller"] == "Alpogo"
+        assert event["source_url"] == "https://elevenflow.app/events/attack"
+
+    def test_homepage_only_is_not_a_cta(self):
+        member = make_member(
+            "cualpinta",
+            ticket_url="https://alpogo.com",
+            seller="Alpogo",
+            price_min=50000.0,
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["ticket_url"] is None
+        assert event["seller"] == "Alpogo"
+        row = build_site.render_row(event, SNAPSHOT_TODAY)
+        assert 'data-outbound="ticket"' not in row
+        assert "Venta en Alpogo" in row
+
+    def test_details_carry_the_source_link_not_internal_sources(self):
+        member = make_member(
+            "municipal",
+            price_text="$35000, en venta en www.plateanet.com",
+            seller="Plateanet",
+            raw_url="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&tipo=11",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert "Datos:" not in details
+        assert "Venta:</b> Plateanet" in details
+        assert "Fuente:</b>" in details
+        assert (
+            'href="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&amp;tipo=11"'
+            in details
+        )
 
 
 class TestExactDuplicateGuard:
@@ -389,6 +448,10 @@ class TestDisplayHelpers:
 
     def test_trailing_date_is_stripped(self):
         assert build_site.clean_title("SANTO PECADO EN ABBEY ROAD 16-10") == "SANTO PECADO EN ABBEY ROAD"
+
+    def test_spanish_date_phrase_is_stripped(self):
+        assert build_site.clean_title("Colyn 21 noviembre 2026") == "Colyn"
+        assert build_site.clean_title("Solomun 2 de enero de 2027") == "Solomun"
 
     def test_leading_weekday_date_is_stripped(self):
         assert build_site.clean_title("SAB 17-10 LUCHO SSJ") == "LUCHO SSJ"

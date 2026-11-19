@@ -92,6 +92,16 @@ def extract_slug(url):
 # Bombo/Venti/Articket titles. Remove them anywhere in the title for matching;
 # the source title itself stays untouched in the output.
 _DATE_TOKEN_RE = re.compile(r"(?<!\d)\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?(?!\d)")
+# Spanish date phrases ("Colyn 21 noviembre 2026", "Solomun 2 enero 2027")
+# name the event's date, not a different show: strip them for matching.
+_SPANISH_MONTH = (
+    r"(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|"
+    r"septiembre|setiembre|octubre|noviembre|diciembre)"
+)
+_SPANISH_DATE_PHRASE_RE = re.compile(
+    rf"(?<!\d)\d{{1,2}}\s*(?:de\s+)?{_SPANISH_MONTH}(?:\s*(?:de\s+)?\d{{2,4}})?(?!\d)",
+    re.IGNORECASE,
+)
 # Edition markers ("Vol. 3", "Volumen III", "Edición 2") name the same event's
 # edition, not a different show; strip them for matching only.
 _EDITION_RE = re.compile(
@@ -104,6 +114,7 @@ def strip_title_noise(title):
     """Remove date/city noise (prefix, standalone dates, separators) before matching."""
     cleaned = _TITLE_DATE_PREFIX_RE.sub("", title or "")
     cleaned = _DATE_TOKEN_RE.sub(" ", cleaned)
+    cleaned = _SPANISH_DATE_PHRASE_RE.sub(" ", cleaned)
     cleaned = _EDITION_RE.sub(" ", cleaned)
     cleaned = re.sub(r"[|]+", " ", cleaned)
     return " ".join(cleaned.split()).strip(" -–,:|")
@@ -189,6 +200,14 @@ def _single_token_match(event_a, event_b):
         return None
     score = max(fuzz.ratio(short, token) for token in longer)
     return round(float(score), 1) if score >= 90 else None
+
+
+def _single_significant_token(event):
+    """The only significant token when the title reduces to one ("Colyn")."""
+    tokens = _significant_tokens(event)
+    if len(tokens) == 1 and len(tokens[0]) >= 4:
+        return tokens[0]
+    return None
 
 
 def series_prefix_conflict(event_a, event_b):
@@ -323,6 +342,33 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
             index = parent[index]
         return index
 
+    def corroborated(event, root_titles, own_source):
+        """Another source in the cluster independently names this event."""
+        for source, (_title, other_event) in root_titles.items():
+            if source == own_source:
+                continue
+            if _core_title_match(event, other_event) is not None:
+                return True
+            if _single_token_match(event, other_event) is not None:
+                return True
+            if title_similarity(event.title, other_event.title) >= DEFAULT_THRESHOLD:
+                return True
+        return False
+
+    def same_source_corroboration(left, right):
+        """Evidence for two same-source rows joined through a third source."""
+        left_event = indexed[left][1]
+        right_event = indexed[right][1]
+        if not (_single_significant_token(left_event) or _single_significant_token(right_event)):
+            return None
+        combined = {**titles[find(left)], **titles[find(right)]}
+        source = left_event.source
+        if corroborated(left_event, combined, source) and corroborated(
+            right_event, combined, source
+        ):
+            return {"kind": "title_corroborated", "score": 100.0}
+        return None
+
     def compatible(left_root, right_root):
         if slugs[left_root] & slugs[right_root]:
             return True
@@ -340,6 +386,20 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
                 continue
             if _single_token_match(event, other_event) is not None:
                 continue
+            # Two titles from the same source can still name one event when
+            # one reduces to a single artist token and both are corroborated
+            # by a third source in the two clusters (Qué Hacemos publishes
+            # both "MUTE OPENING" and "Colyn 21 noviembre 2026" for the
+            # opening, and Bombo names both). The single-token requirement
+            # keeps two distinct two-artist shows (e.g. "HALLOWEEN KIDS" /
+            # "HALLOWEEN NICO MATTIOLI") apart even when a combined bridge
+            # lists both.
+            if _single_significant_token(event) or _single_significant_token(other_event):
+                combined = {**titles[left_root], **titles[right_root]}
+                if corroborated(event, combined, source) and corroborated(
+                    other_event, combined, source
+                ):
+                    continue
             return False
         return True
 
@@ -385,6 +445,32 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
                 if not _dates_match(indexed[left][1], indexed[right][1]):
                     continue
                 evidence = _pair_evidence(indexed[left][1], indexed[right][1], threshold)
+                if evidence is None:
+                    continue
+                if not union(left, right):
+                    continue
+                pairs.append(
+                    {
+                        "a": _event_ref(indexed[left][1]),
+                        "b": _event_ref(indexed[right][1]),
+                        **evidence,
+                    }
+                )
+
+    # Second pass: same-source rows that a cross-source member corroborates.
+    # "Colyn 21 noviembre 2026" and "MUTE OPENING" are both Qué Hacemos, but
+    # Bombo and Cual Pinta list the same opening; the single-artist title may
+    # join the cluster after the cross-source edges above are built.
+    for group in groups.values():
+        for left_position, left in enumerate(group):
+            for right in group[left_position + 1 :]:
+                if indexed[left][1].source != indexed[right][1].source:
+                    continue
+                if find(left) == find(right):
+                    continue
+                if not _dates_match(indexed[left][1], indexed[right][1]):
+                    continue
+                evidence = same_source_corroboration(left, right)
                 if evidence is None:
                     continue
                 if not union(left, right):

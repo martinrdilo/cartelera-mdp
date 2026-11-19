@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 
 SELLERS = (
     ("venti.live", "Venti"),
+    ("venti.com.ar", "Venti"),
     ("articket.com.ar", "Articket"),
     ("cultutickets.com", "CultuTickets"),
     ("ticketek.com.ar", "Ticketek"),
@@ -20,6 +21,7 @@ SELLERS = (
     ("alpogo.com", "Alpogo"),
     ("ticketmas.ar", "Ticketmas"),
     ("chauvin.com.ar", "Chauvin"),
+    ("entradauno.com", "Entrada Uno"),
 )
 
 

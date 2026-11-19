@@ -29,12 +29,17 @@ SOURCE = "municipal"
 _SELLERS = {
     "ticketek": "Ticketek",
     "venti.live": "Venti.live",
+    "venti.com": "Venti",
     "articket": "Articket",
     "plateanet": "Plateanet",
     "feverup": "Fever",
     "cultutickets": "CultuTickets",
     "passline": "Passline",
     "ticketmas": "Ticketmas",
+    "chauvin": "Chauvin",
+    "bombo": "Bombo",
+    "septimofuego": "Séptimo Fuego",
+    "entradauno": "Entrada Uno",
     "boletería": "Boletería",
     "boleteria": "Boletería",
 }

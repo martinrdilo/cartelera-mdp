@@ -36,6 +36,8 @@ from pathlib import Path
 from urllib.parse import urlparse, quote
 from zoneinfo import ZoneInfo
 
+from lib.sellers import seller_from_url
+
 # ---------------------------------------------------------------------------
 # Site identity and constants
 # ---------------------------------------------------------------------------
@@ -226,6 +228,18 @@ def is_usable(value) -> bool:
     return True
 
 
+def is_event_url(url: str | None) -> bool:
+    """True when a ticket URL points at an event page, not a seller root.
+
+    A bare host ("https://alpogo.com") is the ticketera homepage: showing it
+    as "Sacar entrada" sends the visitor to a generic page, not to the show.
+    """
+    if not url:
+        return False
+    parsed = urlparse(url)
+    return bool(parsed.netloc) and bool(parsed.path.strip("/"))
+
+
 def _parse_amount(raw: str) -> float | None:
     """'12.000' / '12000' / '12.000,50' -> float (es-AR separators)."""
     cleaned = re.sub(r"[^\d.,]", "", raw or "")
@@ -283,7 +297,11 @@ def clean_price_text(text: str | None) -> str | None:
 
 
 def price_label(event: dict) -> str | None:
-    """'Gratis' | '$12.000' | 'Desde $14.000' | cleaned price_text | None."""
+    """'Gratis' | '$12.000' | 'Desde $14.000' | None.
+
+    Only real prices live here. A note that names the sale channel
+    ("en venta desde App. Bombo") is not a price; it belongs to `sale_name`.
+    """
     if event["is_free"] or event["price_min"] == 0:
         return "Gratis"
     if event["price_min"] is not None:
@@ -292,7 +310,12 @@ def price_label(event: dict) -> str | None:
         if cleaned and cleaned.casefold().startswith("desde"):
             label = f"Desde {label}"
         return label
-    return clean_price_text(event["price_text"])
+    cleaned = clean_price_text(event["price_text"])
+    if cleaned and (
+        cleaned == "Gratis" or cleaned.startswith("$") or cleaned.startswith("Desde $")
+    ):
+        return cleaned
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -357,6 +380,48 @@ def pick_field(members: list[dict], field: str):
     return None
 
 
+def _source_rank(member: dict) -> int:
+    source = member.get("source")
+    return SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER)
+
+
+def pick_source_member(members: list[dict]) -> dict | None:
+    """Highest-priority member that carries a source page."""
+    for member in sorted(members, key=_source_rank):
+        if is_usable(member.get("raw_url")):
+            return member
+    return members[0] if members else None
+
+
+def pick_ticket_info(members: list[dict]) -> tuple[str | None, str | None, dict | None]:
+    """Best buy link, its seller and the member it came from.
+
+    An event deep link always beats a seller homepage, even when the homepage
+    comes from a higher-priority source. A homepage is never used as the CTA:
+    it is only a hint of where the tickets are sold.
+    """
+    ranked = sorted(members, key=_source_rank)
+    homepage = None
+    for member in ranked:
+        url = member.get("ticket_url")
+        if not is_usable(url):
+            continue
+        if is_event_url(url):
+            seller = member.get("seller") or seller_from_url(url)
+            return url, seller, member
+        if homepage is None:
+            homepage = member
+    if homepage is not None:
+        seller = homepage.get("seller") or seller_from_url(homepage.get("ticket_url"))
+        if is_usable(seller):
+            return None, seller, homepage
+    for member in ranked:
+        seller = member.get("seller")
+        if is_usable(seller):
+            return None, seller, member
+    return None, None, None
+
+
 def slugify(value: str) -> str:
     slug = normalize_key(value).replace(" ", "-")
     return slug[:70] or "evento"
@@ -408,6 +473,8 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
                 break
     venue_name = (resolved or {}).get("name") or venue_hint or members[0].get("venue_name") or "Mar del Plata"
     venue_id = (resolved or {}).get("id") or slugify(venue_name)
+    ticket_url, seller, ticket_member = pick_ticket_info(members)
+    source_member = ticket_member or pick_source_member(members)
     event = {
         "title": pick_field(members, "title") or venue_name,
         "venue_id": venue_id,
@@ -418,9 +485,12 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
         "is_free": _merged_is_free(members),
         "price_min": pick_field(members, "price_min"),
         "price_text": pick_field(members, "price_text"),
-        "ticket_url": pick_field(members, "ticket_url"),
+        "ticket_url": ticket_url,
+        "seller": seller,
         "image_url": pick_field(members, "image_url"),
         "sources": sorted({member.get("source", "") for member in members}),
+        "source_name": (source_member or {}).get("source"),
+        "source_url": (source_member or {}).get("raw_url"),
     }
     event["price_label"] = price_label(event)
     event["display_title"] = choose_display_title(members, event["title"])
@@ -443,7 +513,7 @@ def merge_site_duplicates(left: dict, right: dict) -> dict:
     merged["dates"] = sorted(set(left["dates"]) | set(right["dates"]))
     merged["sources"] = sorted(set(left.get("sources") or []) | set(right.get("sources") or []))
     merged["is_free"] = bool(left.get("is_free") or right.get("is_free"))
-    for field in ("time", "price_min", "price_text", "ticket_url", "image_url", "address"):
+    for field in ("time", "price_min", "price_text", "ticket_url", "seller", "image_url", "address", "source_name", "source_url"):
         if not is_usable(merged.get(field)) and is_usable(right.get(field)):
             merged[field] = right[field]
     merged["price_label"] = price_label(merged)
@@ -515,6 +585,12 @@ def collect_site_events(data_dir: Path, today: date) -> tuple[list[dict], list[d
 # ("SANTO PECADO EN ABBEY ROAD 16-10"). The data stays untouched; the display
 # title prefers a member title that is already well cased and strips the date.
 DATE_SUFFIX_RE = re.compile(r"[,\s-]*\b\d{1,2}[-/]\d{1,2}\b\s*$")
+SPANISH_DATE_PHRASE_RE = re.compile(
+    r"\b\d{1,2}\s*(?:de\s+)?"
+    r"(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)"
+    r"(?:\s*(?:de\s+)?\d{2,4})?\b",
+    re.IGNORECASE,
+)
 WEEKDAY_PREFIX_RE = re.compile(
     r"^\s*(?:lun|mar|mi[eé]|jue|vie|s[áa]b|dom)[a-záéíóú]*\.?\s+\d{1,2}[-/]\d{1,2}\s+",
     re.IGNORECASE,
@@ -527,8 +603,9 @@ KEEP_CAPS = {"dj", "vj", "mc", "ii", "iii", "iv", "led", "mdp", "tv", "uv"}
 
 
 def clean_title(text: str | None) -> str:
-    """Drop a leading weekday+date and a trailing date token."""
+    """Drop a leading weekday+date, a Spanish date phrase and a trailing date."""
     value = WEEKDAY_PREFIX_RE.sub("", text or "")
+    value = SPANISH_DATE_PHRASE_RE.sub("", value)
     value = DATE_SUFFIX_RE.sub("", value)
     return " ".join(value.split()).strip(" ,")
 
@@ -683,6 +760,42 @@ def price_parts(event: dict) -> tuple[str, str] | None:
     if label.startswith("Desde "):
         return (label[len("Desde "):], "desde")
     return (label, "entrada")
+
+
+def sale_name(event: dict) -> str | None:
+    """Where the ticket is sold when there is no event deep link.
+
+    Prefers the seller the pipeline already detected, then the ticket host,
+    then a note in the price text ("en puerta", "boletería").
+    """
+    seller = event.get("seller")
+    if is_usable(seller):
+        if str(seller).casefold() in {"boletería", "boleteria"}:
+            return "Boletería"
+        return str(seller)
+    host = ticket_host(event.get("ticket_url"))
+    if host:
+        return host
+    note = clean_price_text(event.get("price_text"))
+    if note:
+        low = note.casefold()
+        if "boleter" in low:
+            return "Boletería"
+        if "en puerta" in low:
+            return "En puerta"
+    return None
+
+
+def sale_label(event: dict) -> str | None:
+    """User-facing sale hint: 'Venta en Bombo', 'En boletería', 'En puerta'."""
+    name = sale_name(event)
+    if not name:
+        return None
+    if name == "Boletería":
+        return "En boletería"
+    if name == "En puerta":
+        return "En puerta"
+    return f"Venta en {name}"
 
 
 def group_by_date(events: list[dict]) -> list[tuple[str, list[dict]]]:
@@ -1062,7 +1175,6 @@ def render_featured_card(event: dict, today: date, variant: str = "lead") -> str
         suffix = f"<small>{esc(note)}</small>" if note else ""
         price_html = f'<div class="feature__price">{esc(value)}{suffix}</div>'
     ticket = event.get("ticket_url")
-    host = ticket_host(ticket)
     actions = []
     if ticket:
         label = "Sacar entrada" if lead else "Entradas"
@@ -1082,8 +1194,9 @@ def render_featured_card(event: dict, today: date, variant: str = "lead") -> str
         if event.get("time"):
             meta_bits.append(esc(event["time"]))
         meta_bits.append(where)
-        if host:
-            meta_bits.append(f"Venta en {esc(host)}")
+        sale = sale_label(event)
+        if sale:
+            meta_bits.append(esc(sale))
     else:
         meta_bits = [f"<b>{esc(format_date_short(primary_date(event)))}</b>"]
         if event.get("time"):
@@ -1200,9 +1313,16 @@ def render_row_details(event: dict) -> str:
     facts = [f"<p><b>Fechas:</b> {esc(dates)}</p>"]
     if event.get("address"):
         facts.append(f"<p><b>Dónde:</b> {esc(event['address'])}</p>")
-    sources = [SOURCE_LABELS.get(source, source) for source in event.get("sources") or []]
-    if sources:
-        facts.append(f"<p><b>Datos:</b> {esc(' + '.join(sources))}</p>")
+    if not event.get("ticket_url"):
+        name = sale_name(event)
+        if name:
+            facts.append(f"<p><b>Venta:</b> {esc(name)}</p>")
+    if event.get("source_url"):
+        source_label = SOURCE_LABELS.get(event.get("source_name"), event.get("source_name") or "Fuente")
+        facts.append(
+            f'<p><b>Fuente:</b> <a href="{esc(event["source_url"])}" target="_blank" rel="noopener">'
+            f"{esc(source_label)} ↗</a></p>"
+        )
     actions = []
     if event.get("ticket_url"):
         host = ticket_host(event["ticket_url"])
@@ -1232,14 +1352,18 @@ def render_row(event: dict, today: date) -> str:
     slug = esc(event["slug"])
     primary = primary_date(event)
     price = price_parts(event)
+    sale = sale_label(event)
     if event["is_free"]:
         price_html = '<span class="row__price row__price--free">Gratis<small>sin entrada</small></span>'
     elif price:
         value, note = price
+        if not event.get("ticket_url") and sale:
+            note = sale
         note_html = f"<small>{esc(note)}</small>" if note else ""
         price_html = f'<span class="row__price">{esc(value)}{note_html}</span>'
     else:
-        price_html = '<span class="row__price row__price--dim">Consultar<small>en puerta</small></span>'
+        note = sale or ("según la fuente" if event.get("source_url") else "en puerta")
+        price_html = f'<span class="row__price row__price--dim">Consultar<small>{esc(note)}</small></span>'
 
     if event.get("ticket_url"):
         cta = (
