@@ -93,6 +93,15 @@ class TestSameSourceCorroboration:
         assert len(clusters) == 1
         assert len(clusters[0]["events"]) == 2
 
+    def test_independent_bridges_do_not_merge_two_distinct_same_source_shows(self):
+        dante = make_event("quehacemos", "Dante", "Brew House", "2026-11-21")
+        dante_bridge = make_event("cualpinta", "Dante", "Brew House", "2026-11-21")
+        nico = make_event("quehacemos", "Nico", "Brew House", "2026-11-21", event_id="q2")
+        nico_bridge = make_event("elevenflow", "Nico", "Brew House", "2026-11-21")
+        clusters = cluster_events([dante, dante_bridge, nico, nico_bridge])
+        assert len(clusters) == 2
+        assert all(len(cluster["events"]) == 2 for cluster in clusters)
+
 
 class TestExtractSlug:
     def test_articket_slug_with_trailing_slash(self):

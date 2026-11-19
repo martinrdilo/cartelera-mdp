@@ -342,29 +342,40 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
             index = parent[index]
         return index
 
-    def corroborated(event, root_titles, own_source):
-        """Another source in the cluster independently names this event."""
+    def corroborating_sources(event, root_titles, own_source):
+        """Sources in the cluster that independently name this event."""
+        sources = set()
         for source, (_title, other_event) in root_titles.items():
             if source == own_source:
                 continue
             if _core_title_match(event, other_event) is not None:
-                return True
-            if _single_token_match(event, other_event) is not None:
-                return True
-            if title_similarity(event.title, other_event.title) >= DEFAULT_THRESHOLD:
-                return True
-        return False
+                sources.add(source)
+            elif _single_token_match(event, other_event) is not None:
+                sources.add(source)
+            elif title_similarity(event.title, other_event.title) >= DEFAULT_THRESHOLD:
+                sources.add(source)
+        return sources
+
+    def same_source_pair_corroborated(event_a, event_b, combined, own_source):
+        """True when one shared third source names both same-source events.
+
+        Requiring the same source for both is what stops two different shows
+        at one venue/date from merging just because each has its own bridge.
+        """
+        if not (_single_significant_token(event_a) or _single_significant_token(event_b)):
+            return False
+        shared = corroborating_sources(event_a, combined, own_source) & corroborating_sources(
+            event_b, combined, own_source
+        )
+        return bool(shared)
 
     def same_source_corroboration(left, right):
         """Evidence for two same-source rows joined through a third source."""
         left_event = indexed[left][1]
         right_event = indexed[right][1]
-        if not (_single_significant_token(left_event) or _single_significant_token(right_event)):
-            return None
         combined = {**titles[find(left)], **titles[find(right)]}
-        source = left_event.source
-        if corroborated(left_event, combined, source) and corroborated(
-            right_event, combined, source
+        if same_source_pair_corroborated(
+            left_event, right_event, combined, left_event.source
         ):
             return {"kind": "title_corroborated", "score": 100.0}
         return None
@@ -387,19 +398,16 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
             if _single_token_match(event, other_event) is not None:
                 continue
             # Two titles from the same source can still name one event when
-            # one reduces to a single artist token and both are corroborated
-            # by a third source in the two clusters (Qué Hacemos publishes
+            # one reduces to a single artist token and a shared third source
+            # in the two clusters corroborates both (Qué Hacemos publishes
             # both "MUTE OPENING" and "Colyn 21 noviembre 2026" for the
             # opening, and Bombo names both). The single-token requirement
             # keeps two distinct two-artist shows (e.g. "HALLOWEEN KIDS" /
             # "HALLOWEEN NICO MATTIOLI") apart even when a combined bridge
             # lists both.
-            if _single_significant_token(event) or _single_significant_token(other_event):
-                combined = {**titles[left_root], **titles[right_root]}
-                if corroborated(event, combined, source) and corroborated(
-                    other_event, combined, source
-                ):
-                    continue
+            combined = {**titles[left_root], **titles[right_root]}
+            if same_source_pair_corroborated(event, other_event, combined, source):
+                continue
             return False
         return True
 
