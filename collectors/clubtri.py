@@ -59,18 +59,23 @@ def collect():
 def normalize(records):
     events = []
     for record in records:
+        title = (record.get("title") or "").strip()
+        if not title:
+            # The home page sometimes renders a card without a title; an
+            # untitled event cannot be found or read, so it is not published.
+            continue
         is_ticket_link = any(host in record["link"] for host in SELLERS)
         seller = next((name for host, name in SELLERS.items() if host in record["link"]), None)
         status = record["status_text"].lower()
         is_free = True if "gratis" in status else (False if status else None)
-        seed = f"{record['title']}|{record['date_text']}"
+        seed = f"{title}|{record['date_text']}"
         source_event_id = record["image_id"] or "clubtri-" + hashlib.sha1(seed.encode("utf-8")).hexdigest()[:10]
         date_iso = to_iso(parse_spanish_date(record["date_text"]))
         events.append(
             Event(
                 source=SOURCE,
                 source_event_id=source_event_id,
-                title=record["title"],
+                title=title,
                 venue_name=VENUE_NAME,
                 venue_raw=VENUE_RAW,
                 date_start=date_iso,
