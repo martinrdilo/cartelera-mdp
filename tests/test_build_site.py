@@ -200,6 +200,18 @@ class TestPriceFormatting:
         event = {"is_free": False, "price_min": None, "price_text": "en venta desde App. Bombo"}
         assert build_site.price_label(event) is None
 
+    def test_label_falls_back_to_a_lowercase_desde_price(self):
+        event = {"is_free": False, "price_min": None, "price_text": "desde $12000"}
+        assert build_site.price_label(event) == "Desde $12.000"
+
+    def test_sale_name_reads_boleteria_and_en_puerta_notes(self):
+        assert build_site.sale_label(
+            {"seller": None, "ticket_url": None, "price_text": "En boletería"}
+        ) == "En boletería"
+        assert build_site.sale_label(
+            {"seller": None, "ticket_url": None, "price_text": "Sólo en puerta"}
+        ) == "En puerta"
+
 
 class TestMergeRule:
     """Seller members win event fields; municipal wins the address; dates union."""
@@ -347,6 +359,78 @@ class TestTicketLinkSelection:
             in details
         )
 
+    def test_deep_link_seller_prefers_the_url_host(self):
+        member = make_member(
+            "cualpinta",
+            ticket_url="https://wearebombo.com/evento/colyn",
+            seller="nan",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["seller"] == "Bombo"
+
+    def test_source_link_falls_back_to_a_member_with_a_source_page(self):
+        homepage = make_member(
+            "cualpinta",
+            ticket_url="https://alpogo.com",
+            seller="Alpogo",
+            raw_url=None,
+        )
+        source = make_member(
+            "municipal",
+            raw_url="https://www.turismomardelplata.gob.ar/evento",
+        )
+        event = build_site.merge_members([homepage, source], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] == "https://www.turismomardelplata.gob.ar/evento"
+        assert event["source_name"] == "municipal"
+
+    def test_featured_card_shows_the_seller_not_the_raw_host(self):
+        member = make_member(
+            "articket",
+            ticket_url="https://articket.com.ar/AN-ESPIL/",
+            seller="Articket",
+            occurrences=["2026-10-17"],
+            date_start="2026-10-17",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        html = build_site.render_featured_card(event, SNAPSHOT_TODAY, "lead")
+        assert "Venta en Articket" in html
+
+    def test_row_without_price_or_link_points_to_the_source(self):
+        member = make_member(
+            "municipal",
+            raw_url="https://www.turismomardelplata.gob.ar/evento",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        row = build_site.render_row(event, SNAPSHOT_TODAY)
+        assert "Consultar" in row
+        assert "según la fuente" in row
+
+    def test_row_without_price_shows_the_sale_channel(self):
+        member = make_member(
+            "municipal",
+            seller="Plateanet",
+            raw_url="https://www.turismomardelplata.gob.ar/evento",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        row = build_site.render_row(event, SNAPSHOT_TODAY)
+        assert "Venta en Plateanet" in row
+
+    def test_search_query_is_not_a_deep_link(self):
+        member = make_member(
+            "cualpinta",
+            ticket_url="https://articket.com.ar/?buscar=cumbia",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["ticket_url"] is None
+        assert event["seller"] == "Articket"
+
+    def test_details_without_a_source_url_keep_the_source_label(self):
+        member = make_member("municipal", raw_url=None, seller="Plateanet")
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert "Fuente:</b> Municipal" in details
+
 
 class TestExactDuplicateGuard:
     """The site never renders the same venue+title+date twice."""
@@ -384,6 +468,21 @@ class TestExactDuplicateGuard:
         assert merged[0]["ticket_url"] == "https://venti.live/evento/dillom"
         assert merged[0]["price_min"] == 69000
         assert merged[0]["sources"] == ["punto", "ticketek"]
+
+    def test_site_duplicate_fills_the_ticket_group_together(self):
+        left = self.site_event("Dillom", "bendu", ["2027-01-30"], sources=["ticketek"])
+        right = self.site_event(
+            "DILLOM", "bendu", ["2027-01-30"], sources=["punto"],
+            ticket_url="https://venti.live/evento/dillom",
+            seller="Venti",
+            source_name="punto",
+            source_url="https://puntomardelplata.com/actividades/dillom",
+        )
+        merged = build_site.collapse_exact_duplicates([left, right])[0]
+        assert merged["ticket_url"] == "https://venti.live/evento/dillom"
+        assert merged["seller"] == "Venti"
+        assert merged["source_name"] == "punto"
+        assert merged["source_url"] == "https://puntomardelplata.com/actividades/dillom"
 
     def test_same_title_different_session_stays_two_rows(self):
         left = self.site_event("Dillom", "bendu", ["2027-01-30"])

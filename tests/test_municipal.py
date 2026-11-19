@@ -102,3 +102,9 @@ class TestSellerFromEntryText:
         bombo = normalize([make_record(entry_text="en venta desde App. Bombo")])[0]
         assert chauvin.seller == "Chauvin"
         assert bombo.seller == "Bombo"
+
+    def test_septimo_fuego_and_entrada_uno(self):
+        septimo = normalize([make_record(entry_text="en venta en septimofuego.com")])[0]
+        uno = normalize([make_record(entry_text="en venta en www.entradauno.com/x")])[0]
+        assert septimo.seller == "Séptimo Fuego"
+        assert uno.seller == "Entrada Uno"

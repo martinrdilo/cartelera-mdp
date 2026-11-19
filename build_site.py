@@ -311,10 +311,10 @@ def price_label(event: dict) -> str | None:
             label = f"Desde {label}"
         return label
     cleaned = clean_price_text(event["price_text"])
-    if cleaned and (
-        cleaned == "Gratis" or cleaned.startswith("$") or cleaned.startswith("Desde $")
-    ):
-        return cleaned
+    if cleaned:
+        low = cleaned.casefold()
+        if low == "gratis" or low.startswith("$") or low.startswith("desde $"):
+            return cleaned
     return None
 
 
@@ -407,8 +407,9 @@ def pick_ticket_info(members: list[dict]) -> tuple[str | None, str | None, dict 
         if not is_usable(url):
             continue
         if is_event_url(url):
-            seller = member.get("seller") or seller_from_url(url)
-            return url, seller, member
+            host_seller = seller_from_url(url)
+            member_seller = member.get("seller") if is_usable(member.get("seller")) else None
+            return url, host_seller or member_seller, member
         if homepage is None:
             homepage = member
     if homepage is not None:
@@ -474,7 +475,11 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
     venue_name = (resolved or {}).get("name") or venue_hint or members[0].get("venue_name") or "Mar del Plata"
     venue_id = (resolved or {}).get("id") or slugify(venue_name)
     ticket_url, seller, ticket_member = pick_ticket_info(members)
-    source_member = ticket_member or pick_source_member(members)
+    source_member = (
+        ticket_member
+        if ticket_member and is_usable(ticket_member.get("raw_url"))
+        else pick_source_member(members)
+    )
     event = {
         "title": pick_field(members, "title") or venue_name,
         "venue_id": venue_id,
@@ -513,7 +518,15 @@ def merge_site_duplicates(left: dict, right: dict) -> dict:
     merged["dates"] = sorted(set(left["dates"]) | set(right["dates"]))
     merged["sources"] = sorted(set(left.get("sources") or []) | set(right.get("sources") or []))
     merged["is_free"] = bool(left.get("is_free") or right.get("is_free"))
-    for field in ("time", "price_min", "price_text", "ticket_url", "seller", "image_url", "address", "source_name", "source_url"):
+    if not is_usable(merged.get("ticket_url")) and is_usable(right.get("ticket_url")):
+        for field in ("ticket_url", "seller", "source_name", "source_url"):
+            if is_usable(right.get(field)):
+                merged[field] = right[field]
+    elif not is_usable(merged.get("ticket_url")):
+        for field in ("seller", "source_name", "source_url"):
+            if not is_usable(merged.get(field)) and is_usable(right.get(field)):
+                merged[field] = right[field]
+    for field in ("time", "price_min", "price_text", "image_url", "address"):
         if not is_usable(merged.get(field)) and is_usable(right.get(field)):
             merged[field] = right[field]
     merged["price_label"] = price_label(merged)
@@ -1323,6 +1336,11 @@ def render_row_details(event: dict) -> str:
             f'<p><b>Fuente:</b> <a href="{esc(event["source_url"])}" target="_blank" rel="noopener">'
             f"{esc(source_label)} ↗</a></p>"
         )
+    elif event.get("sources"):
+        labels = " + ".join(
+            SOURCE_LABELS.get(source, source) for source in event["sources"]
+        )
+        facts.append(f"<p><b>Fuente:</b> {esc(labels)}</p>")
     actions = []
     if event.get("ticket_url"):
         host = ticket_host(event["ticket_url"])
