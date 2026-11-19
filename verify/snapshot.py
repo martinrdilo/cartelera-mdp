@@ -146,6 +146,15 @@ def check_schema(events, known_sources=None) -> list[Finding]:
                     {"ref": reference, "fields": sorted(empty)},
                 )
             )
+        if not (row.get("venue_name") or "").strip():
+            findings.append(
+                Finding(
+                    "schema.empty_venue",
+                    "warning",
+                    f"{reference} has no venue and would fall back to the city name",
+                    {"ref": reference, "venue_raw": row.get("venue_raw")},
+                )
+            )
 
         for field in _DATE_FIELDS:
             value = row.get(field)

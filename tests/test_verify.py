@@ -91,6 +91,12 @@ def test_empty_required_title_is_its_own_finding():
     assert "schema.bad_type" not in refs(findings, "error")
 
 
+def test_empty_venue_is_flagged():
+    homeless = make_event(source_event_id="show-nowhere", venue_name="", venue_raw="")
+    findings = snapshot.check_schema([homeless], known_sources={"ticketek"})
+    assert "schema.empty_venue" in refs(findings, "warning")
+
+
 def test_unknown_source_is_an_error():
     findings = snapshot.check_schema([make_event(source="mystery")], known_sources={"ticketek"})
     assert "schema.unknown_source" in refs(findings, "error")
