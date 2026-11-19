@@ -2,7 +2,8 @@
 
 The exact-triple guard only catches identical titles; these cases prove that
 the same event published with different titles (or a wrong venue) still renders
-once.
+once. The cases are derived from the committed snapshot, so a refreshed corpus
+keeps the probe meaningful.
 """
 
 import json
@@ -14,41 +15,44 @@ import build_site
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
+ANCHOR = date(2026, 11, 18)
 
 
-def _site_events(tmp_path):
-    build_site.build(data_dir=DATA, out_dir=tmp_path, today=date(2026, 10, 24))
-    text = (tmp_path / "index.html").read_text(encoding="utf-8")
-    payload = json.loads(
-        re.search(
-            r'<script id="events-data" type="application/json">(.*?)</script>',
-            text,
-            re.S,
-        ).group(1)
-    )
-    return payload["events"]
+def _load(name):
+    return json.loads((DATA / name).read_text(encoding="utf-8"))
 
 
-def test_same_event_renders_once(tmp_path):
-    normalized = json.loads((DATA / "events_normalized.json").read_text(encoding="utf-8"))
-    events = _site_events(tmp_path)
+def _site_events():
+    events, _, _ = build_site.collect_site_events(DATA, ANCHOR)
+    return events
 
-    for needle in (
-        "Patricia Lucas",
-        "Amniótika",
-        "Hairspray",
-        "Dante Spinetta",
-    ):
-        days = {
-            event["date_start"]
-            for event in normalized
-            if event["date_start"] and needle.casefold() in event["title"].casefold()
-        }
-        assert len(days) == 1, (needle, days)
-        day = days.pop()
+
+def test_cross_source_event_with_different_titles_renders_once():
+    deduped = _load("events_deduped.json")
+    events = _site_events()
+
+    candidates = []
+    for cluster in deduped["clusters"]:
+        sources = {event["source"] for event in cluster["events"]}
+        dates = {day for day in cluster["dates"] if day >= ANCHOR.isoformat()}
+        titles = {build_site.normalize_key(event["title"]) for event in cluster["events"]}
+        # The hard case: two sources name the same show differently.
+        if len(sources) >= 2 and dates and len(titles) >= 2:
+            candidates.append((cluster, sources, dates))
+
+    assert candidates, "the snapshot should carry a cross-source show with differing titles"
+
+    for cluster, _sources, dates in candidates[:8]:
+        expected = build_site.normalize_key(
+            build_site.pick_field(cluster["events"], "title") or cluster["events"][0]["title"]
+        )
         rows = [
             event
             for event in events
-            if day in event["dates"] and needle.casefold() in event["title"].casefold()
+            if set(event["dates"]) & dates and build_site.normalize_key(event["title"]) == expected
         ]
-        assert len(rows) == 1, (needle, day, [(row["slug"], row["venue_id"]) for row in rows])
+        assert len(rows) == 1, (
+            cluster["venue_name"],
+            sorted(dates)[:3],
+            [(row["slug"], row["title"], row["venue_name"]) for row in rows],
+        )

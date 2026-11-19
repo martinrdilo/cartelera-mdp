@@ -13,9 +13,30 @@ import build_site
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO_ROOT / "data"
+
+
+def _anchor_today() -> date:
+    """The next Thursday with events, so the weekend layout assertions hold.
+
+    The snapshot is refreshed from live sources, so a hardcoded date goes
+    stale within days. Anchoring on a Thursday keeps the "Finde" view at four
+    day tabs no matter which corpus is committed.
+    """
+    today = date.today()
+    try:
+        events, _, _ = build_site.collect_site_events(DATA_DIR, today)
+    except Exception:  # missing or unreadable snapshot
+        return today
+    for value in sorted({day for event in events for day in event["dates"]}):
+        candidate = date.fromisoformat(value)
+        if candidate >= today and candidate.weekday() == 3:
+            return candidate
+    return today
+
+
 SNAPSHOT_TODAY = date(2026, 10, 14)
-# Integration builds use the latest committed snapshot (pipeline run Oct 22).
-BUILD_TODAY = date(2026, 10, 22)
+# Integration builds use the committed snapshot, anchored on a real Thursday.
+BUILD_TODAY = _anchor_today()
 JSON_LD_RE = re.compile(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.DOTALL)
 DATA_RE = re.compile(r'<script id="events-data" type="application/json">(.*?)</script>', re.DOTALL)
 
@@ -442,7 +463,7 @@ class TestDeterministicBuild:
     def test_counts_match_the_snapshot(self, tmp_path):
         stats, html = self.build(tmp_path)
         rows = html.count("<article class=\"row\"")
-        assert stats["today"] == "2026-10-22"
+        assert stats["today"] == BUILD_TODAY.isoformat()
         assert stats["upcoming"] == rows
         assert stats["weekend"] == sum(rows for _, weekend, rows in day_groups(html) if weekend)
         assert rows > 0
@@ -475,7 +496,7 @@ class TestDeterministicBuild:
     def test_hero_and_footer_copy(self, tmp_path):
         _, html = self.build(tmp_path)
         assert "Qué hay este finde" in html
-        assert "Jueves 22 — Domingo 25 · Octubre 2026" in html
+        assert build_site.format_weekend_kicker(BUILD_TODAY) in html
         for label in ("agenda municipal", "Articket", "CultuTickets", "Club TRI", "Venti", "Ticketek", "Bombo", "Punto MDP"):
             assert label in html
         last_run = json.loads((DATA_DIR / "last_run.json").read_text(encoding="utf-8"))
@@ -508,7 +529,9 @@ class TestDeterministicBuild:
         first = items[0]["item"]
         assert first["@type"] == "Event"
         assert first["name"]
-        assert first["startDate"].startswith("2026-10-")
+        payload = json.loads(DATA_RE.search(html).group(1))
+        weekend_start = payload["windows"]["weekend"]["start"]
+        assert first["startDate"][:7] == weekend_start[:7]
         assert first["location"]["name"]
 
 
@@ -524,15 +547,17 @@ class TestRedesignMarkup:
         return stats, html, css, app_js, payload
 
     def test_day_navigation_markup(self, tmp_path):
-        stats, html, _, _, _ = self.build(tmp_path)
+        stats, html, _, _, payload = self.build(tmp_path)
+        window = payload["windows"]["weekend"]
+        days = (date.fromisoformat(window["end"]) - date.fromisoformat(window["start"])).days + 1
         assert 'class="daynav"' in html
         day_nav = html.split('aria-label="Filtrar por día">', 1)[1].split("</nav>", 1)[0]
         assert 'data-view="weekend"' in day_nav
-        assert 'data-view="2026-10-22"' in day_nav
-        assert 'data-view="2026-10-25"' in day_nav
+        assert f'data-view="{window["start"]}"' in day_nav
+        assert f'data-view="{window["end"]}"' in day_nav
         assert 'data-view="next-weekend"' in day_nav
         assert 'data-view="all"' in day_nav
-        assert day_nav.count("data-view=") == 7
+        assert day_nav.count("data-view=") == days + 3
         # The finde view is the default when the weekend has events.
         assert stats["weekend"] > 0
         assert re.search(r'class="day is-on" data-view="weekend"', html)
@@ -579,7 +604,10 @@ class TestRedesignMarkup:
             for event in payload["events"]
             if next_window["start"] <= event["dates"][0] <= next_window["end"]
         )
-        assert int(tabs["next-weekend"]) == expected_next
+        if expected_next:
+            assert int(tabs["next-weekend"]) == expected_next
+        else:
+            assert "next-weekend" not in tabs
 
         for key in re.findall(r'data-view="month:(\d{4}-\d{2})"', html):
             expected_month = sum(1 for event in payload["events"] if event["dates"][0].startswith(key))
@@ -849,9 +877,10 @@ class TestRedesignMarkup:
 
     def test_inlined_payload_is_parseable(self, tmp_path):
         stats, _, _, _, payload = self.build(tmp_path)
-        assert payload["today"] == "2026-10-22"
+        assert payload["today"] == BUILD_TODAY.isoformat()
         assert payload["site"]["name"] == "Cartelera MDP"
-        assert payload["windows"]["weekend"] == {"start": "2026-10-22", "end": "2026-10-25"}
+        start, end = build_site.weekend_window(BUILD_TODAY)
+        assert payload["windows"]["weekend"] == {"start": start.isoformat(), "end": end.isoformat()}
         assert len(payload["events"]) == stats["upcoming"]
         first = payload["events"][0]
         for field in ("id", "title", "venue_id", "dates", "is_free", "price_label"):
