@@ -362,6 +362,36 @@ def slugify(value: str) -> str:
     return slug[:70] or "evento"
 
 
+def _merged_is_free(members: list[dict]) -> bool | None:
+    """Paid wins over a stray free flag.
+
+    One source mislabeling a show as free must not hide the price every other
+    source publishes. A positive `price_min` anywhere means the event is on
+    sale; only when nobody has a price does the free/paid flags decide.
+    """
+    for member in members:
+        price = member.get("price_min")
+        if is_usable(price) and price > 0:
+            return False
+    flags = [member.get("is_free") for member in members if member.get("is_free") is not None]
+    if True in flags:
+        return True
+    if flags:
+        return False
+    return None
+
+
+def _duplicate_title_key(event: dict) -> str:
+    """Space-insensitive key of the title the visitor actually sees.
+
+    'An Espil' and 'AnEspil' are one row; the internal title of a merged
+    cluster can be longer ("AN ESPIL EN CLUB TRI"), so the display title is
+    the only fair comparison.
+    """
+    title = event.get("display_title") or event["title"]
+    return normalize_key(title).replace(" ", "")
+
+
 def merge_members(members: list[dict], index: dict[str, dict], today: date, venue_hint: str | None = None) -> dict:
     """Merge cluster members (or a single event) into one site event."""
     dates = sorted({d for member in members for d in upcoming_dates(member, today)})
@@ -385,7 +415,7 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
         "address": venue_address(resolved, members),
         "dates": dates,
         "time": pick_field(members, "time"),
-        "is_free": any(bool(member.get("is_free")) for member in members),
+        "is_free": _merged_is_free(members),
         "price_min": pick_field(members, "price_min"),
         "price_text": pick_field(members, "price_text"),
         "ticket_url": pick_field(members, "ticket_url"),
@@ -402,7 +432,7 @@ def _same_site_event(left: dict, right: dict) -> bool:
     """Exact duplicate guard: same venue + normalized title + shared date."""
     if left["venue_id"] != right["venue_id"]:
         return False
-    if normalize_key(left["title"]) != normalize_key(right["title"]):
+    if _duplicate_title_key(left) != _duplicate_title_key(right):
         return False
     return bool(set(left["dates"]) & set(right["dates"]))
 
@@ -430,7 +460,7 @@ def collapse_exact_duplicates(events: list[dict]) -> list[dict]:
     """
     buckets: dict[tuple[str, str], list[dict]] = {}
     for event in events:
-        buckets.setdefault((event["venue_id"], normalize_key(event["title"])), []).append(event)
+        buckets.setdefault((event["venue_id"], _duplicate_title_key(event)), []).append(event)
     collapsed: list[dict] = []
     for bucket in buckets.values():
         merged: list[dict] = []

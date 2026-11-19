@@ -222,8 +222,26 @@ class TestMergeRule:
         event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
         assert event["dates"] == ["2026-11-20"]
 
-    def test_free_when_any_member_is_free(self):
-        members = self.cluster() + [make_member("municipal", is_free=True, source_event_id="extra")]
+    def test_positive_price_beats_a_stray_free_flag(self):
+        members = [
+            make_member(
+                "articket",
+                price_min=30000,
+                price_text=None,
+                is_free=False,
+                ticket_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+            ),
+            make_member("cualpinta", source_event_id="cualpinta-1", price_min=0, is_free=True),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["is_free"] is False
+        assert event["price_label"] == "$30.000"
+
+    def test_free_when_no_member_has_a_positive_price(self):
+        members = [
+            make_member("municipal", is_free=True, price_min=None),
+            make_member("clubtri", source_event_id="clubtri-1", is_free=None, price_min=None),
+        ]
         event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
         assert event["is_free"] is True
         assert event["price_label"] == "Gratis"
@@ -296,6 +314,14 @@ class TestExactDuplicateGuard:
         left = self.site_event("Dillom", "bendu", ["2027-01-30"])
         right = self.site_event("Dillom", "arena", ["2027-01-30"])
         assert len(build_site.collapse_exact_duplicates([left, right])) == 2
+
+    def test_spacing_variant_of_the_same_title_collapses(self):
+        # Qué Hacemos listed the same show as "An Espil" and "AnEspil".
+        left = self.site_event("An Espil", "club-tri", ["2026-11-20"], sources=["municipal"])
+        right = self.site_event("AnEspil", "club-tri", ["2026-11-20"], sources=["quehacemos"])
+        merged = build_site.collapse_exact_duplicates([left, right])
+        assert len(merged) == 1
+        assert merged[0]["sources"] == ["municipal", "quehacemos"]
 
     def test_shared_date_merges_multi_date_rows(self):
         left = self.site_event("Festival", "arena", ["2026-12-05", "2026-12-06"])
