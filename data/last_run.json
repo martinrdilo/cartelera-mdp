@@ -1,14 +1,14 @@
 {
-  "finished_at": "2026-10-24T18:58:11+00:00",
-  "duration_seconds": 395.6,
+  "finished_at": "2026-11-19T00:29:00+00:00",
+  "duration_seconds": 366.5,
   "sources": {
     "articket": {
-      "raw": 63,
-      "normalized": 63
+      "raw": 53,
+      "normalized": 53
     },
     "auditorium": {
-      "raw": 39,
-      "normalized": 39
+      "raw": 10,
+      "normalized": 10
     },
     "bombo": {
       "raw": 7,
@@ -19,71 +19,71 @@
       "normalized": 12
     },
     "clubtri": {
-      "raw": 21,
-      "normalized": 21
+      "raw": 13,
+      "normalized": 13
     },
     "colon": {
-      "raw": 28,
-      "normalized": 28
+      "raw": 11,
+      "normalized": 11
     },
     "cualpinta": {
-      "raw": 73,
-      "normalized": 73
+      "raw": 61,
+      "normalized": 61
     },
     "cultutickets": {
       "raw": 19,
       "normalized": 19
     },
     "elevenflow": {
-      "raw": 53,
-      "normalized": 53
+      "raw": 78,
+      "normalized": 78
     },
     "municipal": {
-      "raw": 73,
-      "normalized": 73
+      "raw": 81,
+      "normalized": 81
     },
     "passline": {
-      "raw": 4,
-      "normalized": 4
+      "raw": 7,
+      "normalized": 7
     },
     "punto": {
-      "raw": 79,
-      "normalized": 79
+      "raw": 68,
+      "normalized": 68
     },
     "quehacemos": {
-      "raw": 133,
-      "normalized": 133
+      "raw": 146,
+      "normalized": 146
     },
     "ticketek": {
-      "raw": 9,
-      "normalized": 9
+      "raw": 11,
+      "normalized": 11
     },
     "tuentrada": {
       "raw": 1,
       "normalized": 1
     },
     "venti": {
-      "raw": 12,
-      "normalized": 12
+      "raw": 23,
+      "normalized": 23
     }
   },
   "totals": {
-    "raw": 626,
-    "normalized": 626,
-    "unique": 313
+    "raw": 601,
+    "normalized": 601,
+    "unique": 331
   },
   "duplicates": {
-    "clusters": 141,
-    "events_in_clusters": 454
+    "clusters": 123,
+    "events_in_clusters": 393
   },
   "occurrences": {
-    "multi_date_events": 16,
-    "recurrence_unknown": 9,
+    "multi_date_events": 14,
+    "recurrence_unknown": 13,
     "multi_date_incomplete": 0,
-    "enriched_from_detail": 2
+    "enriched_from_detail": 3
   },
   "venues": {
-    "resolved": 612,
-    "unknown": 14
+    "resolved": 509,
+    "unknown": 92
   }
 }
