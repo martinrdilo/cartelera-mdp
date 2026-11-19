@@ -19,6 +19,11 @@ def test_maps_the_wave4_sellers():
     assert seller_from_url("https://alpogo.com/evento/john-5-en-mar-del-plata-26982") == "Alpogo"
 
 
+def test_maps_the_venue_owned_stores():
+    assert seller_from_url("https://ticketmas.ar/es/ticketmas/evento/x") == "Ticketmas"
+    assert seller_from_url("https://entradas.chauvin.com.ar/event/164319-suona") == "Chauvin"
+
+
 def test_bandsintown_is_an_info_page_not_a_seller():
     # Que Hacemos links Bandsintown event pages, but they sell no tickets.
     assert seller_from_url("https://www.bandsintown.com/e/109045198-joystick") is None
