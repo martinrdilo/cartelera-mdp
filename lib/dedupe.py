@@ -297,6 +297,13 @@ def _pair_evidence(event_a, event_b, threshold):
     prefix_score = _prefix_title_match(event_a, event_b)
     if prefix_score is not None:
         return {"kind": "title_prefix", "score": prefix_score}
+    # A one-token title inside the other side's bill is the same event, not a
+    # second function: one source publishes the artist alone ("Joystick") and
+    # the other lists the whole night ("JOYSTIK presenta Diarios de Humo junto
+    # a (Sideral)"). The artist's own blurb names the same show.
+    single_score = _single_token_match(event_a, event_b)
+    if single_score is not None:
+        return {"kind": "title_core", "score": single_score}
     return None
 
 

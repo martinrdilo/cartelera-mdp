@@ -473,3 +473,111 @@ class TestOla1Sources:
         a = make_event("municipal", "Sebastián Molina presenta Vivo Arjona", "Teatro Tronador", "2026-11-07")
         b = make_event("punto", "VIVO ARJONA EN MAR DEL PLATA", "Teatro Tronador", "2026-11-07")
         assert len(cluster_events([a, b])) == 1
+
+
+class TestOla5Buckets:
+    """Venue+date buckets that still held two clusters, decided one by one."""
+
+    def test_cross_source_single_token_title_joins(self):
+        # Chauvin 04/12: elevenflow lists the full bill, Qué Hacemos only the
+        # artist ("Joystick", whose own description names Sideral and the
+        # "Diarios de Humo" show). Same venue, same date, same act.
+        listed = make_event(
+            "elevenflow",
+            "JOYSTIK presenta Diarios de Humo junto a (Sideral)",
+            "Chauvin Centro de creación",
+            "2026-12-04",
+        )
+        artist_only = make_event("quehacemos", "Joystick", "Chauvin Centro de creación", "2026-12-04")
+        clusters = cluster_events([listed, artist_only])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+        assert clusters[0]["pairs"][0]["kind"] == "title_core"
+
+    def test_single_token_does_not_bridge_a_solo_show_into_a_project(self):
+        # Polideportivo 23/01: "David Lebón" and "Seru Girán por Lebón y
+        # Aznar" share the artist but not the show's name; the solo listing
+        # does not prove it is the Serú Girán project, so they stay apart.
+        solo = make_event("quehacemos", "David Lebón", "Polideportivo Islas Malvinas", "2027-01-23")
+        project = make_event(
+            "tuentrada",
+            "Seru Girán por Lebón y Aznar",
+            "Polideportivo Mar Del Plata",
+            "2027-01-23",
+            ticket_url="https://www.tuentrada.com/seru-giran-mdq-27",
+        )
+        assert cluster_events([solo, project]) == []
+
+    def test_two_functions_of_one_day_at_club_tri_stay_apart(self):
+        # Club TRI 20/11: An Espil and Argentina Electrónica are two shows,
+        # not one event announced twice.
+        espil = make_event(
+            "clubtri",
+            "AN ESPIL EN CLUB TRI",
+            "Club TRI",
+            "2026-11-20",
+            ticket_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI",
+        )
+        electronica = make_event(
+            "articket",
+            "ARGENTINA ELECTRONICA - CLUB TRI",
+            "Club TRI",
+            "2026-11-20",
+            ticket_url="https://articket.com.ar/ARGENTINA-ELECTRONICA-CLUB-TRI",
+        )
+        assert cluster_events([espil, electronica]) == []
+
+    def test_municipal_and_colon_rows_of_one_event_join(self):
+        # The five municipal/Colón pairs are the same event published twice.
+        municipal = make_event("municipal", "Orquesta Sinfónica Municipal", "Teatro Municipal Colón", "2026-11-21")
+        colon = make_event("colon", "ORQUESTA SINFÓNICA MUNICIPAL", "Teatro Municipal Colón", "2026-11-21")
+        clusters = cluster_events([municipal, colon])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+
+    def test_two_candlelight_programmes_of_one_day_stay_apart(self):
+        # Colón 11/12: Fever runs different setlists the same night.
+        swift = make_event(
+            "punto", "Candlelight: Tributo a Taylor Swift", "Teatro Colón", "2026-12-11",
+            event_id="p1",
+        )
+        navidad = make_event(
+            "elevenflow", "Candlelight: Clásicos de Navidad", "Teatro Municipal Colón", "2026-12-11",
+            event_id="p2",
+        )
+        assert cluster_events([swift, navidad]) == []
+
+    def test_la_caseta_and_la_carpa_stay_apart(self):
+        # Both sit on Ruta 11 and are published as "La Carpa" in the titles,
+        # but the venue fields name two different places: no merge without a
+        # shared slug or an identical title.
+        caseta = make_event("passline", "LUMEN FESTIVAL", "La Caseta", "2027-01-20")
+        carpa = make_event("quehacemos", "MIE 20.01 - LUMEN", "LA CARPA", "2027-01-20")
+        assert cluster_events([caseta, carpa]) == []
+
+    def test_normandina_aliases_join_the_sunset_night(self):
+        # punto 30/01 says "La Normandina Destino Arena"; Qué Hacemos says
+        # "Stadium Complejo La Normandina". Same artist, same night, same
+        # Peralta Ramos 5050 complex.
+        punto = make_event(
+            "punto", "Bart Skils – Sunset en Playa Grande", "La Normandina Destino Arena", "2027-01-30"
+        )
+        quehacemos = make_event(
+            "quehacemos",
+            "BART SKILS + VICTORIA ENGEL | SUNSET NIGHT",
+            "Stadium Complejo La Normandina",
+            "2027-01-30",
+        )
+        clusters = cluster_events([punto, quehacemos])
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+
+    def test_arena_rows_keep_two_different_shows_of_one_day_apart(self):
+        # Arena 05/12: a 90s party and a Vinmusic sparkling session are two
+        # functions, not one event announced twice.
+        nineties = make_event(
+            "punto", "Fiesta de los 90 con VIlma Palma en Arena Mardel Plata", "Arena Mardel Plata", "2026-12-05"
+        )
+        vinmusic = make_event("punto", "Vinmusic MDQ - Sparkling Session", "Arena Mardel Plata", "2026-12-05", event_id="p2")
+        assert cluster_events([nineties, vinmusic]) == []
+
