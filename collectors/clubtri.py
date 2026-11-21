@@ -66,6 +66,9 @@ def normalize(records):
             continue
         is_ticket_link = any(host in record["link"] for host in SELLERS)
         seller = next((name for host, name in SELLERS.items() if host in record["link"]), None)
+        # A free card links to the club's own post (Instagram), not to a seller:
+        # keep that link as the event origin instead of the agenda home page.
+        info_link = record["link"] if record["link"] and not is_ticket_link else None
         status = record["status_text"].lower()
         is_free = True if "gratis" in status else (False if status else None)
         seed = f"{title}|{record['date_text']}"
@@ -90,7 +93,7 @@ def normalize(records):
                 seller=seller,
                 image_url=record["image_url"],
                 city="Mar del Plata",
-                raw_url=record["raw_url"],
+                raw_url=info_link or record["raw_url"],
             )
         )
     return events

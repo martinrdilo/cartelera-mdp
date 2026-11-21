@@ -30,3 +30,21 @@ def test_titled_cards_still_normalize():
     assert events[0].source_event_id == "634"
     assert events[0].ticket_url == "https://articket.com.ar/DANTE/"
     assert events[0].seller == "Articket"
+
+
+def test_free_card_keeps_its_info_link_as_origin():
+    link = "https://www.instagram.com/p/Dfmk6R7G5bm/"
+    events = normalize(
+        [make_record(title="El Fuego Sagrado", status_text="Gratis", link=link)]
+    )
+    event = events[0]
+    assert event.ticket_url is None
+    assert event.seller is None
+    assert event.is_free is True
+    assert event.raw_url == link
+
+
+def test_ticket_card_keeps_the_listing_as_origin():
+    event = normalize([make_record()])[0]
+    assert event.ticket_url == "https://articket.com.ar/DANTE/"
+    assert event.raw_url == "https://clubtri.com.ar/"
