@@ -9,6 +9,28 @@ def test_maps_known_hosts():
     assert seller_from_url("https://wearebombo.com/e/1") == "Bombo"
 
 
+def test_existing_mappings_still_resolve():
+    expected = {
+        "venti.live": "Venti",
+        "venti.com.ar": "Venti",
+        "articket.com.ar": "Articket",
+        "cultutickets.com": "CultuTickets",
+        "ticketek.com.ar": "Ticketek",
+        "plateanet.com": "Plateanet",
+        "wearebombo.com": "Bombo",
+        "tuentrada.com": "TuEntrada",
+        "unica-cartelera.com.ar": "Única Cartelera",
+        "passline.com": "Passline",
+        "getdogma.app": "Dogma",
+        "alpogo.com": "Alpogo",
+        "ticketmas.ar": "Ticketmas",
+        "chauvin.com.ar": "Chauvin",
+        "entradauno.com": "Entrada Uno",
+    }
+    for domain, seller in expected.items():
+        assert seller_from_url(f"https://{domain}/evento/x") == seller
+
+
 def test_maps_subdomains_to_their_parent():
     assert seller_from_url("https://entradas.ticketek.com.ar/x") == "Ticketek"
     assert seller_from_url("https://www.passline.com/eventos/x") == "Passline"
@@ -22,6 +44,21 @@ def test_maps_the_wave4_sellers():
 def test_maps_the_venue_owned_stores():
     assert seller_from_url("https://ticketmas.ar/es/ticketmas/evento/x") == "Ticketmas"
     assert seller_from_url("https://entradas.chauvin.com.ar/event/164319-suona") == "Chauvin"
+
+
+def test_maps_the_missing_ticket_hosts():
+    assert seller_from_url("https://feverup.com/m/384932") == "Fever"
+    assert seller_from_url("https://www.edenentradas.ar/event/don-osvaldo-mdq-wh") == "Eden Entradas"
+    assert seller_from_url("https://centralticket.net/event/11105") == "Central Ticket"
+    assert seller_from_url(
+        "https://events.flashpass.com.ar/eventos/el-calamar-loco-7-aniversario-9683"
+    ) == "Flashpass"
+    assert seller_from_url("https://wearebombo.app.link/I87eVR2le7b") == "Bombo"
+    assert seller_from_url("https://ccave.fanz.com.ar/event/178241-manu-nena-solda-taxiburon") == "Chauvin"
+
+
+def test_maps_subdomains_of_the_new_hosts():
+    assert seller_from_url("https://www.feverup.com/x") == "Fever"
 
 
 def test_bandsintown_is_an_info_page_not_a_seller():

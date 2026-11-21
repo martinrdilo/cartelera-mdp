@@ -14,6 +14,7 @@ SELLERS = (
     ("ticketek.com.ar", "Ticketek"),
     ("plateanet.com", "Plateanet"),
     ("wearebombo.com", "Bombo"),
+    ("wearebombo.app.link", "Bombo"),
     ("tuentrada.com", "TuEntrada"),
     ("unica-cartelera.com.ar", "Única Cartelera"),
     ("passline.com", "Passline"),
@@ -21,7 +22,12 @@ SELLERS = (
     ("alpogo.com", "Alpogo"),
     ("ticketmas.ar", "Ticketmas"),
     ("chauvin.com.ar", "Chauvin"),
+    ("ccave.fanz.com.ar", "Chauvin"),
     ("entradauno.com", "Entrada Uno"),
+    ("feverup.com", "Fever"),
+    ("edenentradas.ar", "Eden Entradas"),
+    ("centralticket.net", "Central Ticket"),
+    ("events.flashpass.com.ar", "Flashpass"),
 )
 
 
