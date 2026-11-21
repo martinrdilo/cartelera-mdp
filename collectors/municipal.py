@@ -9,7 +9,7 @@ import hashlib
 import re
 import sys
 import time
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -25,6 +25,11 @@ USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 REQUEST_DELAY = 1.0
 MAX_PAGES = 15
 SOURCE = "municipal"
+
+# Hosts that belong to the municipality itself. A panel often links
+# www.mardelplata.gob.ar/cultura next to the venue's mailto:; that is the
+# municipality, not the venue, so it never becomes a venue site.
+MUNICIPAL_HOSTS = ("turismomardelplata.gob.ar", "mardelplata.gob.ar")
 
 _SELLERS = {
     "ticketek": "Ticketek",
@@ -129,6 +134,27 @@ def _parse_entry(text):
     return is_free, price_min, seller
 
 
+def _venue_site(venue_html):
+    """First external http(s) anchor of the venue block, or None.
+
+    The block lists the venue's phone and email before (sometimes) its own
+    site, so only absolute http(s) hrefs on another host qualify: mailto:,
+    tel:, relative paths and the municipality's own links are not the venue.
+    """
+    if not venue_html:
+        return None
+    for anchor in BeautifulSoup(venue_html, "html.parser").find_all("a", href=True):
+        href = anchor["href"].strip()
+        parsed = urlparse(href)
+        if parsed.scheme.lower() not in ("http", "https") or not parsed.netloc:
+            continue
+        host = parsed.netloc.lower().rsplit("@", 1)[-1].split(":", 1)[0].removeprefix("www.")
+        if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
+            continue
+        return href
+    return None
+
+
 def _parse_panel(panel, raw_url, category):
     title_node = panel.select_one("div.panel-title strong")
     title = title_node.get_text(" ", strip=True) if title_node else ""
@@ -163,6 +189,7 @@ def _parse_panel(panel, raw_url, category):
         "title": title,
         "venue_name": venue_name,
         "venue_raw": venue_raw,
+        "venue_url": _venue_site(sections.get("venue", {}).get("html", "")),
         "ranges": ranges,
         "schedule_text": schedule_text,
         "description": sections.get("description", {}).get("text", ""),
@@ -245,6 +272,7 @@ def normalize(records):
                 ticket_url=None,
                 seller=seller,
                 image_url=record["image_url"],
+                venue_url=record.get("venue_url"),
                 city="Mar del Plata",
                 raw_url=record["raw_url"],
             )

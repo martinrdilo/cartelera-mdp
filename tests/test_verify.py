@@ -74,6 +74,22 @@ def test_clean_snapshot_has_no_errors():
     assert refs(findings, "error") == []
 
 
+def test_row_without_the_optional_venue_url_is_still_clean():
+    # Rows written before the field existed must keep passing the schema check.
+    old_row = make_event()
+    assert "venue_url" not in old_row
+    findings = snapshot.check_schema([old_row], known_sources={"ticketek"})
+    assert "schema.missing_field" not in refs(findings, "error")
+    assert refs(findings, "error") == []
+
+
+def test_present_venue_url_is_still_type_checked():
+    broken = make_event(source_event_id="show-2", venue_url=42)
+    findings = snapshot.check_schema([broken], known_sources={"ticketek"})
+    assert "schema.bad_type" in refs(findings, "error")
+    assert "schema.missing_field" not in refs(findings, "error")
+
+
 def test_schema_missing_field_and_bad_types_are_errors():
     missing = make_event()
     del missing["price_min"]

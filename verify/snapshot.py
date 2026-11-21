@@ -26,6 +26,10 @@ _TIME_RE = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
 _SELLER_ALIASES = {"venti live": "venti"}
 
 _REQUIRED_STR = {"source", "source_event_id", "title", "city"}
+# Fields the schema gained after the first snapshots were written. A row from
+# before the field existed is still valid: absence is not an error, but a
+# present value is type-checked like any other nullable string.
+_OPTIONAL_FIELDS = {"venue_url"}
 _NULLABLE_STR = {
     "venue_name",
     "venue_raw",
@@ -39,6 +43,7 @@ _NULLABLE_STR = {
     "image_url",
     "raw_url",
     "collected_at",
+    "venue_url",
 }
 _BOOL_FIELDS = {"recurrence_unknown", "multi_date_incomplete"}
 _DATE_FIELDS = ("date_start", "date_end")
@@ -102,7 +107,9 @@ def check_schema(events, known_sources=None) -> list[Finding]:
         row = event_dict(event)
         reference = event_ref(event)
 
-        missing = [field for field in EVENT_FIELDS if field not in row]
+        missing = [
+            field for field in EVENT_FIELDS if field not in row and field not in _OPTIONAL_FIELDS
+        ]
         if missing:
             findings.append(
                 Finding(
