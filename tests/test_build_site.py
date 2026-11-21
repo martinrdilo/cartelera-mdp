@@ -342,7 +342,9 @@ class TestTicketLinkSelection:
         assert 'data-outbound="ticket"' not in row
         assert "Venta en Alpogo" in row
 
-    def test_details_carry_the_source_link_not_internal_sources(self):
+    def test_details_leave_the_source_unlinked_when_it_has_no_event_page(self):
+        # The municipal agenda is paginated by date: the recorded page drifts
+        # as events pass, so it never opens the event it claims to source.
         member = make_member(
             "municipal",
             price_text="$35000, en venta en www.plateanet.com",
@@ -353,11 +355,16 @@ class TestTicketLinkSelection:
         details = build_site.render_row_details(event)
         assert "Datos:" not in details
         assert "Venta:</b> Plateanet" in details
-        assert "Fuente:</b>" in details
-        assert (
-            'href="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&amp;tipo=11"'
-            in details
-        )
+        assert "Fuente:</b> Municipal" in details
+        assert "resultados-eventos.asp" not in details
+
+    def test_source_link_is_rendered_as_a_button(self):
+        # A bare anchor inherits the page color, so nothing marks it clickable.
+        member = make_member("punto", raw_url="https://puntomardelplata.com/actividades/x-1")
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert 'class="btn btn--source"' in details
+        assert "Ver en" in details
 
     def test_deep_link_seller_prefers_the_url_host(self):
         member = make_member(
@@ -606,6 +613,18 @@ def day_groups(html):
     return groups
 
 
+def test_is_event_page_rejects_listings_and_endpoints():
+    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+    assert not build_site.is_event_page(
+        "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11"
+    )
+    assert not build_site.is_event_page("https://articket.com.ar/obtener_eventos/?cantidad_eventos=500")
+    assert not build_site.is_event_page("https://api.venti.live/api/home/events?limit=100&page=1")
+    assert not build_site.is_event_page("https://www.mardelplata.gob.ar/colonprogramacion")
+    assert not build_site.is_event_page("https://clubtri.com/")
+    assert not build_site.is_event_page(None)
+
+
 class TestDeterministicBuild:
     """Full build from the committed snapshot into a tmp dir."""
 
@@ -678,6 +697,18 @@ class TestDeterministicBuild:
         assert 'href="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"' in html
         assert html.count('data-outbound="ticket"') > 0
         assert html.count('target="_blank" rel="noopener"') >= html.count('data-outbound="ticket"')
+
+    def test_source_links_point_at_events_not_listings(self, tmp_path):
+        # The municipal agenda is paginated by date, so the recorded page
+        # drifts; the ticketeras expose a JSON endpoint instead of a ficha.
+        _, html = self.build(tmp_path)
+        assert "resultados-eventos.asp" not in html
+        assert "obtener_eventos" not in html
+        assert "api.venti.live" not in html
+
+    def test_event_page_source_link_survives(self, tmp_path):
+        _, html = self.build(tmp_path)
+        assert "puntomardelplata.com/actividades/" in html
 
     def test_json_ld_is_parseable_and_lists_the_weekend(self, tmp_path):
         stats, html = self.build(tmp_path)

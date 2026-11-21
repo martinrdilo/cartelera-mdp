@@ -228,6 +228,30 @@ def is_usable(value) -> bool:
     return True
 
 
+# Pages that list many events, or expose raw data, instead of one ficha. The
+# municipal agenda is paginated by date, so a recorded page keeps moving as
+# events pass: linking it as "Fuente" sends the reader to a page that no
+# longer carries the event. Ticketeras publish a JSON endpoint, not a page.
+LISTING_URL_PATTERNS = (
+    "resultados-eventos.asp",
+    "/obtener_eventos/",
+    "api.venti.live",
+    "/colonprogramacion",
+)
+
+
+def is_event_page(url) -> bool:
+    """True when the URL opens one event, not a listing, an API or a site root."""
+    if not isinstance(url, str) or not is_usable(url):
+        return False
+    parsed = urlparse(url)
+    if not parsed.netloc:
+        return False
+    if parsed.path in ("", "/") and not parsed.query:
+        return False
+    return not any(pattern in url for pattern in LISTING_URL_PATTERNS)
+
+
 def is_event_url(url: str | None) -> bool:
     """True when a ticket URL points at an event page, not a seller root.
 
@@ -385,12 +409,22 @@ def _source_rank(member: dict) -> int:
     return SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER)
 
 
-def pick_source_member(members: list[dict]) -> dict | None:
-    """Highest-priority member that carries a source page."""
-    for member in sorted(members, key=_source_rank):
-        if is_usable(member.get("raw_url")):
+def pick_source_member(members: list[dict], ticket_member: dict | None = None) -> dict | None:
+    """Best member that can be linked as an event page.
+
+    The member behind the chosen ticket goes first, so that "Fuente" and
+    "Comprar" agree. Then priority order. A listing page, an API endpoint or a
+    site root never qualifies: better an unlinked source name than a link that
+    opens nothing.
+    """
+    ordered = [ticket_member, *sorted(members, key=_source_rank)]
+    for member in ordered:
+        if member and is_event_page(member.get("raw_url")):
             return member
-    return members[0] if members else None
+    for member in ordered:
+        if member and is_event_page(member.get("ticket_url")):
+            return member
+    return None
 
 
 def pick_ticket_info(members: list[dict]) -> tuple[str | None, str | None, dict | None]:
@@ -475,11 +509,12 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
     venue_name = (resolved or {}).get("name") or venue_hint or members[0].get("venue_name") or "Mar del Plata"
     venue_id = (resolved or {}).get("id") or slugify(venue_name)
     ticket_url, seller, ticket_member = pick_ticket_info(members)
-    source_member = (
-        ticket_member
-        if ticket_member and is_usable(ticket_member.get("raw_url"))
-        else pick_source_member(members)
-    )
+    source_member = pick_source_member(members, ticket_member)
+    source_url = None
+    if source_member:
+        source_url = source_member.get("raw_url")
+        if not is_event_page(source_url):
+            source_url = source_member.get("ticket_url")
     event = {
         "title": pick_field(members, "title") or venue_name,
         "venue_id": venue_id,
@@ -495,7 +530,7 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
         "image_url": pick_field(members, "image_url"),
         "sources": sorted({member.get("source", "") for member in members}),
         "source_name": (source_member or {}).get("source"),
-        "source_url": (source_member or {}).get("raw_url"),
+        "source_url": source_url,
     }
     event["price_label"] = price_label(event)
     event["display_title"] = choose_display_title(members, event["title"])
@@ -1333,8 +1368,8 @@ def render_row_details(event: dict) -> str:
     if event.get("source_url"):
         source_label = SOURCE_LABELS.get(event.get("source_name"), event.get("source_name") or "Fuente")
         facts.append(
-            f'<p><b>Fuente:</b> <a href="{esc(event["source_url"])}" target="_blank" rel="noopener">'
-            f"{esc(source_label)} ↗</a></p>"
+            f'<p><b>Fuente:</b> <a class="btn btn--source" href="{esc(event["source_url"])}" '
+            f'target="_blank" rel="noopener">Ver en {esc(source_label)} ↗</a></p>'
         )
     elif event.get("sources"):
         labels = " + ".join(

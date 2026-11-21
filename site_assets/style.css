@@ -898,6 +898,18 @@ img { max-width: 100%; }
 }
 .btn--ghost:hover { background: var(--surface-2); color: var(--text); }
 
+/* Inline source link: a pill, so the reader sees it is clickable. */
+.btn--source {
+  margin-left: 0.3rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
+  vertical-align: middle;
+}
+.btn--source:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
 /* ------------------------------------------------------------------ agenda */
 
 .agenda { display: flex; flex-direction: column; gap: 1.5rem; scroll-margin-top: 64px; }
