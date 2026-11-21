@@ -129,6 +129,102 @@ class TestResolve:
         # Both contain "Victoria Ocampo"; alias matching must keep them apart.
         assert resolve("Villa Victoria Ocampo")[0] != resolve("Sheraton Mar del Plata")[0]
 
+    def test_ola5_venue_spellings_resolve_to_the_registered_venue(self):
+        # Spellings the corpus publishes for venues the registry already knows.
+        assert resolve("RADIO CITY / ROXY / MELANY") == (
+            "radio-city",
+            "Centro de Arte Radio City - Roxy - Melany",
+        )
+        assert resolve("Hotel Sheraton") == ("sheraton-mar-del-plata", "Sheraton Mar del Plata")
+        assert resolve("Teatro Vorterix Mar del Plata") == ("vorterix", "Vorterix")
+        assert resolve("Dickens Pub") == ("dickens", "Dickens")
+        assert resolve("Hoffen Bar") == ("hoffen", "Hoffen")
+        assert resolve("BAI-BAI Surf House") == ("bai-bai", "Bai Bai")
+        assert resolve("Centro Cultural Séptimo Fuego") == ("el-septimo-fuego", "El Séptimo Fuego")
+        assert resolve("Colectivo Cultural a La Vuelta de La Esquina") == ("ccave", "CCAVE")
+        assert resolve("La Carpa Mar del Plata") == ("la-carpa", "La Carpa")
+        assert resolve("Playas Alfar - Balneario 10 - La Carpa") == ("la-carpa", "La Carpa")
+
+    def test_ola5_normandina_spellings_are_one_complex(self):
+        # Same address (Paseo Victoria Ocampo / Peralta Ramos 5050) and the
+        # same nights published under both names: Bart Skils on 30/01 and the
+        # Loco Dice NYE party.
+        expected = ("stadium-la-normandina", "Stadium Complejo La Normandina")
+        assert resolve("Stadium (La Normandina)") == expected
+        assert resolve("La Normandina Destino Arena") == expected
+        assert resolve("La normandinda salon de eventos") == expected
+
+    def test_ola5_umn_is_umano(self):
+        # Venti publishes the "UMN ELECTRONIK" series at UMANO (8, 15, 22 and
+        # 29/01) and Qué Hacemos lists the same four nights at "UMN" through
+        # allmusicparties' /umn-mar-del-plata pages, so UMN is the venue's own
+        # short spelling.
+        assert resolve("UMANO") == ("umano", "UMANO")
+        assert resolve("UMN") == ("umano", "UMANO")
+
+    def test_ola5_new_venues_resolve(self):
+        expected_ids = {
+            "La Caseta": "la-caseta",
+            "Cars & Coffee Mar del Plata": "cars-coffee-mdp",
+            "Smith": "smith",
+            "Espacio Fortunato": "espacio-fortunato",
+            "Microdestileria Restinga Gin - Faro Norte": "microdestileria-restinga-gin",
+            "Microdestileria Restinga Gin - Faro Norte, Mar del Plata": "microdestileria-restinga-gin",
+            "Soberano": "soberano",
+            "El Calamar Loco Chapadmalal": "el-calamar-loco-chapadmalal",
+            "Hawaii Bar Pool": "hawaii-bar-pool",
+            "EL CLUB DEL TEATRO": "el-club-del-teatro",
+            "Feria de Artesanos del Bosque Peralta Ramos": "feria-artesanos-bosque-peralta-ramos",
+            "Hotel dos Reyes": "hotel-dos-reyes",
+            "AUDITORIO PUERTA DE VIDA": "auditorio-puerta-de-vida",
+            "Coliseo Arena Gamer": "coliseo-arena-gamer",
+            "Biblioteca Popular Juventud Moderna": "biblioteca-juventud-moderna",
+            "Librería El Gran Pez": "libreria-el-gran-pez",
+            "TMT EDISON": "tmt-edison",
+            "Plaza De La Naturaleza": "plaza-de-la-naturaleza",
+            "Casa Chasqui": "casa-chasqui",
+            "Proyecto Bar": "proyecto-bar",
+            "Baum Cervecería": "baum-cerveceria",
+            "Museum MDQ": "museum-mdq",
+            "Ananá": "anana",
+            "El destino": "el-destino",
+        }
+        for name, venue_id in expected_ids.items():
+            assert resolve(name)[0] == venue_id, name
+
+    def test_ola5_sala_amp_is_the_arena_not_bendu(self):
+        # "Sala AMP de Arena Mardel" is the Arena Mar del Plata hall: the
+        # name says so and Venti publishes Kapanga there under the same slug
+        # as the Arena. The "Av. de los Trabajadores 150" address in that row
+        # is the elevenflow slip that also tags Bendu Arena.
+        assert resolve("Sala AMP de Arena Mardel") == ("arena-mar-del-plata", "Arena Mar del Plata")
+
+    def test_ola5_address_shaped_branches_stay_apart(self):
+        # Same brand, different address: the registry must not fold the
+        # Chapadmalal branch into the Playa Grande one, nor Baum's
+        # Av. Constitución branch into Baum Playa Grande.
+        assert resolve("El Calamar Loco Chapadmalal")[0] != resolve("El Calamar Loco PG")[0]
+        assert resolve("El Calamar Loco Chapadmalal")[0] != resolve("Calamar Loco PG")[0]
+        assert resolve("Baum Cervecería")[0] != resolve("Baum Playa Grande")[0]
+        assert resolve("La Caseta")[0] != resolve("La Carpa")[0]
+
+    def test_ola5_unresolved_categories_stay_unresolved(self):
+        # Production company, city/zone strings, bare routes and a missing
+        # venue field: resolving these would invent a venue or hide a real one.
+        for name in (
+            "",
+            "Antesala",
+            "Mar Del Plata",
+            "MAR DEL PLATA",
+            "Playa Grande",
+            "Playa Chapadmalal",
+            "Avenida Patricio Peralta Ramos",
+            "Ruta Provincial 11",
+            "Festival Silvermare",
+            "El Plan de la Mariposa",
+        ):
+            assert resolve(name) is None, name
+
 
 class TestVenueKey:
     def test_resolvable_venue_uses_registry_id(self):
@@ -151,6 +247,10 @@ class TestRegistryConsistency:
     def test_every_venue_has_at_least_one_alias(self):
         for venue in all_venues():
             assert venue["aliases"], venue["id"]
+
+    def test_every_venue_declares_its_display_name_as_an_alias(self):
+        for venue in all_venues():
+            assert resolve(venue["name"]) == (venue["id"], venue["name"]), venue["id"]
 
     def test_corpus_venue_names_all_resolve(self):
         # Names observed in data/raw/*.json; keep the registry honest when the

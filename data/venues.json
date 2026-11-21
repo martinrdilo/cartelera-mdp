@@ -17,7 +17,8 @@
       "aliases": [
         "Vorterix",
         "Vorterix Mar del Plata",
-        "Teatro Vorterix"
+        "Teatro Vorterix",
+        "Teatro Vorterix Mar del Plata"
       ],
       "address": "Diag. Pueyrredón 3338"
     },
@@ -50,7 +51,8 @@
       "aliases": [
         "Arena Mar del Plata",
         "Arena Mardel Plata",
-        "Arena MDP"
+        "Arena MDP",
+        "Sala AMP de Arena Mardel"
       ],
       "address": "Av. Luro 4220"
     },
@@ -74,7 +76,8 @@
         "Roxy",
         "Teatro Roxy Radio City",
         "Roxy Radio City",
-        "Teatro Roxy - Radio City"
+        "Teatro Roxy - Radio City",
+        "RADIO CITY / ROXY / MELANY"
       ],
       "address": "San Luis 1752"
     },
@@ -175,7 +178,8 @@
       "aliases": [
         "Sheraton Mar del Plata",
         "Sheraton Mar del Plata - Auditorium Victoria Ocampo",
-        "Sheraton Mar del Plata Hotel"
+        "Sheraton Mar del Plata Hotel",
+        "Hotel Sheraton"
       ],
       "address": "Alem 4221"
     },
@@ -269,8 +273,10 @@
       "name": "CCAVE",
       "aliases": [
         "CCAVE",
-        "CCAVE - Colectivo Cultural a la Vuelta de la Esquina"
-      ]
+        "CCAVE - Colectivo Cultural a la Vuelta de la Esquina",
+        "Colectivo Cultural a La Vuelta de La Esquina"
+      ],
+      "address": "Alberti 3723"
     },
     {
       "id": "teatro-san-martin",
@@ -386,7 +392,8 @@
       "name": "El Séptimo Fuego",
       "aliases": [
         "El Séptimo Fuego",
-        "El Septimo Fuego"
+        "El Septimo Fuego",
+        "Centro Cultural Séptimo Fuego"
       ]
     },
     {
@@ -522,7 +529,8 @@
       "id": "bai-bai",
       "name": "Bai Bai",
       "aliases": [
-        "Bai Bai"
+        "Bai Bai",
+        "BAI-BAI Surf House"
       ],
       "address": "Chapadmalal"
     },
@@ -565,7 +573,8 @@
       "id": "hoffen",
       "name": "Hoffen",
       "aliases": [
-        "Hoffen"
+        "Hoffen",
+        "Hoffen Bar"
       ],
       "address": "Rodríguez Peña 1333"
     },
@@ -624,7 +633,8 @@
       "id": "dickens",
       "name": "Dickens",
       "aliases": [
-        "Dickens"
+        "Dickens",
+        "Dickens Pub"
       ],
       "address": "Diagonal Pueyrredón 3017"
     },
@@ -684,7 +694,10 @@
       "name": "Stadium Complejo La Normandina",
       "aliases": [
         "Stadium Complejo La Normandina",
-        "Complejo La Normandina"
+        "Complejo La Normandina",
+        "Stadium (La Normandina)",
+        "La Normandina Destino Arena",
+        "La normandinda salon de eventos"
       ],
       "address": "Victoria Ocampo"
     },
@@ -710,9 +723,194 @@
       "id": "la-carpa",
       "name": "La Carpa",
       "aliases": [
-        "La Carpa"
+        "La Carpa",
+        "La Carpa Mar del Plata",
+        "Playas Alfar - Balneario 10 - La Carpa"
       ],
       "address": ""
+    },
+    {
+      "id": "umano",
+      "name": "UMANO",
+      "aliases": [
+        "UMANO",
+        "UMN"
+      ],
+      "address": "Av. de los Trabajadores 6230"
+    },
+    {
+      "id": "la-caseta",
+      "name": "La Caseta",
+      "aliases": [
+        "La Caseta"
+      ],
+      "address": "RP11 4774"
+    },
+    {
+      "id": "cars-coffee-mdp",
+      "name": "Cars & Coffee Mar del Plata",
+      "aliases": [
+        "Cars & Coffee Mar del Plata"
+      ],
+      "address": "C. 511"
+    },
+    {
+      "id": "smith",
+      "name": "Smith",
+      "aliases": [
+        "Smith"
+      ]
+    },
+    {
+      "id": "espacio-fortunato",
+      "name": "Espacio Fortunato",
+      "aliases": [
+        "Espacio Fortunato"
+      ],
+      "address": "Córdoba 3061"
+    },
+    {
+      "id": "microdestileria-restinga-gin",
+      "name": "Microdestileria Restinga Gin - Faro Norte",
+      "aliases": [
+        "Microdestileria Restinga Gin - Faro Norte"
+      ],
+      "address": "Av. de los Trabajadores 5420"
+    },
+    {
+      "id": "soberano",
+      "name": "Soberano",
+      "aliases": [
+        "Soberano"
+      ],
+      "address": "Hipólito Yrigoyen 2669"
+    },
+    {
+      "id": "el-calamar-loco-chapadmalal",
+      "name": "El Calamar Loco Chapadmalal",
+      "aliases": [
+        "El Calamar Loco Chapadmalal"
+      ],
+      "address": "Chapadmalal"
+    },
+    {
+      "id": "hawaii-bar-pool",
+      "name": "Hawaii Bar Pool",
+      "aliases": [
+        "Hawaii Bar Pool"
+      ]
+    },
+    {
+      "id": "el-club-del-teatro",
+      "name": "El Club del Teatro",
+      "aliases": [
+        "El Club del Teatro"
+      ],
+      "address": "Rivadavia 3422"
+    },
+    {
+      "id": "feria-artesanos-bosque-peralta-ramos",
+      "name": "Feria de Artesanos del Bosque Peralta Ramos",
+      "aliases": [
+        "Feria de Artesanos del Bosque Peralta Ramos"
+      ]
+    },
+    {
+      "id": "hotel-dos-reyes",
+      "name": "Hotel dos Reyes",
+      "aliases": [
+        "Hotel dos Reyes"
+      ]
+    },
+    {
+      "id": "auditorio-puerta-de-vida",
+      "name": "Auditorio Puerta de Vida",
+      "aliases": [
+        "Auditorio Puerta de Vida"
+      ]
+    },
+    {
+      "id": "coliseo-arena-gamer",
+      "name": "Coliseo Arena Gamer",
+      "aliases": [
+        "Coliseo Arena Gamer"
+      ],
+      "address": "Geronimo Rejon 4988"
+    },
+    {
+      "id": "biblioteca-juventud-moderna",
+      "name": "Biblioteca Popular Juventud Moderna",
+      "aliases": [
+        "Biblioteca Popular Juventud Moderna"
+      ],
+      "address": "Diagonal Pueyrredón 3324"
+    },
+    {
+      "id": "libreria-el-gran-pez",
+      "name": "Librería El Gran Pez",
+      "aliases": [
+        "Librería El Gran Pez"
+      ],
+      "address": "Santiago del Estero 2052"
+    },
+    {
+      "id": "tmt-edison",
+      "name": "TMT Edison",
+      "aliases": [
+        "TMT Edison"
+      ]
+    },
+    {
+      "id": "plaza-de-la-naturaleza",
+      "name": "Plaza de la Naturaleza",
+      "aliases": [
+        "Plaza de la Naturaleza"
+      ]
+    },
+    {
+      "id": "casa-chasqui",
+      "name": "Casa Chasqui",
+      "aliases": [
+        "Casa Chasqui"
+      ]
+    },
+    {
+      "id": "proyecto-bar",
+      "name": "Proyecto Bar",
+      "aliases": [
+        "Proyecto Bar"
+      ],
+      "address": "San Luis 2745"
+    },
+    {
+      "id": "baum-cerveceria",
+      "name": "Baum Cervecería",
+      "aliases": [
+        "Baum Cervecería"
+      ],
+      "address": "Av. Constitución"
+    },
+    {
+      "id": "museum-mdq",
+      "name": "Museum MDQ",
+      "aliases": [
+        "Museum MDQ"
+      ]
+    },
+    {
+      "id": "anana",
+      "name": "Ananá",
+      "aliases": [
+        "Ananá"
+      ]
+    },
+    {
+      "id": "el-destino",
+      "name": "El Destino",
+      "aliases": [
+        "El Destino"
+      ],
+      "address": "San Juan 1521"
     }
   ]
 }
