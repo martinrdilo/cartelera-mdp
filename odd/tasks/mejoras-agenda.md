@@ -30,6 +30,7 @@ Cierra la deuda detectada al auditar el sitio: links rotos, filtros y saneamient
 | T6 | S6 | Sitio de la sala desde el panel municipal | `56a40d5` |
 | T7a | S7 | Venues sin resolver (587/601) y 6 duplicados probados | `8028d59` |
 | T7b | S7 | Join cross-source de título de un token contra cartel completo | `5f45880` |
+| T8 | — | Defectos de la verificación independiente (link duplicado, campo muerto, gate de esquema, doc) | `c7f5f47` |
 
 T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `build_site.py` en un solo árbol: separarlos exigía staging por hunks. Slice resultante: 1.326 líneas sobre `feat/mejoras-agenda` en 6 commits, por encima de la guía de ~400 por slice; el límite se registra acá y la forma de entrega (un PR o slices encadenados) se decide al publicar.
 
@@ -37,7 +38,12 @@ T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `buil
 
 **L4.** Verificación final (2026-11-21): suite **689 pasan, 1 falla** (la previa dependiente del calendario, `test_known_ticket_url_is_linked`). Build `--today 2026-11-21`: 285 filas, 216 con entrada online, 7 links a `colonprogramacion`, ningún título con 2029. En navegador: el chip «Solo con entrada online 216» filtra 44 → 33 filas del finde, deja 0 filas sin entrada visibles, `aria-pressed="true"` y el contador acompañando.
 
-**L5.** Deuda declarada que no se tocó: 14 filas siguen sin venue resuelto (productoras, zonas, ruta suelta, artista en el campo de sala); 8 duplicados probados quedaron sin unir, cada uno con su blocker escrito en el handoff de T7; `data/events_normalized.json` no tiene todavía `venue_url` porque el pipeline necesita una corrida real para poblarlo.
+**L5.** Deuda declarada que no se tocó: 14 filas siguen sin venue resuelto (productoras, zonas, ruta suelta, artista en el campo de sala); 8 duplicados probados quedaron sin unir, cada uno con su blocker escrito en el handoff de T7.
+
+**L6.** Verificación independiente (`gentle-ai-verify`) sobre el branch: S1, S2, S3 (navegador real), S4, S5 y S7 en PASS; S6 marcado FAIL por discrepancia entre el texto del spec («usarlo como link de Fuente») y la forma aprobada (línea propia `Sala:`). Se mantiene la forma aprobada: el sitio de la sala no debe disfrazarse de procedencia. La verificación también detectó cuatro defectos, corregidos en `c7f5f47`: link de Fuente duplicando el CTA en 119 filas, campo `has_ticket` muerto en el payload, `is_event_page` aceptando `ftp://` y raíz con query, y números desactualizados en `docs/fuentes.md`. Suite tras el fix: **692 pasan, 1 falla** (la previa).
+
+**L7.** Deuda que sólo se cierra con una corrida real del pipeline: `venue_url` no existe en el snapshot, y los 6 merges de dedupe no se ven en el sitio porque `data/events_deduped.json` es salida del pipeline. Se lanzó `run_pipeline.py` para materializarlos.
+
 
 
 **L1.** «arregla todo. Los 7 puntos»
