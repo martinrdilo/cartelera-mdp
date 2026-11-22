@@ -698,3 +698,48 @@ class TestSlugDateCompatibility:
         assert len(clusters) == 1
         assert clusters[0]["pairs"][0]["kind"] == "ticket_slug"
 
+
+    def test_a_bridging_page_gives_the_same_result_in_any_order(self):
+        # A={19/12}, B={20/12} and C={19/12, 20/12} share one ticket page but
+        # sit in different venues with different titles, so only the slug pass
+        # can join them. Anchoring each row on a single earlier candidate made
+        # the clustering depend on input order: with C last, B never met C.
+        first = make_event(
+            "articket",
+            "TRES NOCHES",
+            "Club Uno",
+            "2026-12-19",
+            event_id="tres-noches-a",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/TRES-NOCHES/",
+        )
+        second = make_event(
+            "punto",
+            "TRES NOCHES BIS",
+            "Club Dos",
+            "2026-12-20",
+            event_id="tres-noches-b",
+            occurrences=["2026-12-20"],
+            ticket_url="https://articket.com.ar/TRES-NOCHES",
+        )
+        both = make_event(
+            "cualpinta",
+            "TRES NOCHES FINAL",
+            "Club Tres",
+            "2026-12-19",
+            event_id="tres-noches-c",
+            occurrences=["2026-12-19", "2026-12-20"],
+            ticket_url="https://articket.com.ar/TRES-NOCHES/",
+        )
+
+        shapes = set()
+        for order in (
+            [first, second, both],
+            [both, first, second],
+            [first, both, second],
+            [second, first, both],
+        ):
+            clusters = cluster_events(list(order))
+            shapes.add(tuple(sorted(len(cluster["events"]) for cluster in clusters)))
+
+        assert len(shapes) == 1, shapes

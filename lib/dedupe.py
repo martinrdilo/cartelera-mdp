@@ -459,17 +459,19 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
             by_slug.setdefault(slug, []).append(index)
     for slug, positions in by_slug.items():
         for offset, other in enumerate(positions[1:], start=1):
-            anchor = next(
-                (
-                    candidate
-                    for candidate in positions[:offset]
-                    if _slug_dates_compatible(indexed[candidate][1], indexed[other][1])
-                ),
-                None,
-            )
-            if anchor is None:
+            # Every compatible earlier row, not just the first: a multi-night
+            # page bridges rows that share only one night each, and anchoring
+            # on a single candidate made the result depend on input order.
+            anchors = [
+                candidate
+                for candidate in positions[:offset]
+                if _slug_dates_compatible(indexed[candidate][1], indexed[other][1])
+            ]
+            if not anchors:
                 continue
-            union(anchor, other)
+            for anchor in anchors:
+                union(anchor, other)
+            anchor = anchors[-1]
             pairs.append(
                 {
                     "a": _event_ref(indexed[anchor][1]),
