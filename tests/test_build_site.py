@@ -501,6 +501,39 @@ class TestTicketLinkSelection:
         details = build_site.render_row_details(event)
         assert "Fuente:</b> Municipal" in details
 
+    def test_source_falling_back_to_the_buy_page_is_plain_text(self):
+        # D1: when no ficha exists the source falls back to the member's own
+        # ticket link. Linking it again next to the buy CTA would render two
+        # affordances that open the same URL.
+        member = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+            ticket_url="https://articket.com.ar/AN-ESPIL/",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] == event["ticket_url"] == "https://articket.com.ar/AN-ESPIL/"
+        details = build_site.render_row_details(event)
+        assert "Fuente:</b> Articket" in details
+        assert 'class="btn btn--source"' not in details
+        assert details.count('href="https://articket.com.ar/AN-ESPIL/"') == 1
+        assert "Comprar en articket.com.ar" in details
+
+    def test_source_differing_from_the_buy_page_stays_a_link(self):
+        # PRESERVE: two different URLs are two affordances, not a duplicate.
+        member = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+            ticket_url="https://articket.com.ar/AN-ESPIL/",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] != event["ticket_url"]
+        details = build_site.render_row_details(event)
+        assert 'class="btn btn--source"' in details
+        assert "Ver en Articket" in details
+        assert 'href="https://articket.com.ar/AN-ESPIL/"' in details
+
 
 class TestVenueSite:
     """S6: the venue's own site gets its own detail line, never the Fuente link."""
@@ -791,6 +824,26 @@ def test_is_event_page_rejects_listings_and_endpoints():
     assert not build_site.is_event_page("https://api.venti.live/api/home/events?limit=100&page=1")
     assert not build_site.is_event_page("https://clubtri.com/")
     assert not build_site.is_event_page(None)
+
+
+def test_is_event_page_requires_an_http_scheme_and_a_real_path():
+    # D3: the scheme was never checked and an empty path with a query passed.
+    assert not build_site.is_event_page("ftp://host/colonprogramacion")
+    assert not build_site.is_event_page("ftp://www.mardelplata.gob.ar/colonprogramacion")
+    assert not build_site.is_event_page("https://host/?p=1")
+    assert not build_site.is_event_page("https://puntomardelplata.com/?p=1")
+    # PRESERVE: both accepted schemes, and a real path is still a ficha.
+    assert build_site.is_event_page("http://example.com.ar/evento/123")
+    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+    assert build_site.is_event_page("https://clubtri.com/fuego-sagrado")
+    assert not build_site.is_event_page("https://articket.com.ar/obtener_eventos/")
+    assert not build_site.is_event_page("https://api.venti.live/api/home/events")
+    assert not build_site.is_event_page("https://clubtri.com")
+    assert not build_site.is_event_page("https://clubtri.com/")
+    # PRESERVE: the Colón exception tolerates www and a trailing slash.
+    assert build_site.is_event_page(COLON_PROGRAM_URL)
+    assert build_site.is_event_page("https://mardelplata.gob.ar/colonprogramacion/")
+    assert not build_site.is_event_page(COLON_PROGRAM_URL + "?pagina=2")
 
 
 def test_colon_program_page_qualifies_as_a_source_link():
@@ -1315,14 +1368,17 @@ class TestTicketOnlyFilter:
         chip = self.filterbar(html).split('id="filter-ticket"', 1)[1]
         assert re.search(r"<em>(\d+)</em>", chip).group(1) == str(len(with_ticket))
 
-    def test_payload_marks_the_ticket_link_boolean(self, tmp_path):
-        _, _, _, _, payload = self.build(tmp_path)
+    def test_payload_carries_no_unused_ticket_flag(self, tmp_path):
+        # D2: the toggle reads the row's data-ticket, so a payload boolean
+        # nobody read was dead weight in every build.
+        _, _, _, app_js, payload = self.build(tmp_path)
         for event in payload["events"]:
-            assert event["has_ticket"] == bool(event["ticket_url"])
+            assert "has_ticket" not in event
+        assert "row.dataset.ticket" in app_js
 
     def test_every_row_carries_the_ticket_flag_of_its_event(self, tmp_path):
         _, html, _, _, payload = self.build(tmp_path)
-        flags = {event["id"]: event["has_ticket"] for event in payload["events"]}
+        flags = {event["id"]: bool(event["ticket_url"]) for event in payload["events"]}
         rows = re.findall(r'<article class="row" data-row data-id="([^"]+)"([^>]*)>', html)
         assert rows
         for event_id, attrs in rows:

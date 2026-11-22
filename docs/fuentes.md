@@ -84,11 +84,21 @@ La clasificación quedó **solo documentada**: no se agregó ningún campo al es
 
 Único cambio de código asociado a este relevamiento (2026-11-21): **`collectors/clubtri.py`** ahora guarda el link propio de la tarjeta como `raw_url` cuando no es un link de ticketera. Antes todas las tarjetas quedaban con `https://clubtri.com/` como origen, así que los 4 eventos gratis de Club TRI (El Fuego Sagrado, Noche de Salsa, Ciclo Costa Cannabis, Pistilo 27 Aniversario) no tenían ni venta ni link al evento: sólo el home del club. Con el cambio, cada uno apunta a su post de Instagram, y las tarjetas con ticketera conservan `ticket_url` y el origen anterior.
 
-Estado de la suite tras el cambio: **626 tests pasan, 1 falla** (`test_build_site.py::test_known_ticket_url_is_linked`). Esa falla es **previa al cambio** (verificada con `git stash`): depende del calendario, porque `_anchor_today()` avanza con la fecha y el evento que la aserción busca queda en el pasado.
+Estado de la suite en el head actual: **692 tests pasan, 1 falla** (`test_build_site.py::test_known_ticket_url_is_linked`). Esa falla es **previa al cambio**: depende del calendario, porque `_anchor_today()` avanza con la fecha y el evento que la aserción busca queda en el pasado.
 
 El cambio toma efecto en `data/` recién en la próxima corrida del pipeline; los snapshots actuales todavía tienen el `raw_url` viejo.
 
-Segundo cambio (mismo día): **`build_site.py`** dejó de enlazar páginas que no son de un evento. La agenda municipal está paginada por fecha, así que la página registrada al colectar deja de contener el evento a los pocos días (verificado en vivo: el evento de Javier Santaolalla estaba en `pagina=4` cuando se colectó y hoy está en `pagina=3`); Articket y CultuTickets exponen un endpoint JSON como `raw_url`, Venti una API, y Club TRI publicaba el home del club. Ahora `is_event_page()` descarta esos casos y la «Fuente» usa la ficha de mayor prioridad, o la página del evento en la ticketera, o el nombre sin link. Build del 2026-11-21: **258 links de fuente, todos a fichas reales** (antes 318, de los cuales 119 eran endpoints, listados paginados o homes). Quedan **30 filas sin link de fuente**: 25 con presencia municipal (EMTUR no publica ficha por evento) y 5 de Teatro Colón/Club TRI.
+Segundo cambio (mismo día): **`build_site.py`** dejó de enlazar páginas que no son de un evento. La agenda municipal está paginada por fecha, así que la página registrada al colectar deja de contener el evento a los pocos días (verificado en vivo: el evento de Javier Santaolalla estaba en `pagina=4` cuando se colectó y hoy está en `pagina=3`); Articket y CultuTickets exponen un endpoint JSON como `raw_url`, Venti una API, y Club TRI publicaba el home del club. Ahora `is_event_page()` descarta esos casos y la «Fuente» usa la ficha de mayor prioridad, o la página del evento en la ticketera, o el nombre sin link. `is_event_page()` sólo acepta `http`/`https` con un path real: un `ftp://…` o un home con query (`https://host/?p=1`) nunca es ficha; la excepción de Colón (`/colonprogramacion` en `mardelplata.gob.ar`, con o sin `www.` y con o sin barra final) sigue valiendo.
+
+Build del 2026-11-21 (`--today 2026-11-21`) sobre el head que cierra este relevamiento: **285 filas**, **264 resuelven una página de fuente**, todas a fichas reales (antes 318, de las cuales 119 eran endpoints, listados paginados o homes). De esas 264, **145 se muestran como link** «Ver en …» y **119 quedan como texto plano** porque la página elegida es la misma URL del CTA de compra (`source_url == ticket_url`): enlazarla otra vez duplicaba la acción de compra que la fila ya ofrece. De las 145 enlazadas, **7 apuntan a `colonprogramacion`**.
+
+Quedan **21 filas sin link de fuente**: **18 municipal** (EMTUR no publica ficha por evento) y **3 de Club TRI**.
+
+Tres cambios de la tanda sólo llegan al sitio después de **una corrida real del pipeline**; `data/` no se regeneró a mano:
+
+- **`venue_url`** (sitio de la sala capturado del panel municipal): el collector ya lo guarda, pero `data/events_normalized.json` todavía no tiene el campo, así que hoy no se renderiza la línea «Sala».
+- **Los 6 duplicados probados** de venues/dedupe: son aliases en `data/venues.json` y `lib/dedupe.py` los aplica al armar los clusters, o sea que las filas recién se unen cuando el pipeline reescribe `data/events_deduped.json` (que es lo que lee `build_site.py`).
+- **`last_run.json`** sigue describiendo la corrida del 2026-11-19 (511 venues resueltos, 90 sin resolver) aunque el registro ya resuelva 587 de 601.
 
 ## 8. Follow-ups detectados al relevar
 

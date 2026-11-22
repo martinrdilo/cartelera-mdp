@@ -291,9 +291,13 @@ def is_event_page(url) -> bool:
     if not isinstance(url, str) or not is_usable(url):
         return False
     parsed = urlparse(url)
+    # A clickable source is a web page; ftp:// never opens the event.
+    if parsed.scheme not in ("http", "https"):
+        return False
     if not parsed.netloc:
         return False
-    if parsed.path in ("", "/") and not parsed.query:
+    # A root with a query string ("https://host/?p=1") is still a site root.
+    if not parsed.path.strip("/"):
         return False
     if _is_colon_program_page(parsed):
         return True
@@ -1453,10 +1457,15 @@ def render_row_details(event: dict) -> str:
             facts.append(f"<p><b>Venta:</b> {esc(name)}</p>")
     if event.get("source_url"):
         source_label = SOURCE_LABELS.get(event.get("source_name"), event.get("source_name") or "Fuente")
-        facts.append(
-            f'<p><b>Fuente:</b> <a class="btn btn--source" href="{esc(event["source_url"])}" '
-            f'target="_blank" rel="noopener">Ver en {esc(source_label)} ↗</a></p>'
-        )
+        if event["source_url"] == event.get("ticket_url"):
+            # The chosen ficha is the sale page itself: the buy CTA already
+            # opens it, so the source is named, not linked twice.
+            facts.append(f"<p><b>Fuente:</b> {esc(source_label)}</p>")
+        else:
+            facts.append(
+                f'<p><b>Fuente:</b> <a class="btn btn--source" href="{esc(event["source_url"])}" '
+                f'target="_blank" rel="noopener">Ver en {esc(source_label)} ↗</a></p>'
+            )
     elif event.get("sources"):
         labels = " + ".join(
             SOURCE_LABELS.get(source, source) for source in event["sources"]
@@ -1642,7 +1651,6 @@ def events_payload(events: list[dict], today: date) -> dict:
                 "is_free": event["is_free"],
                 "price_label": event["price_label"],
                 "ticket_url": event["ticket_url"],
-                "has_ticket": bool(event.get("ticket_url")),
                 "image_url": event["image_url"],
             }
             for event in events
