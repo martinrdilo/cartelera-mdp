@@ -6,6 +6,8 @@ The integration test builds from the committed data/ snapshot (pipeline run
 
 import json
 import re
+import subprocess
+import sys
 from datetime import date
 from pathlib import Path
 
@@ -153,6 +155,31 @@ class TestWindowBounds:
         assert build_site.matches_window(["2027-04-03"], "all", today)
 
 
+class TestAddMonths:
+    """R2-002: a month shift clamps to the target month's last day.
+
+    The old branch answered the 28th for every invalid day, so 31 May + 1
+    landed on 28 June instead of 30 June and the ±12-month horizon came out
+    three days short whenever the build date was a month-end.
+    """
+
+    @pytest.mark.parametrize(
+        ("start", "months", "expected"),
+        (
+            (date(2026, 5, 31), 1, date(2026, 6, 30)),  # June has 30 days
+            (date(2026, 3, 31), 1, date(2026, 4, 30)),  # April has 30 days
+            (date(2026, 1, 31), 1, date(2026, 2, 28)),  # non-leap February
+            (date(2028, 2, 29), 12, date(2029, 2, 28)),  # leap day, non-leap target
+            (date(2026, 12, 31), 1, date(2027, 1, 31)),  # January keeps the 31st
+            (date(2026, 5, 15), 1, date(2026, 6, 15)),  # a valid day never moves
+            (date(2026, 5, 31), -1, date(2026, 4, 30)),  # backwards past a short month
+            (date(2026, 3, 31), -3, date(2025, 12, 31)),  # backwards across a year
+        ),
+    )
+    def test_month_shift_clamps_to_the_target_months_last_day(self, start, months, expected):
+        assert build_site.add_months(start, months) == expected
+
+
 class TestBuildHorizon:
     """Events outside ±12 months of the build date never reach the site."""
 
@@ -167,6 +194,16 @@ class TestBuildHorizon:
             date(2027, 2, 28),
             date(2029, 2, 28),
         )
+
+    def test_a_month_end_build_date_does_not_shorten_the_horizon(self):
+        # add_months(2026-05-31, 12) is 2027-05-31; clamping to the 28th
+        # silently dropped the last three days of the year-long window.
+        assert build_site.add_months(date(2026, 5, 31), 12) == date(2027, 5, 31)
+        assert build_site.horizon_bounds(date(2026, 5, 31)) == (
+            date(2025, 5, 31),
+            date(2027, 5, 31),
+        )
+        assert build_site.in_build_horizon(["2027-05-31"], date(2026, 5, 31))
 
     def test_both_edges_are_inside_the_horizon(self):
         assert build_site.in_build_horizon(["2025-10-14"], SNAPSHOT_TODAY)
@@ -652,15 +689,29 @@ class TestVenueSite:
             'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
         ) in details
 
-    def test_the_site_validates_with_the_collector_predicate(self):
-        # One rule at both ends: same host list, same verdict for every value
-        # the live run captured.
+    def test_the_site_and_the_collector_share_one_venue_site_rule(self):
+        # R2-001: the rule had a copy at each end, so a fix in one could leave
+        # the other rejecting the same URLs. Now a single module owns it and
+        # both callers import that same function -- no mirrored copy to drift.
         from collectors import municipal
+        from lib import site_urls
 
-        assert build_site.MUNICIPAL_HOSTS == municipal.MUNICIPAL_HOSTS
-        values = self.BAD_VENUE_URLS + self.GOOD_VENUE_URLS
-        for value in values:
-            assert build_site.venue_site_url(value) == municipal.venue_site_url(value), value
+        assert build_site.venue_site_url is site_urls.venue_site_url
+        assert municipal.venue_site_url is site_urls.venue_site_url
+        assert not hasattr(build_site, "MUNICIPAL_HOSTS")
+        assert not hasattr(municipal, "MUNICIPAL_HOSTS")
+
+    def test_build_site_imports_with_only_the_standard_library(self):
+        # -S drops site-packages: bs4 and requests are invisible, so the site
+        # build (and the module it shares with the collector) must be stdlib.
+        result = subprocess.run(
+            [sys.executable, "-S", "-c", "import build_site"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        assert result.returncode == 0, result.stderr
 
     def test_duplicate_merge_keeps_the_venue_site(self):
         site_event = build_site.merge_members([make_member("municipal")], empty_index(), SNAPSHOT_TODAY)
@@ -929,9 +980,23 @@ class TestDeterministicBuild:
         stats, _ = self.build(tmp_path)
         assert (tmp_path / "index.html").exists()
         assert (tmp_path / "assets" / "style.css").exists()
+        assert (tmp_path / "assets" / "filter.js").exists()
         assert (tmp_path / "assets" / "app.js").exists()
         assert (tmp_path / "favicon.svg").exists()
-        assert stats["files"] == ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"]
+        assert stats["files"] == [
+            "index.html",
+            "assets/style.css",
+            "assets/filter.js",
+            "assets/app.js",
+            "favicon.svg",
+        ]
+
+    def test_filter_module_loads_before_the_script_that_uses_it(self, tmp_path):
+        # app.js reads the predicate from that module at parse time, so the
+        # tag order is part of the contract.
+        _, html = self.build(tmp_path)
+        assert '<script src="assets/filter.js"></script>' in html
+        assert html.index("assets/filter.js") < html.index("assets/app.js")
 
     def test_counts_match_the_snapshot(self, tmp_path):
         stats, html = self.build(tmp_path)
@@ -1426,10 +1491,11 @@ class TestTicketOnlyFilter:
     def test_payload_carries_no_unused_ticket_flag(self, tmp_path):
         # D2: the toggle reads the row's data-ticket, so a payload boolean
         # nobody read was dead weight in every build.
-        _, _, _, app_js, payload = self.build(tmp_path)
+        _, _, _, _, payload = self.build(tmp_path)
+        filter_js = (tmp_path / "assets" / "filter.js").read_text(encoding="utf-8")
         for event in payload["events"]:
             assert "has_ticket" not in event
-        assert "row.dataset.ticket" in app_js
+        assert "row.dataset.ticket" in filter_js
 
     def test_every_row_carries_the_ticket_flag_of_its_event(self, tmp_path):
         _, html, _, _, payload = self.build(tmp_path)
@@ -1444,12 +1510,19 @@ class TestTicketOnlyFilter:
 
     def test_toggle_extends_the_single_filter_path(self, tmp_path):
         _, _, _, app_js, _ = self.build(tmp_path)
+        filter_js = (tmp_path / "assets" / "filter.js").read_text(encoding="utf-8")
         assert 'getElementById("filter-ticket")' in app_js
-        predicate = app_js.split("function matchesFilters", 1)[1].split("\n  }", 1)[0]
-        assert "row.dataset.ticket" in predicate
+        # The predicate lives in the shared module -- which the page loads and
+        # Node can require -- and is not duplicated in the script.
+        assert "row.dataset.ticket" in filter_js
+        assert "row.dataset.ticket" not in app_js
+        assert "function matchesFilters" not in app_js
+        assert "CarteleraFilter" in app_js
+        assert "module.exports" in filter_js
         # The day badges and the count recalculate through the same predicate.
         tab_counts = app_js.split("function updateTabCounts", 1)[1].split("\n  }", 1)[0]
         assert "matches(row)" in tab_counts
+        assert "inView(row, view)" in tab_counts
         # The toggle counts as a filter, so the existing auto-switch/empty
         # state logic engages instead of leaving a dead day tab.
         assert "state.ticket" in app_js.split("function activeFilters", 1)[1].split("\n  }", 1)[0]

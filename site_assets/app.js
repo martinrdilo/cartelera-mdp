@@ -130,35 +130,16 @@
       .trim();
   }
 
-  function matchesFilters(row, overrides) {
-    var free = overrides && "free" in overrides ? overrides.free : state.free;
-    var venue = overrides && "venue" in overrides ? overrides.venue : state.venue;
-    var ticket = overrides && "ticket" in overrides ? overrides.ticket : state.ticket;
-    if (free && row.dataset.free !== "1") return false;
-    if (ticket && row.dataset.ticket !== "1") return false;
-    if (venue && row.dataset.venue !== venue) return false;
-    if (state.query && (row.dataset.search || "").indexOf(state.query) === -1) return false;
-    return true;
-  }
+  /* The filter predicates live in filter.js, loaded before this script, so
+     the page and the Node tests run one rule. */
+  var Filter = window.CarteleraFilter;
 
   function matches(row) {
-    return matchesFilters(row, null);
-  }
-
-  function dateInWindow(iso, window) {
-    return Boolean(window) && iso >= window.start && iso <= window.end;
-  }
-
-  function inMonth(iso, key) {
-    return iso.indexOf(key) === 0;
+    return Filter.matchesFilters(row, state);
   }
 
   function inView(row, view) {
-    if (view === "all") return true;
-    if (view === "weekend") return row.dataset.inWeekend === "1";
-    if (view === "next-weekend") return dateInWindow(row.dataset.date, data.windows && data.windows.next_weekend);
-    if (view.indexOf("month:") === 0) return inMonth(row.dataset.date, view.slice(6));
-    return row.dataset.date === view;
+    return Filter.inView(row, view, data.windows);
   }
 
   function activeFilters() {
@@ -235,13 +216,7 @@
         row.hidden = !show;
         if (show) shown += 1;
       });
-      var groupInView =
-        state.view === "all" ||
-        (state.view === "weekend" && group.dataset.inWeekend === "1") ||
-        (state.view === "next-weekend" &&
-          dateInWindow(group.dataset.date, data.windows && data.windows.next_weekend)) ||
-        (state.view.indexOf("month:") === 0 && inMonth(group.dataset.date, state.view.slice(6))) ||
-        group.dataset.date === state.view;
+      var groupInView = inView(group, state.view);
       group.hidden = !groupInView || shown === 0;
       var label = group.querySelector(".daygroup__head span");
       if (label) label.textContent = shown + (shown === 1 ? " evento" : " eventos");

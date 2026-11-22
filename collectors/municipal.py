@@ -9,7 +9,7 @@ import hashlib
 import re
 import sys
 import time
-from urllib.parse import quote, urlparse
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from lib.dates import extract_time, parse_ddmmyyyy, to_iso
 from lib.occurrences import expand_segments, parse_weekdays
 from lib.schema import Event
+from lib.site_urls import venue_site_url
 
 BASE = "https://www.turismomardelplata.gob.ar"
 RESULTS_URL = f"{BASE}/ASP/SP/resultados-eventos.asp"
@@ -25,17 +26,6 @@ USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 REQUEST_DELAY = 1.0
 MAX_PAGES = 15
 SOURCE = "municipal"
-
-# Hosts that belong to the municipality itself, with or without subdomain and
-# on both spellings of its domain. A panel often links
-# www.mardelplata.gob.ar/cultura next to the venue's mailto:; that is the
-# municipality, not the venue, so it never becomes a venue site.
-MUNICIPAL_HOSTS = (
-    "mardelplata.gob.ar",
-    "mardelplata.gov.ar",
-    "turismomardelplata.gob.ar",
-    "turismomardelplata.gov.ar",
-)
 
 _SELLERS = {
     "ticketek": "Ticketek",
@@ -138,32 +128,6 @@ def _parse_entry(text):
         is_free = None
     seller = next((name for key, name in _SELLERS.items() if key in low), None)
     return is_free, price_min, seller
-
-
-def venue_site_url(raw):
-    """The venue's own site, normalized, or None when the value is not one.
-
-    Only a real site qualifies: http(s), a dotted host, no credentials and no
-    spaces in it, and a host outside the municipality. Live panels also carry
-    hrefs that are an address (`http://sala@hotmail.com`), a handle
-    (`http://IG feriadeartesanos`), a guttered scheme (`http://https:/host/`)
-    or the municipality on the .gov.ar spelling, and none of those is a site.
-    """
-    if not isinstance(raw, str):
-        return None
-    candidate = raw.strip()
-    if not candidate or any(char.isspace() for char in candidate):
-        return None
-    parsed = urlparse(candidate)
-    if parsed.scheme.lower() not in ("http", "https"):
-        return None
-    netloc = parsed.netloc
-    if "@" in netloc or "." not in netloc:
-        return None
-    host = netloc.split(":", 1)[0].lower().removeprefix("www.")
-    if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
-        return None
-    return candidate
 
 
 def _venue_site(venue_html):

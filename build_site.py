@@ -26,6 +26,7 @@ No network, standard library only (Python 3.12).
 from __future__ import annotations
 
 import argparse
+import calendar
 import html
 import json
 import re
@@ -37,6 +38,7 @@ from urllib.parse import urlparse, quote
 from zoneinfo import ZoneInfo
 
 from lib.sellers import seller_from_url
+from lib.site_urls import venue_site_url
 
 # ---------------------------------------------------------------------------
 # Site identity and constants
@@ -176,14 +178,12 @@ def upcoming_dates(event: dict, today: date) -> list[str]:
 
 
 def add_months(day: date, months: int) -> date:
-    """Shift a date by whole months, clamping 29 February to the 28th."""
+    """Shift a date by whole months, clamping to the last day of the target month."""
     index = day.month - 1 + months
     year = day.year + index // 12
     month = index % 12 + 1
-    try:
-        return date(year, month, day.day)
-    except ValueError:  # 29 February in a non-leap year
-        return date(year, month, 28)
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(day.day, last_day))
 
 
 def horizon_bounds(today: date) -> tuple[date, date]:
@@ -262,35 +262,8 @@ def is_usable(value) -> bool:
 
 # The venue's own site comes from the municipal panel and is republished from
 # the snapshot, so a stale value is re-validated here before it becomes a
-# "Sala" link. Same rule, same host list as collectors.municipal.venue_site_url
-# (which owns the value at collection time): http(s), a dotted host, no
-# credentials, no spaces, and a host outside the municipality on either
-# spelling of its domain.
-MUNICIPAL_HOSTS = (
-    "mardelplata.gob.ar",
-    "mardelplata.gov.ar",
-    "turismomardelplata.gob.ar",
-    "turismomardelplata.gov.ar",
-)
-
-
-def venue_site_url(raw):
-    """The venue's own site, normalized, or None when the value is not one."""
-    if not isinstance(raw, str):
-        return None
-    candidate = raw.strip()
-    if not candidate or any(char.isspace() for char in candidate):
-        return None
-    parsed = urlparse(candidate)
-    if parsed.scheme.lower() not in ("http", "https"):
-        return None
-    netloc = parsed.netloc
-    if "@" in netloc or "." not in netloc:
-        return None
-    host = netloc.split(":", 1)[0].lower().removeprefix("www.")
-    if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
-        return None
-    return candidate
+# "Sala" link. The rule is shared with the collector (lib/site_urls.py), so
+# both ends accept and reject exactly the same values.
 
 
 # Pages that list many events, or expose raw data, instead of one ficha. The
@@ -1757,6 +1730,7 @@ def render_index(
 {render_footer(last_run)}
 </main>
 <script id="events-data" type="application/json">{payload}</script>
+<script src="assets/filter.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
@@ -1780,6 +1754,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         render_index(events, last_run, today, registry=registry), encoding="utf-8"
     )
     shutil.copyfile(ASSETS_SRC / "style.css", out_dir / "assets" / "style.css")
+    shutil.copyfile(ASSETS_SRC / "filter.js", out_dir / "assets" / "filter.js")
     shutil.copyfile(ASSETS_SRC / "app.js", out_dir / "assets" / "app.js")
     shutil.copyfile(ASSETS_SRC / "favicon.svg", out_dir / "favicon.svg")
 
@@ -1788,7 +1763,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         "upcoming": len(events),
         "weekend": weekend_count,
         "venues": len(venue_options(events, registry)),
-        "files": ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"],
+        "files": ["index.html", "assets/style.css", "assets/filter.js", "assets/app.js", "favicon.svg"],
     }
 
 
