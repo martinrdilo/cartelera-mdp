@@ -26,10 +26,16 @@ REQUEST_DELAY = 1.0
 MAX_PAGES = 15
 SOURCE = "municipal"
 
-# Hosts that belong to the municipality itself. A panel often links
+# Hosts that belong to the municipality itself, with or without subdomain and
+# on both spellings of its domain. A panel often links
 # www.mardelplata.gob.ar/cultura next to the venue's mailto:; that is the
 # municipality, not the venue, so it never becomes a venue site.
-MUNICIPAL_HOSTS = ("turismomardelplata.gob.ar", "mardelplata.gob.ar")
+MUNICIPAL_HOSTS = (
+    "mardelplata.gob.ar",
+    "mardelplata.gov.ar",
+    "turismomardelplata.gob.ar",
+    "turismomardelplata.gov.ar",
+)
 
 _SELLERS = {
     "ticketek": "Ticketek",
@@ -134,8 +140,34 @@ def _parse_entry(text):
     return is_free, price_min, seller
 
 
+def venue_site_url(raw):
+    """The venue's own site, normalized, or None when the value is not one.
+
+    Only a real site qualifies: http(s), a dotted host, no credentials and no
+    spaces in it, and a host outside the municipality. Live panels also carry
+    hrefs that are an address (`http://sala@hotmail.com`), a handle
+    (`http://IG feriadeartesanos`), a guttered scheme (`http://https:/host/`)
+    or the municipality on the .gov.ar spelling, and none of those is a site.
+    """
+    if not isinstance(raw, str):
+        return None
+    candidate = raw.strip()
+    if not candidate or any(char.isspace() for char in candidate):
+        return None
+    parsed = urlparse(candidate)
+    if parsed.scheme.lower() not in ("http", "https"):
+        return None
+    netloc = parsed.netloc
+    if "@" in netloc or "." not in netloc:
+        return None
+    host = netloc.split(":", 1)[0].lower().removeprefix("www.")
+    if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
+        return None
+    return candidate
+
+
 def _venue_site(venue_html):
-    """First external http(s) anchor of the venue block, or None.
+    """First anchor of the venue block that is the venue's own site, or None.
 
     The block lists the venue's phone and email before (sometimes) its own
     site, so only absolute http(s) hrefs on another host qualify: mailto:,
@@ -144,14 +176,9 @@ def _venue_site(venue_html):
     if not venue_html:
         return None
     for anchor in BeautifulSoup(venue_html, "html.parser").find_all("a", href=True):
-        href = anchor["href"].strip()
-        parsed = urlparse(href)
-        if parsed.scheme.lower() not in ("http", "https") or not parsed.netloc:
-            continue
-        host = parsed.netloc.lower().rsplit("@", 1)[-1].split(":", 1)[0].removeprefix("www.")
-        if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
-            continue
-        return href
+        site = venue_site_url(anchor["href"])
+        if site:
+            return site
     return None
 
 

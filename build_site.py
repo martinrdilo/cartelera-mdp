@@ -260,6 +260,39 @@ def is_usable(value) -> bool:
     return True
 
 
+# The venue's own site comes from the municipal panel and is republished from
+# the snapshot, so a stale value is re-validated here before it becomes a
+# "Sala" link. Same rule, same host list as collectors.municipal.venue_site_url
+# (which owns the value at collection time): http(s), a dotted host, no
+# credentials, no spaces, and a host outside the municipality on either
+# spelling of its domain.
+MUNICIPAL_HOSTS = (
+    "mardelplata.gob.ar",
+    "mardelplata.gov.ar",
+    "turismomardelplata.gob.ar",
+    "turismomardelplata.gov.ar",
+)
+
+
+def venue_site_url(raw):
+    """The venue's own site, normalized, or None when the value is not one."""
+    if not isinstance(raw, str):
+        return None
+    candidate = raw.strip()
+    if not candidate or any(char.isspace() for char in candidate):
+        return None
+    parsed = urlparse(candidate)
+    if parsed.scheme.lower() not in ("http", "https"):
+        return None
+    netloc = parsed.netloc
+    if "@" in netloc or "." not in netloc:
+        return None
+    host = netloc.split(":", 1)[0].lower().removeprefix("www.")
+    if any(host == own or host.endswith("." + own) for own in MUNICIPAL_HOSTS):
+        return None
+    return candidate
+
+
 # Pages that list many events, or expose raw data, instead of one ficha. The
 # municipal agenda is paginated by date, so a recorded page keeps moving as
 # events pass: linking it as "Fuente" sends the reader to a page that no
@@ -1445,10 +1478,12 @@ def render_row_details(event: dict) -> str:
     facts = [f"<p><b>Fechas:</b> {esc(dates)}</p>"]
     if event.get("address"):
         facts.append(f"<p><b>Dónde:</b> {esc(event['address'])}</p>")
-    if event.get("venue_url"):
+    venue_url = venue_site_url(event.get("venue_url"))
+    if venue_url:
         # The venue's own site, not the event page nor the fuente: its own line.
+        # Validated again here: the snapshot may predate the collector's check.
         facts.append(
-            f'<p><b>Sala:</b> <a class="btn btn--source" href="{esc(event["venue_url"])}" '
+            f'<p><b>Sala:</b> <a class="btn btn--source" href="{esc(venue_url)}" '
             f'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
         )
     if not event.get("ticket_url"):

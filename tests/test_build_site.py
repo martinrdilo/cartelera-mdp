@@ -9,6 +9,8 @@ import re
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 import build_site
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -540,6 +542,28 @@ class TestVenueSite:
 
     VENUE_URL = "http://www.centrodeartemdp.com"
 
+    # The venue_url values a live run captured from the panels (2026-11-21): 23
+    # rows over 10 distinct values. Seven rows are not a venue site: an address
+    # in an http href, a handle, a scheme with no host, the municipality on the
+    # .gov.ar spelling. The snapshot still carries them, so the site filters.
+    BAD_VENUE_URLS = (
+        "http://abbeyroadreservas@hotmail.com",
+        "http://IG @feriadeartesanosdelbosque",
+        "http://https:/abbeyroadmdp.com.ar/",
+        "https:",
+        "ig @feriadeartesanosdelbosque",
+        "http://www.mardelplata.gov.ar",
+        "www.mardelplata.gov.ar",
+    )
+    GOOD_VENUE_URLS = (
+        "http://www.vorterixmdq.com.ar",
+        "http://bendu.com.ar",
+        "http://www.centrodeartemdp.com",
+        "http://www.programacionauditorium.blogspot.com",
+        "http://www.chauvin.com.ar",
+        "http://www.sheratonmardelplatahotel.com",
+    )
+
     def municipal_with_site(self, **overrides):
         fields = dict(
             venue_name="Centro de Arte Radio City",
@@ -606,6 +630,37 @@ class TestVenueSite:
         details = build_site.render_row_details(event)
         assert "Sala:" not in details
         assert "Ver sitio de la sala" not in details
+
+    @pytest.mark.parametrize("venue_url", BAD_VENUE_URLS)
+    def test_a_bad_venue_url_renders_no_sala_line(self, venue_url):
+        event = build_site.merge_members(
+            [self.municipal_with_site(venue_url=venue_url)], empty_index(), SNAPSHOT_TODAY
+        )
+        assert event["venue_url"] == venue_url  # the snapshot value stays as it is
+        details = build_site.render_row_details(event)
+        assert "Sala:" not in details
+        assert "Ver sitio de la sala" not in details
+
+    @pytest.mark.parametrize("venue_url", GOOD_VENUE_URLS)
+    def test_a_good_venue_url_renders_its_sala_line(self, venue_url):
+        event = build_site.merge_members(
+            [self.municipal_with_site(venue_url=venue_url)], empty_index(), SNAPSHOT_TODAY
+        )
+        details = build_site.render_row_details(event)
+        assert (
+            f'<p><b>Sala:</b> <a class="btn btn--source" href="{venue_url}" '
+            'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
+        ) in details
+
+    def test_the_site_validates_with_the_collector_predicate(self):
+        # One rule at both ends: same host list, same verdict for every value
+        # the live run captured.
+        from collectors import municipal
+
+        assert build_site.MUNICIPAL_HOSTS == municipal.MUNICIPAL_HOSTS
+        values = self.BAD_VENUE_URLS + self.GOOD_VENUE_URLS
+        for value in values:
+            assert build_site.venue_site_url(value) == municipal.venue_site_url(value), value
 
     def test_duplicate_merge_keeps_the_venue_site(self):
         site_event = build_site.merge_members([make_member("municipal")], empty_index(), SNAPSHOT_TODAY)

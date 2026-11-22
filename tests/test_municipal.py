@@ -1,5 +1,7 @@
 """Tests for the municipal collector: schedule segmentation, occurrences and venue sites."""
 
+import pytest
+
 from collectors.municipal import normalize, parse_page, parse_schedule_segments
 
 # Real schedule text (Coros Mardelcanto 2026, data/raw/municipal.json): four
@@ -42,6 +44,29 @@ VENUE_BODY_WITH_SITE = (
     ' <a href="mailto:roxyradiocitymelanycentrodeart@gmail.com">'
     "roxyradiocitymelanycentrodeart@gmail.com&nbsp; </a>"
     ' <a href="http://www.centrodeartemdp.com" target="_blank">www.centrodeartemdp.com&nbsp; </a>\n'
+)
+
+
+# The venue_url values a live run captured from the panels (2026-11-21): 23
+# rows over 10 distinct values. Seven rows are not a venue site, either because
+# the href is an address, a social handle or a mangled scheme, or because it is
+# the municipality itself on the .gov.ar spelling of its domain.
+BAD_VENUE_SITES = (
+    "http://abbeyroadreservas@hotmail.com",  # 3 rows: an address in an http href
+    "http://IG @feriadeartesanosdelbosque",  # 1 row: a handle, not a URL
+    "http://https:/abbeyroadmdp.com.ar/",  # 1 row: a scheme with no host
+    "https:",  # the same defect on its own
+    "ig @feriadeartesanosdelbosque",
+    "http://www.mardelplata.gov.ar",  # 2 rows: the municipality, .gov.ar
+    "www.mardelplata.gov.ar",
+)
+GOOD_VENUE_SITES = (
+    "http://www.vorterixmdq.com.ar",
+    "http://bendu.com.ar",
+    "http://www.centrodeartemdp.com",
+    "http://www.programacionauditorium.blogspot.com",
+    "http://www.chauvin.com.ar",
+    "http://www.sheratonmardelplatahotel.com",
 )
 
 
@@ -151,10 +176,31 @@ class TestVenueSite:
         for href in (
             "http://www.mardelplata.gob.ar/cultura",
             "https://turismomardelplata.gob.ar/ASP/SP/agenda.asp",
+            "http://www.mardelplata.gov.ar/colonprogramacion",
+            "https://turismomardelplata.gov.ar/cultura",
+            "https://cultura.mardelplata.gob.ar/agenda",
         ):
             body = f'Teatro Col&oacute;n&nbsp <a href="mailto:teatrocolon@mardelplata.gov.ar">mail</a> <a href="{href}">{href}</a>'
             records = parse_page(panel_html(body), "https://example.test", "musica")
             assert records[0]["venue_url"] is None, href
+
+    @pytest.mark.parametrize("href", BAD_VENUE_SITES)
+    def test_values_that_are_not_a_venue_site_are_rejected(self, href):
+        body = f'Sala X&nbsp <a href="mailto:sala@example.test">mail</a> <a href="{href}">sitio</a>'
+        records = parse_page(panel_html(body), "https://example.test", "musica")
+        assert records[0]["venue_url"] is None
+
+    @pytest.mark.parametrize("site", GOOD_VENUE_SITES)
+    def test_venue_sites_are_accepted_and_normalized(self, site):
+        body = f'Sala X&nbsp <a href="  {site}  ">sitio</a>'
+        records = parse_page(panel_html(body), "https://example.test", "musica")
+        assert records[0]["venue_url"] == site
+
+    def test_scheme_is_kept_as_the_panel_has_it(self):
+        # Normalizing strips the panel's padding, it never rewrites http to https.
+        body = 'Sala X&nbsp <a href="  https://bendu.com.ar  ">sitio</a>'
+        records = parse_page(panel_html(body), "https://example.test", "musica")
+        assert records[0]["venue_url"] == "https://bendu.com.ar"
 
     def test_relative_and_non_http_hrefs_are_ignored(self):
         body = (
