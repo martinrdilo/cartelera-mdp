@@ -31,6 +31,9 @@ Cierra la deuda detectada al auditar el sitio: links rotos, filtros y saneamient
 | T7a | S7 | Venues sin resolver (587/601) y 6 duplicados probados | `8028d59` |
 | T7b | S7 | Join cross-source de título de un token contra cartel completo | `5f45880` |
 | T8 | — | Defectos de la verificación independiente (link duplicado, campo muerto, gate de esquema, doc) | `c7f5f47` |
+| T9 | S6 | Validar el sitio de la sala: 7 de 23 URLs capturadas eran basura (emails, handle, esquema suelto, `.gov.ar` municipal) | `7ab624a` |
+| T10 | S7 | Un slug compartido exige una noche compartida: el join cruzaba fechas (Club TRI 22/11 vs 19/12) | `41aa77d` |
+| T11 | — | Refresh del snapshot desde el pipeline real | `2b7e05f` |
 
 T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `build_site.py` en un solo árbol: separarlos exigía staging por hunks. Slice resultante: 1.326 líneas sobre `feat/mejoras-agenda` en 6 commits, por encima de la guía de ~400 por slice; el límite se registra acá y la forma de entrega (un PR o slices encadenados) se decide al publicar.
 
@@ -49,3 +52,7 @@ T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `buil
 **L6.** Verificación independiente (`gentle-ai-verify`) sobre el branch: S1, S2, S3 (navegador real), S4, S5 y S7 en PASS; S6 marcado FAIL por discrepancia entre el texto del spec («usarlo como link de Fuente») y la forma aprobada (línea propia `Sala:`). Se mantiene la forma aprobada: el sitio de la sala no debe disfrazarse de procedencia. La verificación también detectó cuatro defectos, corregidos en `c7f5f47`: link de Fuente duplicando el CTA en 119 filas, campo `has_ticket` muerto en el payload, `is_event_page` aceptando `ftp://` y raíz con query, y números desactualizados en `docs/fuentes.md`. Suite tras el fix: **692 pasan, 1 falla** (la previa).
 
 **L7.** Deuda que sólo se cierra con una corrida real del pipeline: `venue_url` no existe en el snapshot, y los 6 merges de dedupe no se ven en el sitio porque `data/events_deduped.json` es salida del pipeline. Se lanzó `run_pipeline.py` para materializarlos.
+
+**L8.** Corrida real (2026-11-22T14:37Z, 224 s, 16 fuentes): 595 filas, 572/595 venues resueltos (antes 511/601), 23 `venue_url` capturados, 424 con link de compra, 121 clusters / 347 únicos. Destapó dos defectos que no se vean en el snapshot viejo: (a) 7 de los 23 sitios de sala eran basura — emails, un handle de Instagram, `https:` suelto y la variante `.gov.ar` del municipio; (b) el join por slug de ticketera cruzaba fechas y unió las funciones del 22/11 y 19/12 de Club TRI. Ambos corregidos en `7ab624a` y `41aa77d`; `data/events_deduped.json` se regeneró offline con `cluster_events` (sin red) y el snapshot se commiteó en `2b7e05f`. Suite: **727 pasan, 1 falla** (la previa).
+
+**L9.** Review nativo bloqueado: la lineage `review-598e18e97ed230f0` (target `sha256:4b20bf…`) no puede correr porque `review-risk` no tiene modelo asignado en `~/.gentle-shell/config/gentle-ai/models.json`. Requiere config del usuario; después hay que arrancar un review nuevo porque el HEAD avanzó a `2b7e05f`.
