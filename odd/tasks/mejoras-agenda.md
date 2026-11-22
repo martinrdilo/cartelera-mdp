@@ -36,6 +36,12 @@ T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `buil
 
 ## Log
 
+**L1.** «arregla todo. Los 7 puntos»
+
+**L2.** Alcance aprobado, definido en el mensaje anterior: 1) mapear los 6 hosts; 2) recuperar los links de Colón; 3) filtro «solo con entrada online»; 4) sanear fechas imposibles; 5) `display_title` para municipal y colón; 6) capturar el sitio de la sala; 7) deuda de dedupe y venues.
+
+**L3.** Restricciones del usuario que estas tareas deben respetar: «Necesito que nos aporte el link directamente del evento o de la compra de la entrada si es que tiene»; «los links se note mas que es un link»; «Lo que me hace ruido es poner eventos que no tengan link de compra y no tengan link de donde se anuncia»; «Los que mas me interesarian dejar son los municipales».
+
 **L4.** Verificación final (2026-11-21): suite **689 pasan, 1 falla** (la previa dependiente del calendario, `test_known_ticket_url_is_linked`). Build `--today 2026-11-21`: 285 filas, 216 con entrada online, 7 links a `colonprogramacion`, ningún título con 2029. En navegador: el chip «Solo con entrada online 216» filtra 44 → 33 filas del finde, deja 0 filas sin entrada visibles, `aria-pressed="true"` y el contador acompañando.
 
 **L5.** Deuda declarada que no se tocó: 14 filas siguen sin venue resuelto (productoras, zonas, ruta suelta, artista en el campo de sala); 8 duplicados probados quedaron sin unir, cada uno con su blocker escrito en el handoff de T7.
@@ -43,11 +49,3 @@ T2 a T6 comparten commit porque los tres writers trabajaron sobre el mismo `buil
 **L6.** Verificación independiente (`gentle-ai-verify`) sobre el branch: S1, S2, S3 (navegador real), S4, S5 y S7 en PASS; S6 marcado FAIL por discrepancia entre el texto del spec («usarlo como link de Fuente») y la forma aprobada (línea propia `Sala:`). Se mantiene la forma aprobada: el sitio de la sala no debe disfrazarse de procedencia. La verificación también detectó cuatro defectos, corregidos en `c7f5f47`: link de Fuente duplicando el CTA en 119 filas, campo `has_ticket` muerto en el payload, `is_event_page` aceptando `ftp://` y raíz con query, y números desactualizados en `docs/fuentes.md`. Suite tras el fix: **692 pasan, 1 falla** (la previa).
 
 **L7.** Deuda que sólo se cierra con una corrida real del pipeline: `venue_url` no existe en el snapshot, y los 6 merges de dedupe no se ven en el sitio porque `data/events_deduped.json` es salida del pipeline. Se lanzó `run_pipeline.py` para materializarlos.
-
-
-
-**L1.** «arregla todo. Los 7 puntos»
-
-**L2.** Alcance aprobado, definido en el mensaje anterior: 1) mapear los 6 hosts; 2) recuperar los links de Colón; 3) filtro «solo con entrada online»; 4) sanear fechas imposibles; 5) `display_title` para municipal y colón; 6) capturar el sitio de la sala; 7) deuda de dedupe y venues.
-
-**L3.** Restricciones del usuario que estas tareas deben respetar: «Necesito que nos aporte el link directamente del evento o de la compra de la entrada si es que tiene»; «los links se note mas que es un link»; «Lo que me hace ruido es poner eventos que no tengan link de compra y no tengan link de donde se anuncia»; «Los que mas me interesarian dejar son los municipales».
