@@ -581,3 +581,120 @@ class TestOla5Buckets:
         vinmusic = make_event("punto", "Vinmusic MDQ - Sparkling Session", "Arena Mardel Plata", "2026-12-05", event_id="p2")
         assert cluster_events([nineties, vinmusic]) == []
 
+
+class TestSlugDateCompatibility:
+    """A shared ticket page joins one night, never two.
+
+    The wave-3 slug join is deliberately cross-venue (one source often fills
+    the venue field with the event name), so the slug alone has to carry the
+    evidence. Sellers reuse one ticket page for every function of a show: the
+    Club TRI page serves the 22/11 and the 19/12 Cumbia Grande nights, which
+    are two events, and dedupe merged them across dates until this rule.
+    """
+
+    def test_shared_slug_on_two_different_nights_stays_split(self):
+        # Real pair from the refreshed snapshot: Articket lists CUMBIA GRANDE
+        # on 19/12 and elevenflow on 22/11 under the same ticket page.
+        articket = make_event(
+            "articket",
+            "CUMBIA GRANDE EN EL TRI",
+            "Club TRI",
+            "2026-12-19",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/CUMBIA-GRANDE-EN-EL-TRI/",
+        )
+        elevenflow = make_event(
+            "elevenflow",
+            "CUMBIA GRANDE EN EL TRI",
+            "Club TRI",
+            "2026-11-22",
+            event_id="cumbia-grande-en-el-tri-20261122-7d9i",
+            occurrences=["2026-11-22"],
+            ticket_url="https://articket.com.ar/CUMBIA-GRANDE-EN-EL-TRI",
+        )
+
+        assert cluster_events([articket, elevenflow]) == []
+
+    def test_shared_slug_on_the_same_night_joins(self):
+        # The same two rows on the night both sources published.
+        articket = make_event(
+            "articket",
+            "CUMBIA GRANDE EN EL TRI",
+            "Club TRI",
+            "2026-12-19",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/CUMBIA-GRANDE-EN-EL-TRI/",
+        )
+        elevenflow = make_event(
+            "elevenflow",
+            "CUMBIA GRANDE EN EL TRI",
+            "Club TRI",
+            "2026-12-19",
+            event_id="cumbia-grande-en-el-tri-20261219-7d9i",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/CUMBIA-GRANDE-EN-EL-TRI",
+        )
+
+        clusters = cluster_events([articket, elevenflow])
+
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+        assert clusters[0]["pairs"][0]["kind"] == "ticket_slug"
+        assert clusters[0]["dates"] == ["2026-12-19"]
+
+    def test_shared_slug_still_joins_across_venues_on_one_night(self):
+        # The wave-3 case the slug join exists for: Ticketek 22/01 has Punto
+        # naming the hall (Bendu Arena) and elevenflow putting the event name
+        # in the venue field. One ticket page, one event, two venue spellings.
+        punto = make_event(
+            "punto",
+            "El Plan de la Mariposa",
+            "Bendu Arena",
+            "2027-01-22",
+            event_id="20461",
+            occurrences=["2027-01-22"],
+            ticket_url="https://www.ticketek.com.ar/el-plan-de-la-mariposa",
+        )
+        elevenflow = make_event(
+            "elevenflow",
+            "El Plan De La Mariposa",
+            "El Plan de la Mariposa",
+            "2027-01-22",
+            event_id="avif-20270122-1nyw",
+            occurrences=["2027-01-22"],
+            ticket_url="https://www.ticketek.com.ar/el-plan-de-la-mariposa/bendu-arena",
+        )
+
+        clusters = cluster_events([punto, elevenflow])
+
+        assert len(clusters) == 1
+        assert {event["source"] for event in clusters[0]["events"]} == {"punto", "elevenflow"}
+        assert clusters[0]["pairs"][0]["kind"] == "ticket_slug"
+
+    def test_unknown_session_dates_keep_the_slug_join(self):
+        # Punto's row for Tan Bionica has no recurrence info: its start date
+        # is the 21/11 and Articket lists the 22/11 function on the same page.
+        # An unknown date set on either side leaves the slug as the evidence.
+        articket = make_event(
+            "articket",
+            "TAN BIONICA EN MAR DEL PLATA 22-11",
+            "Polideportivo Islas Malvinas",
+            "2026-11-22",
+            occurrences=["2026-11-22"],
+            ticket_url="https://articket.com.ar/TAN-BIONICA-EN-MAR-DEL-PLATA-22-11/",
+        )
+        punto = make_event(
+            "punto",
+            "Tan Bionica llega a Mar del Plata",
+            "Estadio Polideportivo Islas Malvinas",
+            "2026-11-21",
+            event_id="19994",
+            occurrences=[],
+            ticket_url="https://articket.com.ar/TAN-BIONICA-EN-MAR-DEL-PLATA-22-11/",
+        )
+
+        clusters = cluster_events([articket, punto])
+
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "ticket_slug"
+

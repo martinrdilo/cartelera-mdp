@@ -255,6 +255,75 @@ def test_duplicate_slug_across_clusters_is_an_error():
     assert "duplicates.slug_across_clusters" in refs(findings, "error")
 
 
+def test_slug_across_clusters_on_disjoint_dates_is_not_an_error():
+    # Sellers reuse one ticket page for every function of a show: Club TRI's
+    # Cumbia Grande page served the 19/12 and the 22/11 night. Dedupe splits
+    # them on purpose, so the verifier must not call that a missed join.
+    first = make_event(
+        source="articket",
+        source_event_id="a1",
+        date_start="2026-12-19",
+        occurrences=["2026-12-19"],
+    )
+    second = make_event(
+        source="elevenflow",
+        source_event_id="e1",
+        ticket_url=first["ticket_url"],
+        date_start="2026-11-22",
+        occurrences=["2026-11-22"],
+    )
+    cluster_one = make_cluster(
+        first,
+        make_event(
+            source="clubtri",
+            source_event_id="c1",
+            ticket_url=None,
+            seller=None,
+            date_start="2026-12-19",
+            occurrences=["2026-12-19"],
+        ),
+    )
+    cluster_two = make_cluster(
+        second,
+        make_event(
+            source="punto",
+            source_event_id="p1",
+            ticket_url=None,
+            seller=None,
+            date_start="2026-11-22",
+            occurrences=["2026-11-22"],
+        ),
+    )
+    events = cluster_one["events"] + cluster_two["events"]
+    findings = duplicates.find_candidates(events, make_deduped(events, [cluster_one, cluster_two]))
+    assert "duplicates.slug_across_clusters" not in refs(findings, "error")
+
+
+def test_slug_across_clusters_on_a_shared_night_is_still_an_error():
+    # The same page, the same night, two clusters: a real missed join that the
+    # date excuse must not hide.
+    first = make_event(source="articket", source_event_id="a1")
+    second = make_event(
+        source="elevenflow",
+        source_event_id="e1",
+        ticket_url=first["ticket_url"],
+    )
+    other_night = make_event(
+        source="punto",
+        source_event_id="p2",
+        ticket_url=first["ticket_url"],
+        date_start="2026-11-21",
+        occurrences=["2026-11-21"],
+    )
+    cluster_one = make_cluster(first)
+    cluster_two = make_cluster(second, other_night)
+    events = cluster_one["events"] + cluster_two["events"]
+    findings = duplicates.find_candidates(events, make_deduped(events, [cluster_one, cluster_two]))
+    assert "duplicates.slug_across_clusters" in refs(findings, "error")
+    evidence = [f for f in findings if f.check == "duplicates.slug_across_clusters"][0].evidence
+    assert evidence["refs"] == ["articket:a1", "elevenflow:e1"]
+
+
 def test_similar_titles_same_venue_and_date_are_candidates():
     first = make_event(source="municipal", source_event_id="m1", title="Abel Pintos - Tour 2026")
     second = make_event(

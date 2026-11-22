@@ -6,7 +6,9 @@ Strategy:
 2. Date match: occurrence sets must intersect; when either side has no
    known occurrences (range without recurrence info, parse failure), fall
    back to start-date equality.
-3. Exact join: same ticket slug (host + slug) on both sides wins outright.
+3. Exact join: same ticket slug (host + slug) on both sides, when the known
+   session sets intersect or one side has none (sellers reuse one page for
+   every function of a show).
 4. Fuzzy fallback: rapidfuzz token_set_ratio over normalized titles,
    threshold ~85 (tuned against the live corpus; see REPORT.md).
 
@@ -256,6 +258,22 @@ def _dates_match(event_a, event_b):
     return bool(event_a.date_start) and event_a.date_start == event_b.date_start
 
 
+def _slug_dates_compatible(event_a, event_b):
+    """A shared ticket page joins one night, so known sessions must intersect.
+
+    Sellers keep one slug for every function of a show
+    ("cumbia-grande-en-el-tri" serves both the 22/11 and the 19/12 night at
+    Club TRI), so the slug alone is not proof of one event. When either side
+    carries no session list the slug stays the only evidence and the pair
+    joins.
+    """
+    occurrences_a = set(event_a.occurrences or [])
+    occurrences_b = set(event_b.occurrences or [])
+    if occurrences_a and occurrences_b:
+        return bool(occurrences_a & occurrences_b)
+    return True
+
+
 def _display_venue(event):
     """Registry display name when resolvable, else the source's own name."""
     raw = event.venue_name or event.venue_raw
@@ -316,7 +334,7 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
 
     Venue groups gate title matching, but a shared ticket slug joins events
     across venues: the same ticket page is the same event even when one source
-    publishes the wrong venue.
+    publishes the wrong venue. The slug still has to name a shared session.
 
     Each cluster: {"venue": canonical id or normalized name,
     "venue_name": display name, "dates": known session dates (union of the
@@ -431,18 +449,30 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
 
     pairs = []
 
-    # Cross-venue slug edges: a shared ticket page is the same event.
+    # Cross-venue slug edges: a shared ticket page is the same event when both
+    # sides name a shared session. Sellers reuse the page for every night of a
+    # show, so the date gate applies here too.
     by_slug = {}
     for index, event in indexed:
         slug = extract_slug(event.ticket_url)
         if slug:
             by_slug.setdefault(slug, []).append(index)
     for slug, positions in by_slug.items():
-        for other in positions[1:]:
-            union(positions[0], other)
+        for offset, other in enumerate(positions[1:], start=1):
+            anchor = next(
+                (
+                    candidate
+                    for candidate in positions[:offset]
+                    if _slug_dates_compatible(indexed[candidate][1], indexed[other][1])
+                ),
+                None,
+            )
+            if anchor is None:
+                continue
+            union(anchor, other)
             pairs.append(
                 {
-                    "a": _event_ref(indexed[positions[0]][1]),
+                    "a": _event_ref(indexed[anchor][1]),
                     "b": _event_ref(indexed[other][1]),
                     "kind": "ticket_slug",
                     "score": 100.0,
