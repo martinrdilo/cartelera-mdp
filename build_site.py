@@ -277,11 +277,12 @@ LISTING_URL_PATTERNS = (
     "/colonprogramacion",
 )
 
-# Each marker is a substring of the URL. A marker that ends on a path boundary
-# is recorded with the trailing slash or without it, and the recorded URL may
-# put a query string or a fragment right after it, so the slash is not part of
-# the comparison: trimming it here makes every entry -- including one added
-# later and written with the slash -- reject all of those spellings.
+# Each marker is a substring of the URL without its query string or fragment:
+# a host ("api.venti.live") or a path ("resultados-eventos.asp"). A marker that
+# ends on a path boundary is recorded with the trailing slash or without it, and
+# the path may put a query string or a fragment right after it, so the slash is
+# not part of the comparison: trimming it here makes every entry -- including
+# one added later and written with the slash -- reject all of those spellings.
 _LISTING_MARKERS = tuple(marker.rstrip("/") for marker in LISTING_URL_PATTERNS)
 
 # The one listing that still opens the events it sources: Colón publishes the
@@ -289,6 +290,16 @@ _LISTING_MARKERS = tuple(marker.rstrip("/") for marker in LISTING_URL_PATTERNS)
 # exact host+path, so every other /colonprogramacion URL stays a listing.
 COLON_PROGRAM_HOST = "mardelplata.gob.ar"
 COLON_PROGRAM_PATH = "/colonprogramacion"
+
+
+def _listing_target(parsed) -> str:
+    """The URL without its query string or fragment, as host+path.
+
+    The markers name a host or a path, never a query parameter, so a ficha that
+    merely carries the marker in its query -- a redirect or ref parameter, for
+    example -- stays an event page instead of losing its "Fuente" link.
+    """
+    return parsed.netloc + parsed.path
 
 
 def _is_colon_program_page(parsed) -> bool:
@@ -314,7 +325,8 @@ def is_event_page(url) -> bool:
         return False
     if _is_colon_program_page(parsed):
         return True
-    return not any(marker in url for marker in _LISTING_MARKERS)
+    target = _listing_target(parsed)
+    return not any(marker in target for marker in _LISTING_MARKERS)
 
 
 def is_event_url(url: str | None) -> bool:

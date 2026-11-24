@@ -57,16 +57,17 @@ def _same_cluster(first: str, second: str, cluster_of: dict[str, int]) -> bool:
     return index is not None and index == cluster_of.get(second)
 
 
-def _dates_compatible(first_row, second_row) -> bool:
-    """Whether two rows on one ticket slug can be the same event.
+def _rows_compatible_by_known_dates(first_row, second_row) -> bool:
+    """Whether two snapshot rows on one ticket slug can be the same event.
 
-    `lib.dedupe._slug_dates_compatible` is the only decision: known sessions
-    must intersect, and a side without any joins. The verifier adds one input
-    step before asking — `_with_known_dates` fills a missing session list from
+    It takes the two rows as the verifier loads them, applies
+    `_with_known_dates` to each one — filling a missing session list from
     `date_start`, because a row can lag the detail page that populates
-    `occurrences` — so the verifier can rule out a night the pipeline still
-    sees as unknown, and confirm one it cannot. The fallback is that step, not
-    a second copy of the rule.
+    `occurrences` — and only then asks `lib.dedupe._slug_dates_compatible`,
+    the single decision: known sessions must intersect, and a side without any
+    joins. That input step lets the verifier rule out a night the pipeline
+    still sees as unknown, and confirm one it cannot; it is not a second copy
+    of the rule.
     """
     return dedupe._slug_dates_compatible(
         _with_known_dates(first_row), _with_known_dates(second_row)
@@ -99,7 +100,7 @@ def _slug_findings(events, cluster_of) -> list[Finding]:
                 if any(
                     cluster_of.get(reference, f"unclustered:{reference}")
                     != cluster_of.get(other, f"unclustered:{other}")
-                    and _dates_compatible(row, other_row)
+                    and _rows_compatible_by_known_dates(row, other_row)
                     for other, other_row in rows.items()
                     if other != reference
                 )
