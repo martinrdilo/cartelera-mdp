@@ -8,8 +8,12 @@ shared session, or same venue and session with near-identical titles).
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import replace
 
-from lib.dedupe import extract_slug, series_prefix_conflict, title_similarity
+# Module handle for the rule lib.dedupe owns: the verifier looks it up by name
+# at call time instead of binding a copy, so a change there reaches both paths.
+from lib import dedupe
+from lib.dedupe import extract_slug, occurrences_of, series_prefix_conflict, title_similarity
 from lib.schema import Event
 from lib.venues import venue_key
 
@@ -18,11 +22,26 @@ from .core import Finding, event_dict, event_ref
 DEFAULT_THRESHOLD = 85
 
 
+def _as_event(row) -> Event:
+    return Event(**{field: row.get(field) for field in Event.__dataclass_fields__})
+
+
 def _dates(row) -> set[str]:
-    values = list(row.get("occurrences") or [])
-    if not values and row.get("date_start"):
-        values = [row.get("date_start")]
-    return {value for value in values if isinstance(value, str)}
+    """Known sessions for the row, with the verifier's `date_start` fallback.
+
+    A snapshot row may publish no session list at all, and its start date is
+    then the one session the verifier can reason about. The fallback itself is
+    `lib.dedupe.occurrences_of`, so it is not restated here.
+    """
+    return {value for value in occurrences_of(_as_event(row)) if isinstance(value, str)}
+
+
+def _with_known_dates(row) -> Event:
+    """The row as an Event whose session list carries `_dates`."""
+    event = _as_event(row)
+    if event.occurrences:
+        return event
+    return replace(event, occurrences=sorted(_dates(row)))
 
 
 def _cluster_index(deduped) -> dict[str, int]:
@@ -38,19 +57,20 @@ def _same_cluster(first: str, second: str, cluster_of: dict[str, int]) -> bool:
     return index is not None and index == cluster_of.get(second)
 
 
-def _as_event(row) -> Event:
-    return Event(**{field: row.get(field) for field in Event.__dataclass_fields__})
+def _dates_compatible(first_row, second_row) -> bool:
+    """Whether two rows on one ticket slug can be the same event.
 
-
-def _dates_compatible(first: set[str], second: set[str]) -> bool:
-    """Known date sets must intersect; an unknown set joins either way.
-
-    Same rule lib.dedupe applies to a shared ticket slug: one page can serve
-    every function of a show.
+    `lib.dedupe._slug_dates_compatible` is the only decision: known sessions
+    must intersect, and a side without any joins. The verifier adds one input
+    step before asking — `_with_known_dates` fills a missing session list from
+    `date_start`, because a row can lag the detail page that populates
+    `occurrences` — so the verifier can rule out a night the pipeline still
+    sees as unknown, and confirm one it cannot. The fallback is that step, not
+    a second copy of the rule.
     """
-    if first and second:
-        return bool(first & second)
-    return True
+    return dedupe._slug_dates_compatible(
+        _with_known_dates(first_row), _with_known_dates(second_row)
+    )
 
 
 def _slug_findings(events, cluster_of) -> list[Finding]:
@@ -79,7 +99,7 @@ def _slug_findings(events, cluster_of) -> list[Finding]:
                 if any(
                     cluster_of.get(reference, f"unclustered:{reference}")
                     != cluster_of.get(other, f"unclustered:{other}")
-                    and _dates_compatible(_dates(row), _dates(other_row))
+                    and _dates_compatible(row, other_row)
                     for other, other_row in rows.items()
                     if other != reference
                 )
