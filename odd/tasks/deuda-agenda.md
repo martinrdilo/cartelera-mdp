@@ -62,6 +62,14 @@ Quedan 12 filas sin resolver, con criterio escrito en los tests: `Playa Chapadma
 
 **L9.** T7 (2026-11-24): el cliente ya no depende duro de `filter.js`. `app.js:133-149` sondea `filterReady`; sin módulo, `matches()` e `inView()` devuelven `true`, así que el render no tira y la página degrada a «sin filtrado del cliente» sin copiar ninguna regla. Los tests **ejecutan** `app.js` bajo Node con un stub de DOM, con y sin el módulo, y afirman estado renderizado: sin módulo, 3 filas visibles, contador «3 eventos», badges «3», sin error de init; con módulo, el toggle sigue recortando a 1. RED 3 fallas / GREEN 17.
 
+**L10.** Corrección post-review (2026-11-24), después del intento `review-63730b341d30220e`, que escaló sin recibo por causalidad desconocida en R3-002:
+
+- **R4-002 (defecto real, mío).** `_venue_stats` contaba como resuelto un venue inferido del título sin escribirlo en el evento: el reporte decía 559 resueltos mientras el snapshot seguía sin sala en esas filas. Ahora `run_pipeline._materialise_venues()` escribe el nombre del registro en el evento antes de `cluster_events`, y el contador lee sólo los campos del evento. Diferencial: 3 filas ganan `Mute Club de Mar`; 556/569 por campo → 559/569 tras materializar, igual al conteo de la regla completa. Efecto declarado: dos clusters existentes ganan un miembro, porque la puerta de venue del dedupe ahora ve la sala de esas filas.
+- **R3-003.** El guard `series_prefix_conflict` vuelve a la versión base (sin `_SERIES_MARKERS`): un prefijo compartido sin marcador no es evidencia por sí solo. Consecuencia: el bucket `teatro-auditorium` vuelve a **rechazado**; el diferencial muestra 116 → 115 clusters y sólo ese bucket cambia.
+- **R2-002.** El docstring de `_concatenated_title_match` declara que la regla es simétrica.
+
+RED 5 fallas / GREEN 136 en `tests/test_dedupe.py` + `tests/test_venues.py`.
+
 ## Log
 
 **L1.** «dale vamos con todo»
@@ -82,7 +90,7 @@ Quedan 12 filas sin resolver, con criterio escrito en los tests: `Playa Chapadma
 | `brew-house` | unido | «NOCHE RASTONE» contra «¡FIESTA EN MAR DEL RASTONE!», misma sala, fecha y 20:00. `_wrapper_title_match` (`:229`). La función de 23:30 queda fuera. | `test_party_wrapper_title_joins_noche_rastone` + near-miss |
 | `sheraton-mar-del-plata` | **rechazado** | No es una noche repetida: son dos ediciones Venti con páginas de venta distintas (`vinmusic-mdq-sparkling-ii` codigo 20628 vs `vinmusic-mdq-aniversario-ii` codigo 20331). El join era falso positivo del prefijo `VINMUSIC MDQ`; `mdq` pasa a `_TITLE_STOPWORDS` (`:145`). | `test_two_vinmusic_editions_keep_their_own_rows` |
 | `stadium-la-normandina` | unido | «Fiesta La Nosti» contra «La Nosti - 5 aniversario», misma sala y fecha. | `test_municipal_fiesta_la_nosti_joins_the_anniversary_title` |
-| `teatro-auditorium` | unido | «Valentín Garvie Quinteto» contra «VALENTIN GARVIE QUINTETO FEAT HERNAN HECHT»: el prefijo compartido es el artista, no una serie. `series_prefix_conflict` ahora exige marcador de serie (`:308`). | `test_artist_name_prefix_is_not_a_festival_series` |
+| `teatro-auditorium` | **rechazado** | «Valentín Garvie Quinteto» contra «VALENTIN GARVIE QUINTETO FEAT HERNAN HECHT»: el prefijo compartido es el artista, pero el guard no puede distinguirlo de una serie sin marcador y abrir esa clase permitía unir entradas distintas. Ver L10. | `test_shared_artist_prefix_alone_does_not_join_two_descriptions` |
 | `el-argentino-bar` | **rechazado** | Mismo show de Cual Pinta dos veces (89.4 de similitud) pero sólo el gate same-source los separa; relajarlo uniría funciones distintas. Regla intacta. | `test_same_source_fuzzy_duplicate_stays_split_by_design` |
 | `la-carpa` | unido | La edición XMAS duplicada; el prefijo día+fecha sólo aceptaba `-`, así que el día de semana sobrevivía como token. `_TITLE_DATE_PREFIX_RE` acepta `.` y `/` (`:47`); el gate same-source no cambió. | `test_xmas_sinergia_rows_join_once_the_weekday_prefix_is_noise` |
 | `umano` | unido | `08 .01.2027` con espacio antes del punto no matcheaba `_DATE_TOKEN_RE` (`:98`). | `test_date_stamp_with_a_space_joins_the_lineup_title` |
