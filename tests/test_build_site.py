@@ -540,6 +540,30 @@ class TestTicketLinkSelection:
         details = build_site.render_row_details(event)
         assert "Fuente:</b> Municipal" in details
 
+    def test_listing_endpoint_without_the_trailing_slash_is_not_a_source(self):
+        # S3c: the marker pinned the trailing slash, so the same endpoint with
+        # a query string read as a ficha and became a "Fuente" link.
+        member = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/obtener_eventos?cantidad_eventos=500",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] is None
+        details = build_site.render_row_details(event)
+        assert "Fuente:</b> Articket" in details
+        assert "obtener_eventos" not in details
+        assert 'class="btn btn--source"' not in details
+        # PRESERVE: a real ficha is still the Fuente link.
+        ficha = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+            seller="Articket",
+        )
+        event = build_site.merge_members([ficha], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] == "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"
+        assert 'class="btn btn--source"' in build_site.render_row_details(event)
+
     def test_source_falling_back_to_the_buy_page_is_plain_text(self):
         # D1: when no ficha exists the source falls back to the member's own
         # ticket link. Linking it again next to the buy CTA would render two
@@ -930,6 +954,33 @@ def test_is_event_page_rejects_listings_and_endpoints():
     assert not build_site.is_event_page("https://api.venti.live/api/home/events?limit=100&page=1")
     assert not build_site.is_event_page("https://clubtri.com/")
     assert not build_site.is_event_page(None)
+
+
+def test_articket_endpoint_is_rejected_without_the_trailing_slash():
+    # S3c: "/obtener_eventos/" pinned the trailing slash, so the same endpoint
+    # with no slash, a query string or a fragment read as a ficha and could be
+    # published as "Fuente".
+    for spelling in (
+        "https://articket.com.ar/obtener_eventos",
+        "https://articket.com.ar/obtener_eventos?cantidad_eventos=500",
+        "https://articket.com.ar/obtener_eventos#cartelera",
+        "https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+    ):
+        assert not build_site.is_event_page(spelling), spelling
+    # PRESERVE: Articket publishes each ficha under its own path segment.
+    assert build_site.is_event_page("https://articket.com.ar/AN-ESPIL/")
+    assert build_site.is_event_page("https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/")
+
+
+@pytest.mark.parametrize("marker", build_site.LISTING_URL_PATTERNS)
+def test_every_listing_marker_rejects_its_trailing_slash_spellings(marker):
+    # S3c: the guard drops the marker's trailing slash before comparing, so
+    # every entry -- this one and any added later -- rejects the page with no
+    # slash, with the slash, with a query string and with a fragment.
+    segment = "/" + marker.strip("/")
+    for suffix in ("", "/", "?limit=100", "#eventos"):
+        url = f"https://example.com.ar{segment}{suffix}"
+        assert not build_site.is_event_page(url), url
 
 
 def test_is_event_page_requires_an_http_scheme_and_a_real_path():

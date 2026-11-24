@@ -2,6 +2,7 @@
 
 import pytest
 
+import lib.venues as venues
 from lib.venues import all_venues, normalize_name, resolve, venue_key
 
 
@@ -224,6 +225,244 @@ class TestResolve:
             "El Plan de la Mariposa",
         ):
             assert resolve(name) is None, name
+
+
+class TestEventVenue:
+    """Qué Hacemos publishes Dogma shows with no venue field at all and names
+    the room only in the title ("Max Styler en MUTE"). The fields stay
+    authoritative; the title is a venue statement only where it attributes the
+    show to a registered alias after "en"/"at"/"@". Cities, zones, bare
+    routes, brands and artist names carry no venue and stay unresolved.
+    """
+
+    def test_max_styler_at_mute_resolves_from_the_title(self):
+        assert venues.resolve_event(
+            title="Max Styler en MUTE", venue_name="", venue_raw=""
+        ) == ("mute-club-de-mar", "Mute Club de Mar")
+
+    def test_konstantin_sibold_at_mute_resolves_from_the_title(self):
+        # Dogma publishes this night with only the route as its address.
+        assert venues.resolve_event(
+            title="Konstantin Sibold en MUTE",
+            venue_name="",
+            venue_raw=", Ruta Provincial 11",
+        ) == ("mute-club-de-mar", "Mute Club de Mar")
+
+    def test_massano_and_kevin_de_vries_at_mute_resolves_from_the_title(self):
+        assert venues.resolve_event(
+            title="MASSANO & KEVIN DE VRIES at MUTE",
+            venue_name="",
+            venue_raw=", Ruta Provincial 11",
+        ) == ("mute-club-de-mar", "Mute Club de Mar")
+
+    def test_camelphat_row_keeps_the_bare_route_unresolved(self):
+        # Same night and room as the Bombo and Cual Pinta MUTE rows of the
+        # same show, but this row names no venue: the route alone is not
+        # evidence, and the artist name is not a place.
+        assert venues.resolve_event(
+            title="CAMELPHAT", venue_name="", venue_raw=", Ruta Provincial 11"
+        ) is None
+
+    def test_venue_fields_win_over_a_title_mention(self):
+        assert venues.resolve_event(
+            title="Tributo en Abbey Road",
+            venue_name="Brew House",
+            venue_raw="Brew House, Diag. Garibaldi 4830",
+        ) == ("brew-house", "Ciudad Cultural Brew House")
+
+    def test_unresolved_rows_of_the_snapshot_stay_unresolved(self):
+        # Every row S2 leaves unresolved, with its published fields.
+        rows = [
+            (
+                "Festival de la Plaza de la Naturaleza",
+                "Playa Chapadmalal",
+                "Playa Chapadmalal, Paseo Costanero Sur Presidente Illia 20",
+            ),
+            (
+                "ANTESALA 07 NAVIDAD PETER SWAREZ - FRAN OTERO - TOMY RAIZ",
+                "Antesala",
+                (
+                    "P.º Jesús de Galindez s/n, B7600 Mar del Plata,"
+                    " Provincia de Buenos Aires, Argentina"
+                ),
+            ),
+            (
+                "Sector Recreacionista Vikingo - Klan Venner",
+                "Festival Silvermare",
+                "Festival Silvermare, Armando Chulac 6635",
+            ),
+            (
+                "El Plan De La Mariposa",
+                "El Plan de la Mariposa",
+                "El Plan de la Mariposa, Av. de los Trabajadores 150",
+            ),
+            ("TERRIBLE DOMINGO - 22.11 - +18", "Mar del Plata", "Mar del Plata"),
+            (
+                "LA LLAMADA",
+                "Mar Del Plata",
+                "Mar Del Plata, Av. Pedro Luro 2335, Mar del Plata, Buenos Aires, Argentina",
+            ),
+            ("Argy", "Mar Del Plata", "Mar Del Plata, 2299-2399"),
+            ("LUN 11.1 - LADIES NIGHT (+18)", "MAR DEL PLATA", "MAR DEL PLATA"),
+            (
+                "MAKE ME FLY - OPEN AIR",
+                "Avenida Patricio Peralta Ramos",
+                "Avenida Patricio Peralta Ramos",
+            ),
+            ("Sunset Night - Nick Warren", "Playa Grande", "Playa Grande"),
+            ("Fiesta Bresh en Mar del Plata - 22 de Enero", "", ""),
+        ]
+        for title, venue_name, venue_raw in rows:
+            assert venues.resolve_event(
+                title=title, venue_name=venue_name, venue_raw=venue_raw
+            ) is None, title
+
+
+class TestRemainingVenueRows:
+    """The rows of the S2 snapshot that name a room and a street address but
+    had no registry entry. Each row keeps the exact published strings; the
+    expected value is the registry entry that now covers it.
+    """
+
+    def test_samsara_beach_on_ruta_provincial_11(self):
+        assert venues.resolve_event(
+            title="SAMSARA | Christmas Edition | Jueves 24 dic",
+            venue_name="SAMSARA BEACH",
+            venue_raw="SAMSARA BEACH, Ruta Provincial 11 4866, Mar del Plata",
+        ) == ("samsara-beach", "Samsara Beach")
+
+    def test_immc_on_chacabuco(self):
+        assert venues.resolve_event(
+            title="RODA DE SAMBA del Insti",
+            venue_name="IMMC",
+            venue_raw="IMMC, Chacabuco 3639, B7600HNM Mar del Plata, Provincia de Buenos Aires",
+        ) == ("immc", "IMMC")
+
+    def test_the_clap_on_jujuy(self):
+        # Cual Pinta publishes the sign in bold mathematical capitals.
+        assert venues.resolve_event(
+            title="FAUFER + BRANCO SIMON",
+            venue_name="𝐓𝐇𝐄 𝐂𝐋𝐀𝐏",
+            venue_raw=(
+                "𝐓𝐇𝐄 𝐂𝐋𝐀𝐏, Jujuy 1559, B7600DCE Mar del Plata,"
+                " Provincia de Buenos Aires"
+            ),
+        ) == ("the-clap", "The Clap")
+
+    def test_fisker_on_guemes(self):
+        assert venues.resolve_event(
+            title="Viernes de Cartas en Fisker",
+            venue_name="Fisker",
+            venue_raw=(
+                "Fisker, Martín Miguel de Güemes 4790, B7600 Mar del Plata,"
+                " Provincia de Buenos Aires"
+            ),
+        ) == ("fisker", "Fisker")
+
+    def test_lina_club_cultural_on_chacabuco(self):
+        assert venues.resolve_event(
+            title="Ciclo 'Ayer, hoy y siempre': Conversación sobre Yo, robot de Isaac Asimov",
+            venue_name="Lina Club Cultural",
+            venue_raw="Lina Club Cultural, Chacabuco 3591 Mar del Plata",
+        ) == ("lina-club-cultural", "Lina Club Cultural")
+
+    def test_fichin_bar_on_rawson(self):
+        assert venues.resolve_event(
+            title="KARAOKE",
+            venue_name="Fichin Bar",
+            venue_raw=(
+                "Fichin Bar, Rawson 2019, B7600 Mar del Plata,"
+                " Provincia de Buenos Aires"
+            ),
+        ) == ("fichin-bar", "Fichin Bar")
+
+    def test_club_de_foodies_on_lamadrid(self):
+        assert venues.resolve_event(
+            title="Tu Ruta - Show en Vivo",
+            venue_name="Club de Foodies",
+            venue_raw=(
+                "Club de Foodies, Lamadrid 2372, B7600EHF Mar del Plata,"
+                " Provincia de Buenos Aires"
+            ),
+        ) == ("club-de-foodies", "Club de Foodies")
+
+    def test_casino_central_de_mar_del_plata_is_the_registered_casino(self):
+        # Same hall as the existing aliases, spelled with the "de".
+        assert venues.resolve_event(
+            title="LA TM - MAR DEL PLATA",
+            venue_name="Casino Central de Mar del Plata",
+            venue_raw="Casino Central de Mar del Plata",
+        ) == ("casinos-de-la-provincia", "Casinos de la Provincia")
+        assert venues.resolve("Casino Central de Mar del Plata") == (
+            "casinos-de-la-provincia",
+            "Casinos de la Provincia",
+        )
+
+
+class TestPipelineVenueStats:
+    @staticmethod
+    def _event(title, venue_name="", venue_raw=""):
+        from lib.schema import Event
+
+        return Event(
+            source="quehacemos",
+            source_event_id="1",
+            title=title,
+            venue_name=venue_name,
+            venue_raw=venue_raw,
+            date_start="2027-01-10",
+            date_end="2027-01-10",
+            occurrences=["2027-01-10"],
+        )
+
+    def test_title_named_venue_is_materialised_into_the_event(self):
+        # The counter used to resolve the title again, so a row could be
+        # counted as resolved while the event itself carried no venue. The
+        # pipeline now writes the registry name into the event, and the
+        # counter reads only what the event carries.
+        from run_pipeline import _materialise_venues, _venue_stats
+
+        events = [
+            self._event("Max Styler en MUTE"),
+            self._event(
+                "SAMSARA | Christmas Edition | Jueves 24 dic",
+                "SAMSARA BEACH",
+                "SAMSARA BEACH, Ruta Provincial 11 4866, Mar del Plata",
+            ),
+            self._event("CAMELPHAT", "", ", Ruta Provincial 11"),
+        ]
+
+        _materialise_venues(events)
+
+        assert events[0].venue_name == "Mute Club de Mar"
+        # A source that already names a resolvable venue keeps its own string.
+        assert events[1].venue_name == "SAMSARA BEACH"
+        # Nothing is invented from a route: the row stays unresolved.
+        assert events[2].venue_name == ""
+        assert _venue_stats(events) == {"resolved": 2, "unknown": 1}
+
+    def test_title_only_row_ends_with_the_venue_in_the_event(self):
+        from run_pipeline import _materialise_venues, _venue_stats
+
+        event = self._event("Max Styler en MUTE")
+
+        _materialise_venues([event])
+
+        assert resolve(event.venue_name) == ("mute-club-de-mar", "Mute Club de Mar")
+        assert event.to_dict()["venue_name"] == "Mute Club de Mar"
+        assert _venue_stats([event]) == {"resolved": 1, "unknown": 0}
+
+    def test_counter_does_not_resolve_the_title_on_its_own(self):
+        # The count must describe the events, not a second independent
+        # inference: an unmaterialised row is unknown however its title reads.
+        from run_pipeline import _venue_stats
+
+        events = [
+            self._event("Max Styler en MUTE"),
+            self._event("CAMELPHAT", "", ", Ruta Provincial 11"),
+        ]
+
+        assert _venue_stats(events) == {"resolved": 0, "unknown": 2}
 
 
 class TestVenueKey:

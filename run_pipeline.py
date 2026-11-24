@@ -33,7 +33,7 @@ from collectors import (
     venti,
 )
 from lib.dedupe import cluster_events
-from lib.venues import resolve
+from lib.venues import resolve, resolve_event
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -118,7 +118,36 @@ def _write_errors(errors, raw_dir, failed_at):
         )
 
 
+def _materialise_venues(events):
+    """Write the title-resolved venue into the event itself.
+
+    `resolve_event` accepts the title as venue evidence (a registered alias
+    after "en"/"at"/"@"), but the pipeline asked it only for the counter:
+    a row resolved from its title was reported as known while the event still
+    carried no venue, so the run report and the snapshot described different
+    objects and the dedupe venue gate saw an empty key. Filling `venue_name`
+    here makes both read the same field.
+
+    The registry-only rule holds: a title that names no registered room adds
+    nothing, and a source that already names a resolvable venue keeps its own
+    string. `venue_raw` is never rewritten, so the source's own value stays
+    recoverable.
+    """
+    for event in events:
+        if resolve(event.venue_name) or resolve(event.venue_raw):
+            continue
+        resolved = resolve_event(title=event.title)
+        if resolved:
+            event.venue_name = resolved[1]
+
+
 def _venue_stats(events):
+    """Count the venue each event carries, not a second inference from its title.
+
+    `_materialise_venues` runs before this, so the count and the published
+    events agree by construction: a row resolved from its title holds the
+    registry name in `venue_name`.
+    """
     resolved = sum(
         1 for event in events if resolve(event.venue_name) or resolve(event.venue_raw)
     )
@@ -143,6 +172,7 @@ def run(modules=MODULES, data_dir=DATA_DIR):
     raw_records = [record for records in raw_by_module.values() for record in records]
     events = [event for module_events in normalized_by_module.values() for event in module_events]
     enriched = muchticket.enrich_occurrences(events, raw_records)
+    _materialise_venues(events)
 
     raw_by_source = {}
     for name, records in raw_by_module.items():

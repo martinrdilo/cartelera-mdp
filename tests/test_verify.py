@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from lib import dedupe
 from lib.schema import Event
 from verify import cli, core, duplicates, rebuild, snapshot
 
@@ -322,6 +323,144 @@ def test_slug_across_clusters_on_a_shared_night_is_still_an_error():
     assert "duplicates.slug_across_clusters" in refs(findings, "error")
     evidence = [f for f in findings if f.check == "duplicates.slug_across_clusters"][0].evidence
     assert evidence["refs"] == ["articket:a1", "elevenflow:e1"]
+
+
+# The slug-date verdict belongs to lib.dedupe; the verifier may only add the
+# `date_start` fallback around it. Each case carries the verdict lib.dedupe
+# reaches on the rows as the pipeline sees them plus the verdict the verifier
+# must reach on the same rows, so the two cannot drift apart silently.
+DATE_RULE_CASES = [
+    # label, first (occurrences, date_start), second, verifier verdict, lib verdict
+    ("same_night", (["2026-11-20"], "2026-11-20"), (["2026-11-20"], "2026-11-20"), True, True),
+    (
+        "disjoint_nights",
+        (["2026-12-19"], "2026-12-19"),
+        (["2026-11-22"], "2026-11-22"),
+        False,
+        False,
+    ),
+    (
+        "shared_second_night",
+        (["2026-11-20", "2026-11-21"], "2026-11-20"),
+        (["2026-11-21"], "2026-11-21"),
+        True,
+        True,
+    ),
+    ("both_rows_without_sessions", ([], None), ([], None), True, True),
+    (
+        "one_row_without_sessions_or_start",
+        ([], None),
+        (["2026-11-21"], "2026-11-21"),
+        True,
+        True,
+    ),
+    (
+        "start_only_row_agrees_with_the_known_night",
+        ([], "2026-11-20"),
+        (["2026-11-20"], "2026-11-20"),
+        True,
+        True,
+    ),
+    # The fallback's own cases: a start-date-only row still rules out, or
+    # confirms, a night the pipeline can only call unknown.
+    (
+        "start_only_row_contradicts_the_known_night",
+        ([], "2026-11-20"),
+        (["2026-11-21"], "2026-11-21"),
+        False,
+        True,
+    ),
+    ("start_only_rows_agree", ([], "2026-11-20"), ([], "2026-11-20"), True, True),
+    ("start_only_rows_disagree", ([], "2026-11-20"), ([], "2026-11-21"), False, True),
+    (
+        "start_only_row_against_an_unknown_row",
+        ([], "2026-11-20"),
+        ([], None),
+        True,
+        True,
+    ),
+]
+
+
+def as_pipeline_event(row):
+    """The row as lib.dedupe's rule sees it: sessions exactly as published."""
+    return Event(**{field: row.get(field) for field in EVENT_FIELDS})
+
+
+def slug_split_findings(first, second):
+    """The verifier's verdict on two clusters that share one ticket slug."""
+    events = [first, second]
+    clusters = [make_cluster(first), make_cluster(second)]
+    return refs(duplicates.find_candidates(events, make_deduped(events, clusters)))
+
+
+@pytest.mark.parametrize(
+    "first_dates,second_dates,verifier_verdict,lib_verdict",
+    [case[1:] for case in DATE_RULE_CASES],
+    ids=[case[0] for case in DATE_RULE_CASES],
+)
+def test_verifier_and_lib_dedupe_agree_on_the_slug_date_rule(
+    monkeypatch, first_dates, second_dates, verifier_verdict, lib_verdict
+):
+    first = make_event(
+        source="articket",
+        source_event_id="a1",
+        occurrences=list(first_dates[0]),
+        date_start=first_dates[1],
+    )
+    second = make_event(
+        source="elevenflow",
+        source_event_id="e1",
+        ticket_url=first["ticket_url"],
+        occurrences=list(second_dates[0]),
+        date_start=second_dates[1],
+        venue_name="Teatro Roxy",
+        venue_raw="Teatro Roxy, Buenos Aires 1200",
+    )
+    # lib.dedupe's own rule, on the rows as the pipeline publishes them.
+    assert (
+        dedupe._slug_dates_compatible(as_pipeline_event(first), as_pipeline_event(second))
+        is lib_verdict
+    )
+    # The verifier's path reaches the verdict documented for it.
+    found = "duplicates.slug_across_clusters" in slug_split_findings(first, second)
+    assert found is verifier_verdict
+    # One code path: flip lib.dedupe's rule and the verifier has to follow.
+    monkeypatch.setattr(dedupe, "_slug_dates_compatible", lambda *_: not verifier_verdict)
+    flipped = "duplicates.slug_across_clusters" in slug_split_findings(first, second)
+    assert flipped is (not verifier_verdict)
+
+
+def test_start_date_only_rows_keep_the_fallback_verdict():
+    # A row that publishes only its start date still carries one known
+    # session, so the verifier can tell two nights apart where the pipeline
+    # can only see an unknown side -- and can also confirm a shared night.
+    start_only = make_event(
+        source="articket",
+        source_event_id="a1",
+        occurrences=[],
+        date_start="2026-11-20",
+    )
+    other_night = make_event(
+        source="elevenflow",
+        source_event_id="e1",
+        ticket_url=start_only["ticket_url"],
+        occurrences=["2026-11-21"],
+        date_start="2026-11-21",
+        venue_name="Teatro Roxy",
+        venue_raw="Teatro Roxy, Buenos Aires 1200",
+    )
+    assert "duplicates.slug_across_clusters" not in slug_split_findings(start_only, other_night)
+    same_night = make_event(
+        source="elevenflow",
+        source_event_id="e1",
+        ticket_url=start_only["ticket_url"],
+        occurrences=["2026-11-20"],
+        date_start="2026-11-20",
+        venue_name="Teatro Roxy",
+        venue_raw="Teatro Roxy, Buenos Aires 1200",
+    )
+    assert "duplicates.slug_across_clusters" in slug_split_findings(start_only, same_night)
 
 
 def test_similar_titles_same_venue_and_date_are_candidates():

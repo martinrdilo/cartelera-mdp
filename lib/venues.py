@@ -8,6 +8,11 @@ across sources (`aliases`), plus the address when the corpus exposes it.
 2. fallback to the part before the first comma (raw strings embed addresses);
 3. `None` when the venue is unknown.
 
+`resolve_event()` applies that rule to an event: the venue fields first, then
+the title when it names the room after "en"/"at"/"@" ("Max Styler en MUTE").
+A city, a zone, a bare route, a brand or an artist name is not a venue, so
+such a title adds no evidence.
+
 Resolution is cached per raw string; the registry is loaded once per process.
 """
 
@@ -17,6 +22,9 @@ import unicodedata
 from pathlib import Path
 
 REGISTRY_PATH = Path(__file__).resolve().parents[1] / "data" / "venues.json"
+
+# A title names the room after one of these prepositions: "Max Styler en MUTE".
+_VENUE_PREPOSITION_RE = re.compile(r"(?:^|\s)(?:en|at|@)\s+(?=\S)", re.IGNORECASE)
 
 _registry = None
 _alias_index = None
@@ -72,3 +80,30 @@ def venue_key(raw):
     if resolved:
         return resolved[0]
     return normalize_name(raw)
+
+
+def _title_venue_mention(title):
+    """Return the phrase a title attributes the show to ("... en MUTE")."""
+    if not title:
+        return None
+    mention = None
+    for match in _VENUE_PREPOSITION_RE.finditer(title):
+        mention = title[match.end() :].strip()
+    return mention or None
+
+
+def resolve_event(title=None, venue_name=None, venue_raw=None):
+    """Return the `(id, name)` of the venue an event happens in, or None.
+
+    The published venue fields are authoritative. When they carry no venue --
+    blank, a city, a zone or a bare route -- the title is venue evidence only
+    where it names the room after "en"/"at"/"@" and that phrase matches a
+    registered alias exactly ("Max Styler en MUTE", "MASSANO & KEVIN DE VRIES
+    at MUTE"). Anything less stays unresolved: inventing a venue from a route,
+    a party brand or the artist name would mislabel the event.
+    """
+    for candidate in (venue_name, venue_raw):
+        resolved = resolve(candidate)
+        if resolved:
+            return resolved
+    return resolve(_title_venue_mention(title))

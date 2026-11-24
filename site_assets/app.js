@@ -131,15 +131,19 @@
   }
 
   /* The filter predicates live in filter.js, loaded before this script, so
-     the page and the Node tests run one rule. */
+     the page and the Node tests run one rule. If that asset is missing the
+     page degrades to no client-side filtering -- every row and every tab
+     stays visible and each count matches what is rendered -- instead of
+     throwing on first paint. */
   var Filter = window.CarteleraFilter;
+  var filterReady = Boolean(Filter);
 
   function matches(row) {
-    return Filter.matchesFilters(row, state);
+    return filterReady ? Filter.matchesFilters(row, state) : true;
   }
 
   function inView(row, view) {
-    return Filter.inView(row, view, data.windows);
+    return filterReady ? Filter.inView(row, view, data.windows) : true;
   }
 
   function activeFilters() {
