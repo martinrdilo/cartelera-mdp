@@ -272,10 +272,17 @@ def is_usable(value) -> bool:
 # longer carries the event. Ticketeras publish a JSON endpoint, not a page.
 LISTING_URL_PATTERNS = (
     "resultados-eventos.asp",
-    "/obtener_eventos/",
+    "/obtener_eventos",
     "api.venti.live",
     "/colonprogramacion",
 )
+
+# Each marker is a substring of the URL. A marker that ends on a path boundary
+# is recorded with the trailing slash or without it, and the recorded URL may
+# put a query string or a fragment right after it, so the slash is not part of
+# the comparison: trimming it here makes every entry -- including one added
+# later and written with the slash -- reject all of those spellings.
+_LISTING_MARKERS = tuple(marker.rstrip("/") for marker in LISTING_URL_PATTERNS)
 
 # The one listing that still opens the events it sources: Colón publishes the
 # whole temporada on a single page, not paginated by date. The exception is
@@ -307,7 +314,7 @@ def is_event_page(url) -> bool:
         return False
     if _is_colon_program_page(parsed):
         return True
-    return not any(pattern in url for pattern in LISTING_URL_PATTERNS)
+    return not any(marker in url for marker in _LISTING_MARKERS)
 
 
 def is_event_url(url: str | None) -> bool:
