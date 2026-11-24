@@ -743,3 +743,331 @@ class TestSlugDateCompatibility:
             shapes.add(tuple(sorted(len(cluster["events"]) for cluster in clusters)))
 
         assert len(shapes) == 1, shapes
+
+
+class TestDateNoise:
+    """Source date prefixes are noise; they must not leak into the title match."""
+
+    def test_weekday_before_a_dot_date_is_date_noise(self):
+        # Qué Hacemos prints "JUE 24.12 - <title>": the dot date is not in the
+        # prefix pattern, so the weekday used to survive as a title token.
+        assert strip_title_noise("JUE 24.12 - XMAS Sinergia x big family") == (
+            "XMAS Sinergia x big family"
+        )
+
+    def test_stamped_date_with_a_space_before_the_dot_is_date_noise(self):
+        # Qué Hacemos prints the Umano date stamp as "08 .01.2027".
+        assert strip_title_noise("Mariano Mellino 08 .01.2027") == "Mariano Mellino"
+
+
+class TestDeudaAgendaBuckets:
+    """The eight duplicate buckets of S1, each closed with its verdict.
+
+    A joined bucket carries the minimal evidence its rows support. A rejected
+    bucket keeps the guard that splits it and pins the two different events
+    that guard exists for, so a later cheap widening fails here.
+    """
+
+    def test_municipal_festival_joins_the_concatenated_articket_title(self):
+        # abbey-road 05/12: the municipal agenda prints the festival name on
+        # its own; Articket glues that name into one word and appends the bill.
+        municipal = make_event(
+            "municipal",
+            "Retropartuza Fest",
+            "Abbey Road - Concert Bar",
+            "2026-12-05",
+            time="21:00",
+        )
+        articket = make_event(
+            "articket",
+            "RETROPARTUZAFEST - CHARLY MORENO Y LOS CHIKILINES - CELE MARTINEZ Y DJ PASTOCCHI",
+            "Abbey Road",
+            "2026-12-05",
+            ticket_url="https://articket.com.ar/RETROPARTUZAFEST-CHARLY-MORENO-CELE-MARTINEZ-PASTOCCHI/",
+            time="21:00",
+        )
+
+        clusters = cluster_events([municipal, articket])
+
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+        assert clusters[0]["pairs"][0]["kind"] == "title_core"
+
+    def test_second_show_of_the_same_night_stays_out_of_the_party(self):
+        # brew-house 27/11 has two shows: the 20:00 party Rastone and
+        # SUPERMERK2 at 23:30. The glued-name and wrapper rules must not pull
+        # the late show into the party.
+        party = make_event(
+            "cualpinta",
+            "¡FIESTA EN MAR DEL RASTONE! 💚💛❤️ 🎸 50% RASTA, 50% STONE",
+            "Ciudad Cultural Brewhouse Puerto",
+            "2026-11-27",
+            time="20:00",
+        )
+        second_show = make_event(
+            "cultutickets",
+            "VIER 27 DE NOV SUPERMERK2",
+            "Ciudad Cultural Brew House",
+            "2026-11-27",
+            time="23:30",
+        )
+
+        assert cluster_events([party, second_show]) == []
+
+    def test_party_wrapper_title_joins_noche_rastone(self):
+        # brew-house 27/11: CultuTickets sells the 20:00 party as "NOCHE
+        # RASTONE"; Cual Pinta brands the same party with a wrapper and bill.
+        cultutickets = make_event(
+            "cultutickets",
+            "NOCHE RASTONE",
+            "Ciudad Cultural Brew House",
+            "2026-11-27",
+            ticket_url="https://cultutickets.com/NOCHE-RASTONE-/",
+            time="20:00",
+        )
+        cualpinta = make_event(
+            "cualpinta",
+            "¡FIESTA EN MAR DEL RASTONE! 💚💛❤️ 🎸 50% RASTA, 50% STONE",
+            "Ciudad Cultural Brewhouse Puerto",
+            "2026-11-27",
+            time="20:00",
+        )
+
+        clusters = cluster_events([cultutickets, cualpinta])
+
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "title_core"
+
+    def test_wrapper_word_alone_does_not_name_the_event(self):
+        # Two different 90s nights at one venue and date share only the
+        # wrapper and a three-character tag: a genre slot is not a name, so
+        # the wrapper rule needs a real name on both sides.
+        fiesta = make_event("municipal", "Fiesta 90s", "Club Uno", "2026-12-12")
+        noche = make_event("punto", "Noche 90s", "Club Uno", "2026-12-12", event_id="p2")
+
+        assert cluster_events([fiesta, noche]) == []
+
+    def test_municipal_fiesta_la_nosti_joins_the_anniversary_title(self):
+        # stadium-la-normandina 21/11: the municipal agenda prints the party's
+        # wrapper title, Venti prints the party plus its anniversary bill.
+        municipal = make_event(
+            "municipal",
+            "Fiesta La Nosti",
+            "Stadium (La Normandina)",
+            "2026-11-21",
+            venue_raw="Stadium (La Normandina), Paseo Victoria Ocampo 5050",
+        )
+        venti = make_event(
+            "venti",
+            "La Nosti - 5 aniversario-sábado 21/11",
+            "Stadium Complejo La Normandina",
+            "2026-11-21",
+            venue_raw=(
+                "Stadium Complejo La Normandina, Victoria Ocampo Complejo "
+                "La Normandina Loc. 4 Playa Grande, EAQ, Mar del Plata"
+            ),
+            ticket_url="https://venti.live/evento/la-nosti-5-aniversario-s-bado-21-11",
+        )
+
+        clusters = cluster_events([municipal, venti])
+
+        assert len(clusters) == 1
+        assert len(clusters[0]["events"]) == 2
+
+    def test_artist_name_prefix_is_not_a_festival_series(self):
+        # teatro-auditorium 05/12: one concert, two titles. The shared opening
+        # is the artist's name, not a festival prefix hiding two entries, so
+        # the series guard must not swallow the pair.
+        auditorium = make_event(
+            "auditorium",
+            "Valentín Garvie Quinteto llega al Teatro Auditorium con una propuesta de jazz contemporáneo",
+            "Teatro Auditorium",
+            "2026-12-05",
+            venue_raw="Sala Gregorio Nachman",
+            time="21:00",
+        )
+        quehacemos = make_event(
+            "quehacemos",
+            "VALENTIN GARVIE QUINTETO FEAT HERNAN HECHT",
+            "Auditorium",
+            "2026-12-05",
+            venue_raw=(
+                "Auditorium, Boulevard Maritimo Patricio Peralta Ramos 2280, "
+                "Mar del Plata, Buenos Aires, Argentina"
+            ),
+            ticket_url=(
+                "https://www.plateanet.com/obra/35972?obra="
+                "VALENTIN-GARVIE-QUINTETO-FEAT-HERNAN-HECHT"
+            ),
+        )
+
+        clusters = cluster_events([auditorium, quehacemos])
+
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "title_prefix"
+
+    def test_date_stamp_with_a_space_joins_the_lineup_title(self):
+        # umano 08/01: Qué Hacemos stamps the date as "08 .01.2027", with a
+        # space before the dot. The stamped copy is the act Venti lists.
+        venti = make_event(
+            "venti",
+            "UMN ELECTRONIK | Audioholics - Mariano Mellino | Vie 8 de Enero",
+            "UMANO",
+            "2027-01-08",
+            venue_raw="UMANO, Av. de los Trabajadores 6230, Mar del Plata",
+            ticket_url="https://venti.live/evento/umn-electronik-vie-8-de-enero",
+            time="23:00",
+        )
+        stamped = make_event(
+            "quehacemos",
+            "Mariano Mellino 08 .01.2027",
+            "UMN",
+            "2027-01-08",
+            venue_raw=(
+                "UMN, Av. de los Trabajadores 4044, B7600 Mar del Plata, "
+                "Provincia de Buenos Aires"
+            ),
+        )
+
+        clusters = cluster_events([venti, stamped])
+
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "title_fuzzy"
+        assert clusters[0]["pairs"][0]["score"] == 100.0
+
+    def test_xmas_sinergia_rows_join_once_the_weekday_prefix_is_noise(self):
+        # la-carpa 24/12: Qué Hacemos published the same Xmas edition twice;
+        # the date prefix "JUE 24.12" kept the older row from matching.
+        stamped = make_event(
+            "quehacemos",
+            "JUE 24.12 - XMAS Sinergia x big family",
+            "LA CARPA",
+            "2026-12-24",
+            ticket_url="https://www.passline.com/eventos/jue-2412-xmas-sinergia-x-big-family",
+        )
+        plain = make_event(
+            "quehacemos",
+            "XMAS EDITION - SINERGIA x BIG FAMILY",
+            "La Carpa Mar del Plata",
+            "2026-12-24",
+            event_id="quehacemos-xmas-edition",
+            ticket_url="https://getdogma.app/web/event/hgGIEFGD86tU",
+        )
+
+        clusters = cluster_events([stamped, plain])
+
+        assert len(clusters) == 1
+        assert clusters[0]["pairs"][0]["kind"] == "title_core"
+
+    def test_same_source_fuzzy_duplicate_stays_split_by_design(self):
+        # el-argentino-bar 20/11: Cual Pinta lists one 22:00 show twice under
+        # different titles. The same-source gate accepts only an exact or a
+        # core-contained title; a fuzzy join there would also merge two
+        # different screenings of one festival day, so this pair stays apart.
+        first = make_event(
+            "cualpinta",
+            "COMIDA CHINA Todo Calamaro",
+            "El Argentino Bar",
+            "2026-11-20",
+            event_id="comida-china-todo-calamaro",
+            time="22:00",
+        )
+        second = make_event(
+            "cualpinta",
+            "Comida China - Canciones de Calamaro",
+            "El Argentino Bar",
+            "2026-11-20",
+            event_id="comida-china-canciones-de-calamaro",
+            time="22:00",
+        )
+
+        assert cluster_events([first, second]) == []
+
+    def test_two_vinmusic_editions_keep_their_own_rows(self):
+        # sheraton 05/12: Venti sells two editions of the same hotel evening
+        # under two ticket pages (sparkling-ii and aniversario-ii) and Punto
+        # listed both. Punto's two titles are not one event: each edition
+        # keeps its own cluster and the Cheers rows join each other.
+        municipal = make_event(
+            "municipal",
+            "Vinmusic MDQ Cheers 2026",
+            "Sheraton Mar del Plata",
+            "2026-12-05",
+            event_id="47265",
+            time="18:00",
+        )
+        venti = make_event(
+            "venti",
+            "VINMUSIC MDQ -  SPARKLING SESSION",
+            "Sheraton Mar del Plata Hotel",
+            "2026-12-05",
+            event_id="10639",
+            venue_raw="Sheraton Mar del Plata Hotel, Leandro N. Alem 4221, Mar del Plata",
+            occurrences=["2026-12-05"],
+            ticket_url="https://venti.live/evento/vinmusic-mdq-sparkling-ii",
+            time="18:00",
+        )
+        punto_sparkling = make_event(
+            "punto",
+            "Vinmusic MDQ - Sparkling Session",
+            "Arena Mardel Plata",
+            "2026-12-05",
+            event_id="20628",
+            date_end="2026-12-06",
+            occurrences=[],
+            ticket_url="https://venti.live/evento/vinmusic-mdq-sparkling-ii",
+            time="18:00",
+        )
+        punto_cheers = make_event(
+            "punto",
+            "Vinmusic MDQ - Cheers 2026",
+            "Sheraton Mar del Plata Hotel",
+            "2026-12-05",
+            event_id="20331",
+            date_end="2026-12-06",
+            occurrences=[],
+            ticket_url="https://venti.live/evento/vinmusic-mdq-aniversario-ii",
+            time="18:00",
+        )
+        cualpinta = make_event(
+            "cualpinta",
+            "Sparkling Cheers con Franco Schmidt y Fede López",
+            "Sheraton Mar del Plata",
+            "2026-12-05",
+            event_id="sparkling-cheers-con-franco-schmidt-y-fede-lopez",
+            venue_raw=(
+                "Sheraton Mar del Plata, Leandro N. Alem 4221, B7600 Mar del "
+                "Plata, Provincia de Buenos Aires"
+            ),
+            occurrences=["2026-12-05"],
+            ticket_url="https://venti.live/evento/vinmusic-mdq-aniversario-ii",
+            time="18:00",
+        )
+        quehacemos = make_event(
+            "quehacemos",
+            "VINMUSIC MDQ - CHEERS 2026",
+            "Sheraton Mar del Plata Hotel",
+            "2026-12-05",
+            event_id="53815",
+            venue_raw="Sheraton Mar del Plata Hotel, Leandro N. Alem 4221, Mar del Plata",
+            occurrences=["2026-12-05"],
+            ticket_url="https://venti.com.ar/evento/vinmusic-mdq-aniversario-ii",
+        )
+
+        clusters = cluster_events(
+            [municipal, venti, punto_sparkling, punto_cheers, cualpinta, quehacemos]
+        )
+
+        members = sorted(
+            sorted(f"{event['source']}:{event['source_event_id']}" for event in cluster["events"])
+            for cluster in clusters
+        )
+        assert members == [
+            [
+                "cualpinta:sparkling-cheers-con-franco-schmidt-y-fede-lopez",
+                "municipal:47265",
+                "punto:20331",
+                "quehacemos:53815",
+            ],
+            ["punto:20628", "venti:10639"],
+        ]

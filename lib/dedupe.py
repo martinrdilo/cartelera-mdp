@@ -9,7 +9,9 @@ Strategy:
 3. Exact join: same ticket slug (host + slug) on both sides, when the known
    session sets intersect or one side has none (sellers reuse one page for
    every function of a show).
-4. Fuzzy fallback: rapidfuzz token_set_ratio over normalized titles,
+4. Title fallback: exact name evidence first (a title whose tokens spell one
+   token of the other, or the same name behind a wrapper noun such as
+   "Fiesta"/"Noche"), then rapidfuzz token_set_ratio over normalized titles,
    threshold ~85 (tuned against the live corpus; see REPORT.md).
 
 Returns clusters of >= 2 events with per-pair evidence.
@@ -39,15 +41,16 @@ TICKET_HOSTS = (
 DEFAULT_THRESHOLD = 85
 
 # CultuTickets embeds date and city prefixes in titles ("VIER 16 DE OKTUBRE
-# MDP UNA OBRA REDONDA"). They are stripped before title comparison so they
-# neither create nor block matches. Source titles stay untouched in output.
+# MDP UNA OBRA REDONDA"). Qué Hacemos prints its dates with dots after the
+# weekday ("JUE 24.12 - XMAS ..."). They are stripped before title comparison
+# so they neither create nor block matches. Source titles stay untouched.
 _WEEKDAY = r"(?:lun|mar|mi[eé]|jue|vie|s[aá]b|dom)[a-záéíóú]*\.?"
 _MONTH = r"(?:ene|feb|mar|abr|may|jun|jul|ago|sep|set|oct|okt|nov|dic)[a-záéíóú]*"
 _TITLE_DATE_PREFIX_RE = re.compile(
     rf"^(?:{_WEEKDAY}\s+)?"
-    rf"(?:\d{{1,2}}\s*-\s*\d{{1,2}}(?:\s*-\s*\d{{2,4}})?"
+    rf"(?:\d{{1,2}}\s*[./-]\s*\d{{1,2}}(?:\s*[./-]\s*\d{{2,4}})?"
     rf"|\d{{1,2}}\s+de\s+{_MONTH}(?:\s+\d{{4}})?"
-    rf"|\d{{1,2}}\s*-\s*{_MONTH}(?:\s*-\s*\d{{2,4}})?"
+    rf"|\d{{1,2}}\s*[./-]\s*{_MONTH}(?:\s*[./-]\s*\d{{2,4}})?"
     rf"|\d{{1,2}}\s+{_MONTH})"
     rf"(?:\s+(?:mdp|mar\s+del\s+plata)\b)?\s*[-–:]?\s*",
     re.IGNORECASE,
@@ -91,9 +94,12 @@ def extract_slug(url):
 
 
 # Standalone numeric date tokens ("22.10", "31/10", "16-10-2026") appear in
-# Bombo/Venti/Articket titles. Remove them anywhere in the title for matching;
-# the source title itself stays untouched in the output.
-_DATE_TOKEN_RE = re.compile(r"(?<!\d)\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?(?!\d)")
+# Bombo/Venti/Articket titles. Some sources put a space before the separator
+# ("Mariano Mellino 08 .01.2027"); the token still names the date. Remove it
+# anywhere in the title for matching; the source title itself stays untouched.
+_DATE_TOKEN_RE = re.compile(
+    r"(?<!\d)\d{1,2}\s*[./-]\s*\d{1,2}(?:\s*[./-]\s*\d{2,4})?(?!\d)"
+)
 # Spanish date phrases ("Colyn 21 noviembre 2026", "Solomun 2 enero 2027")
 # name the event's date, not a different show: strip them for matching.
 _SPANISH_MONTH = (
@@ -132,11 +138,13 @@ def title_similarity(title_a, title_b):
 
 # Connectors and venue words do not identify an event. Removing them lets
 # "Diego Torres - Mi Norte y Mi Sur" match "Diego Torres en Arena Mardel Plata"
-# once the venue+date gate already holds.
+# once the venue+date gate already holds. "mdq" is the city nickname, like
+# "mdp"/"mardel": two Vinmusic editions at one hotel share "VINMUSIC MDQ", so
+# the place must not become the evidence that names the show.
 _TITLE_STOPWORDS = {
     "a", "al", "and", "con", "de", "del", "el", "en", "la", "las", "lo",
     "los", "o", "para", "por", "presenta", "presentan", "the", "u", "un",
-    "una", "y", "vs", "mar", "plata", "mardel", "mdp",
+    "una", "y", "vs", "mar", "plata", "mardel", "mdp", "mdq",
 }
 
 
@@ -204,6 +212,61 @@ def _single_token_match(event_a, event_b):
     return round(float(score), 1) if score >= 90 else None
 
 
+# Wrapper nouns name the kind of night, not which one: the municipal agenda
+# lists a party by its own name ("Fiesta La Nosti") while the seller appends
+# the anniversary bill, and Cual Pinta brands the same party ("¡FIESTA EN MAR
+# DEL RASTONE! 50% RASTA, 50% STONE") that CultuTickets sells as "NOCHE
+# RASTONE".
+_NIGHT_WRAPPER_WORDS = {
+    "fiesta", "fiestas", "fieston", "noche", "noches", "show", "shows",
+    "party", "previa",
+}
+
+
+def _wrapper_title_match(event_a, event_b):
+    """One title is the other's own name behind a wrapper noun.
+
+    Only the shorter title may carry the wrapper and extra words: every name
+    token that survives the wrapper must appear literally in the other title,
+    and each one has to be a real name (four characters or more) so a genre
+    slot ("Noche 90s") is not mistaken for one.
+    """
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    if len(tokens_a) <= len(tokens_b):
+        short, longer = tokens_a, tokens_b
+    else:
+        short, longer = tokens_b, tokens_a
+    if not any(token in _NIGHT_WRAPPER_WORDS for token in short):
+        return None
+    name = [token for token in short if token not in _NIGHT_WRAPPER_WORDS]
+    if not name or len(name) > 3 or not all(len(token) >= 4 for token in name):
+        return None
+    if not all(token in longer for token in name):
+        return None
+    return 100.0
+
+
+def _concatenated_title_match(event_a, event_b):
+    """The shorter title's tokens spell one whole token of the other title.
+
+    Articket glues the festival name into a single word and appends the bill
+    ("RETROPARTUZAFEST - CHARLY MORENO Y LOS CHIKILINES"), so the municipal
+    title ("Retropartuza Fest") never matches token by token. The joined name
+    must be a whole token on the other side and at least eight characters, so
+    a short title cannot match a morpheme of an unrelated one.
+    """
+    tokens_a = _significant_tokens(event_a)
+    tokens_b = _significant_tokens(event_b)
+    for short, longer in ((tokens_a, tokens_b), (tokens_b, tokens_a)):
+        if len(short) < 2:
+            continue
+        joined = "".join(short)
+        if len(joined) >= 8 and joined in longer:
+            return 100.0
+    return None
+
+
 def _single_significant_token(event):
     """The only significant token when the title reduces to one ("Colyn")."""
     tokens = _significant_tokens(event)
@@ -212,14 +275,28 @@ def _single_significant_token(event):
     return None
 
 
+# A series publishes different entries under one shared prefix ("41° Festival
+# Internacional de Cine: <film>"). Only a prefix that names a series can hide
+# two entries, so the guard below checks for one of these markers instead of
+# treating every shared opening as a series.
+_SERIES_MARKERS = {
+    "festival", "festivales", "festivalito", "fest", "festi", "ciclo",
+    "ciclos", "muestra", "muestras", "encuentro", "encuentros", "temporada",
+    "temporadas", "programa", "programacion",
+}
+
+
 def series_prefix_conflict(event_a, event_b):
-    """True when two titles share a long series prefix but differ in the entry.
+    """True when two titles share a series prefix but differ in the entry.
 
     A film festival publishes every screening under the same prefix
     ("41° Festival Internacional de Cine: <film>"). The shared prefix inflates
     token_set_ratio, so two different films look alike. When the common
-    leading tokens are long and the remaining tails are dissimilar, the titles
-    are different entries of the same series.
+    leading tokens name such a series and the remaining tails are dissimilar,
+    the titles are different entries of that series. An artist name or a
+    show's own title in front of two descriptions ("Valentín Garvie Quinteto
+    <framing>" against "VALENTIN GARVIE QUINTETO FEAT HERNAN HECHT") is one
+    event, not a series, and must not be swallowed by this guard.
     """
     tokens_a = _significant_tokens(event_a)
     tokens_b = _significant_tokens(event_b)
@@ -229,6 +306,8 @@ def series_prefix_conflict(event_a, event_b):
             break
         common += 1
     if common < 3:
+        return False
+    if not any(token in _SERIES_MARKERS for token in tokens_a[:common]):
         return False
     tail_a = " ".join(tokens_a[common:])
     tail_b = " ".join(tokens_b[common:])
@@ -306,6 +385,12 @@ def _pair_evidence(event_a, event_b, threshold):
         return None
     if series_prefix_conflict(event_a, event_b):
         return None
+    concatenated_score = _concatenated_title_match(event_a, event_b)
+    if concatenated_score is not None:
+        return {"kind": "title_core", "score": concatenated_score}
+    wrapper_score = _wrapper_title_match(event_a, event_b)
+    if wrapper_score is not None:
+        return {"kind": "title_core", "score": wrapper_score}
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
         return {"kind": "title_fuzzy", "score": round(float(score), 1)}
