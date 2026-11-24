@@ -33,7 +33,7 @@ from collectors import (
     venti,
 )
 from lib.dedupe import cluster_events
-from lib.venues import resolve
+from lib.venues import resolve_event
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -120,7 +120,11 @@ def _write_errors(errors, raw_dir, failed_at):
 
 def _venue_stats(events):
     resolved = sum(
-        1 for event in events if resolve(event.venue_name) or resolve(event.venue_raw)
+        1
+        for event in events
+        if resolve_event(
+            title=event.title, venue_name=event.venue_name, venue_raw=event.venue_raw
+        )
     )
     return {"resolved": resolved, "unknown": len(events) - resolved}
 

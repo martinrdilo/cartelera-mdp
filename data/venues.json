@@ -350,6 +350,7 @@
       "aliases": [
         "Casinos de la Provincia",
         "Casino Central Mar del Plata",
+        "Casino Central de Mar del Plata",
         "Casino Central"
       ]
     },
@@ -911,6 +912,65 @@
         "El Destino"
       ],
       "address": "San Juan 1521"
+    },
+    {
+      "id": "samsara-beach",
+      "name": "Samsara Beach",
+      "aliases": [
+        "Samsara Beach",
+        "SAMSARA BEACH"
+      ],
+      "address": "Ruta Provincial 11 4866"
+    },
+    {
+      "id": "immc",
+      "name": "IMMC",
+      "aliases": [
+        "IMMC"
+      ],
+      "address": "Chacabuco 3639"
+    },
+    {
+      "id": "the-clap",
+      "name": "The Clap",
+      "aliases": [
+        "The Clap",
+        "THE CLAP",
+        "𝐓𝐇𝐄 𝐂𝐋𝐀𝐏"
+      ],
+      "address": "Jujuy 1559"
+    },
+    {
+      "id": "fisker",
+      "name": "Fisker",
+      "aliases": [
+        "Fisker"
+      ],
+      "address": "Martín Miguel de Güemes 4790"
+    },
+    {
+      "id": "lina-club-cultural",
+      "name": "Lina Club Cultural",
+      "aliases": [
+        "Lina Club Cultural"
+      ],
+      "address": "Chacabuco 3591"
+    },
+    {
+      "id": "fichin-bar",
+      "name": "Fichin Bar",
+      "aliases": [
+        "Fichin Bar"
+      ],
+      "address": "Rawson 2019"
+    },
+    {
+      "id": "club-de-foodies",
+      "name": "Club de Foodies",
+      "aliases": [
+        "Club de Foodies"
+      ],
+      "address": "Lamadrid 2372"
     }
   ]
 }

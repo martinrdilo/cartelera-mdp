@@ -36,8 +36,8 @@ Rama: `feat/deuda-agenda`, desde `origin/main` (`41de1e9`). Runner: `.venv/bin/p
 | ID | Spec | Alcance | Commit |
 |---|---|---|---|
 | T1 | S4 | Documento de feature, handoff de T7 versionado y L13 | — |
-| T2 | S1 | Ocho buckets con veredicto y tests de unión | — |
-| T3 | S2 | Quince filas de venue y criterio escrito | — |
+| T2 | S1 | Ocho buckets con veredicto y tests de unión | `4619338` |
+| T3 | S2 | Quince filas de venue y criterio escrito | `pending` |
 | T4 | S3a | Evidencia de pares en el join por slug | — |
 | T5 | S3b | Una sola regla de compatibilidad de fechas | — |
 | T6 | S3c | Guard de Articket sin barra final | — |
@@ -45,6 +45,14 @@ Rama: `feat/deuda-agenda`, desde `origin/main` (`41de1e9`). Runner: `.venv/bin/p
 | T8 | S5 | Sincronización y limpieza de ramas | — |
 
 T4 a T7 son independientes entre sí y tocan archivos disjuntos salvo `tests/`, que se reparte por suite: `tests/test_dedupe.py`, `tests/test_verify.py`, `tests/test_build_site.py` y un test nuevo para `app.js`.
+
+T1 y T2 suman 519 líneas autoradas en 2 commits, por encima de la guía de ~400 por slice; el límite se registra acá y la forma de entrega (un PR o slices encadenados) se decide al publicar.
+
+**L5.** T3 (2026-11-24): venues. Nueva API `lib/venues.resolve_event(title=, venue_name=, venue_raw=)`: los campos de venue ganan y sólo si no hay ninguno se usa la mención final del título (`en`/`at`/`@`) contra un alias **ya registrado**; nunca se inventa una sala. Siete entradas nuevas (`samsara-beach`, `immc`, `the-clap`, `fisker`, `lina-club-cultural`, `fichin-bar`, `club-de-foodies`) y el alias «Casino Central de Mar del Plata» en `casinos-de-la-provincia`.
+
+Cableado en `run_pipeline._venue_stats` (`run_pipeline.py:120-131`): sin caller, el resolver era código muerto y el snapshot no cambiaba — el mismo defecto que el review anterior marcó con `has_ticket`. Diferencial sobre 595 filas: **23 unknown → 12**, 11 flips (3 por título + 8 por registro + el alias), 0 regresiones y ningún venue re-apuntado a otro id. `resolve()` y `venue_key()` siguen byte-idénticas (chequeo AST). RED 9 fallas / GREEN 50 en `tests/test_venues.py`; suite completa 778 pasan, 1 falla previa.
+
+Quedan 12 filas sin resolver, con criterio escrito en los tests: `Playa Chapadmalal` y `Playa Grande` son zonas, `Mar Del Plata` es la ciudad, `Avenida Patricio Peralta Ramos` y las rutas son vías sin sala, `Antesala` es la productora de Bombo, `Festival Silvermare` es marca de festival, `El Plan de La Mariposa` es el artista, y las filas de Bresh y Camelphat no nombran sala en título, campos ni dirección.
 
 ## Log
 
