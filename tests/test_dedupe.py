@@ -745,6 +745,118 @@ class TestSlugDateCompatibility:
         assert len(shapes) == 1, shapes
 
 
+class TestSlugPairEvidence:
+    """The slug join records every anchor it unions, in a stable form.
+
+    One ticket page can list every night of a show, so a single row bridges
+    several rows at once. Naming only the last compatible anchor made the
+    cluster's evidence look narrower than the merge and let the recorded pair
+    depend on the order the rows arrived in.
+    """
+
+    @staticmethod
+    def _evidence(clusters):
+        """Cluster membership plus pair records, in an order-free shape."""
+        assert len(clusters) == 1, clusters
+        cluster = clusters[0]
+        members = sorted(event["source_event_id"] for event in cluster["events"])
+        pairs = sorted(
+            (tuple(sorted((pair["a"], pair["b"]))), pair["kind"], pair["slug"])
+            for pair in cluster["pairs"]
+        )
+        return members, pairs
+
+    def test_three_way_slug_bridge_records_every_anchor(self):
+        # One Articket page sells the 19/12 and the 20/12 functions; the three
+        # rows sit in different venues with different titles, so only the slug
+        # pass can join them. The 20/12 row is compatible with both earlier
+        # rows, so the cluster owes one pair per anchor, not just the last.
+        opening = make_event(
+            "punto",
+            "FESTIVAL TRES NOCHES",
+            "Sala Uno",
+            "2026-12-19",
+            event_id="tres-noches-a",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/FESTIVAL-TRES-NOCHES/",
+        )
+        middle = make_event(
+            "articket",
+            "FESTIVAL TRES NOCHES - SEGUNDA",
+            "Sala Dos",
+            "2026-12-19",
+            event_id="tres-noches-b",
+            occurrences=["2026-12-19", "2026-12-20"],
+            ticket_url="https://articket.com.ar/FESTIVAL-TRES-NOCHES",
+        )
+        closing = make_event(
+            "cualpinta",
+            "FESTIVAL TRES NOCHES - CIERRE",
+            "Sala Tres",
+            "2026-12-20",
+            event_id="tres-noches-c",
+            occurrences=["2026-12-19", "2026-12-20"],
+            ticket_url="https://articket.com.ar/FESTIVAL-TRES-NOCHES/",
+        )
+
+        members, pairs = self._evidence(cluster_events([opening, middle, closing]))
+
+        assert members == ["tres-noches-a", "tres-noches-b", "tres-noches-c"]
+        slug = "articket.com.ar:festival-tres-noches"
+        expected = {
+            (("articket:tres-noches-b", "punto:tres-noches-a"), "ticket_slug", slug),
+            (("articket:tres-noches-b", "cualpinta:tres-noches-c"), "ticket_slug", slug),
+            (("cualpinta:tres-noches-c", "punto:tres-noches-a"), "ticket_slug", slug),
+        }
+        assert len(pairs) == 3
+        assert set(pairs) == expected
+
+    def test_pair_evidence_does_not_depend_on_input_order(self):
+        # Same three rows, same single cluster: only the arrival order of the
+        # bridging row changes. The pair set must not follow it.
+        first_night = make_event(
+            "punto",
+            "FIESTA TRES - PRIMERA",
+            "Sala Uno",
+            "2026-12-19",
+            event_id="fiesta-tres-a",
+            occurrences=["2026-12-19"],
+            ticket_url="https://articket.com.ar/FIESTA-TRES/",
+        )
+        second_night = make_event(
+            "cualpinta",
+            "FIESTA TRES - SEGUNDA",
+            "Sala Dos",
+            "2026-12-20",
+            event_id="fiesta-tres-b",
+            occurrences=["2026-12-20"],
+            ticket_url="https://articket.com.ar/FIESTA-TRES",
+        )
+        bridge = make_event(
+            "articket",
+            "FIESTA TRES - ABONO",
+            "Sala Tres",
+            "2026-12-19",
+            event_id="fiesta-tres-c",
+            occurrences=["2026-12-19", "2026-12-20"],
+            ticket_url="https://articket.com.ar/FIESTA-TRES/",
+        )
+
+        bridge_first = self._evidence(cluster_events([bridge, first_night, second_night]))
+        bridge_last = self._evidence(cluster_events([first_night, second_night, bridge]))
+
+        assert bridge_first == bridge_last
+        members, pairs = bridge_first
+        assert members == ["fiesta-tres-a", "fiesta-tres-b", "fiesta-tres-c"]
+        slug = "articket.com.ar:fiesta-tres"
+        expected = {
+            (("articket:fiesta-tres-c", "punto:fiesta-tres-a"), "ticket_slug", slug),
+            (("articket:fiesta-tres-c", "cualpinta:fiesta-tres-b"), "ticket_slug", slug),
+        }
+        assert len(pairs) == 2
+        assert set(pairs) == expected
+
+
 class TestDateNoise:
     """Source date prefixes are noise; they must not leak into the title match."""
 

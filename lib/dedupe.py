@@ -552,20 +552,27 @@ def cluster_events(events, threshold=DEFAULT_THRESHOLD):
                 for candidate in positions[:offset]
                 if _slug_dates_compatible(indexed[candidate][1], indexed[other][1])
             ]
-            if not anchors:
-                continue
             for anchor in anchors:
                 union(anchor, other)
-            anchor = anchors[-1]
-            pairs.append(
-                {
-                    "a": _event_ref(indexed[anchor][1]),
-                    "b": _event_ref(indexed[other][1]),
-                    "kind": "ticket_slug",
-                    "score": 100.0,
-                    "slug": slug,
-                }
-            )
+                # One record per compatible anchor: the union above merges all
+                # of them, so naming only the last one hid the rest of the
+                # bridge and tied the evidence to the input order. Sorting the
+                # two refs makes each record read the same in either order.
+                first, second = sorted(
+                    (
+                        _event_ref(indexed[anchor][1]),
+                        _event_ref(indexed[other][1]),
+                    )
+                )
+                pairs.append(
+                    {
+                        "a": first,
+                        "b": second,
+                        "kind": "ticket_slug",
+                        "score": 100.0,
+                        "slug": slug,
+                    }
+                )
 
     # Venue edges: title evidence inside the same canonical venue.
     groups = {}
