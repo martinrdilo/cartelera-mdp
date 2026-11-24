@@ -38,6 +38,9 @@ class Event:
     ticket_url: str | None = None
     seller: str | None = None
     image_url: str | None = None
+    # The venue's own site, when the source carries it (municipal panels). It
+    # is not the event page: the site renders it as a separate detail line.
+    venue_url: str | None = None
     city: str = "Mar del Plata"
     raw_url: str | None = None
     collected_at: str = field(default_factory=_collected_at)

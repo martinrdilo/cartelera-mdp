@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from lib.dates import extract_time, parse_ddmmyyyy, to_iso
 from lib.occurrences import expand_segments, parse_weekdays
 from lib.schema import Event
+from lib.site_urls import venue_site_url
 
 BASE = "https://www.turismomardelplata.gob.ar"
 RESULTS_URL = f"{BASE}/ASP/SP/resultados-eventos.asp"
@@ -129,6 +130,22 @@ def _parse_entry(text):
     return is_free, price_min, seller
 
 
+def _venue_site(venue_html):
+    """First anchor of the venue block that is the venue's own site, or None.
+
+    The block lists the venue's phone and email before (sometimes) its own
+    site, so only absolute http(s) hrefs on another host qualify: mailto:,
+    tel:, relative paths and the municipality's own links are not the venue.
+    """
+    if not venue_html:
+        return None
+    for anchor in BeautifulSoup(venue_html, "html.parser").find_all("a", href=True):
+        site = venue_site_url(anchor["href"])
+        if site:
+            return site
+    return None
+
+
 def _parse_panel(panel, raw_url, category):
     title_node = panel.select_one("div.panel-title strong")
     title = title_node.get_text(" ", strip=True) if title_node else ""
@@ -163,6 +180,7 @@ def _parse_panel(panel, raw_url, category):
         "title": title,
         "venue_name": venue_name,
         "venue_raw": venue_raw,
+        "venue_url": _venue_site(sections.get("venue", {}).get("html", "")),
         "ranges": ranges,
         "schedule_text": schedule_text,
         "description": sections.get("description", {}).get("text", ""),
@@ -245,6 +263,7 @@ def normalize(records):
                 ticket_url=None,
                 seller=seller,
                 image_url=record["image_url"],
+                venue_url=record.get("venue_url"),
                 city="Mar del Plata",
                 raw_url=record["raw_url"],
             )

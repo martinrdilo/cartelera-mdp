@@ -6,8 +6,12 @@ The integration test builds from the committed data/ snapshot (pipeline run
 
 import json
 import re
+import subprocess
+import sys
 from datetime import date
 from pathlib import Path
+
+import pytest
 
 import build_site
 
@@ -39,6 +43,7 @@ SNAPSHOT_TODAY = date(2026, 10, 14)
 BUILD_TODAY = _anchor_today()
 JSON_LD_RE = re.compile(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.DOTALL)
 DATA_RE = re.compile(r'<script id="events-data" type="application/json">(.*?)</script>', re.DOTALL)
+COLON_PROGRAM_URL = "https://www.mardelplata.gob.ar/colonprogramacion"
 
 
 def make_member(source, **overrides):
@@ -148,6 +153,86 @@ class TestWindowBounds:
         assert build_site.matches_window(["2026-10-15"], "weekend", today)
         assert not build_site.matches_window(["2026-10-22"], "weekend", today)
         assert build_site.matches_window(["2027-04-03"], "all", today)
+
+
+class TestAddMonths:
+    """R2-002: a month shift clamps to the target month's last day.
+
+    The old branch answered the 28th for every invalid day, so 31 May + 1
+    landed on 28 June instead of 30 June and the ±12-month horizon came out
+    three days short whenever the build date was a month-end.
+    """
+
+    @pytest.mark.parametrize(
+        ("start", "months", "expected"),
+        (
+            (date(2026, 5, 31), 1, date(2026, 6, 30)),  # June has 30 days
+            (date(2026, 3, 31), 1, date(2026, 4, 30)),  # April has 30 days
+            (date(2026, 1, 31), 1, date(2026, 2, 28)),  # non-leap February
+            (date(2028, 2, 29), 12, date(2029, 2, 28)),  # leap day, non-leap target
+            (date(2026, 12, 31), 1, date(2027, 1, 31)),  # January keeps the 31st
+            (date(2026, 5, 15), 1, date(2026, 6, 15)),  # a valid day never moves
+            (date(2026, 5, 31), -1, date(2026, 4, 30)),  # backwards past a short month
+            (date(2026, 3, 31), -3, date(2025, 12, 31)),  # backwards across a year
+        ),
+    )
+    def test_month_shift_clamps_to_the_target_months_last_day(self, start, months, expected):
+        assert build_site.add_months(start, months) == expected
+
+
+class TestBuildHorizon:
+    """Events outside ±12 months of the build date never reach the site."""
+
+    def test_bounds_are_twelve_months_each_way(self):
+        assert build_site.horizon_bounds(SNAPSHOT_TODAY) == (
+            date(2025, 10, 14),
+            date(2027, 10, 14),
+        )
+
+    def test_bounds_clamp_february_29(self):
+        assert build_site.horizon_bounds(date(2028, 2, 29)) == (
+            date(2027, 2, 28),
+            date(2029, 2, 28),
+        )
+
+    def test_a_month_end_build_date_does_not_shorten_the_horizon(self):
+        # add_months(2026-05-31, 12) is 2027-05-31; clamping to the 28th
+        # silently dropped the last three days of the year-long window.
+        assert build_site.add_months(date(2026, 5, 31), 12) == date(2027, 5, 31)
+        assert build_site.horizon_bounds(date(2026, 5, 31)) == (
+            date(2025, 5, 31),
+            date(2027, 5, 31),
+        )
+        assert build_site.in_build_horizon(["2027-05-31"], date(2026, 5, 31))
+
+    def test_both_edges_are_inside_the_horizon(self):
+        assert build_site.in_build_horizon(["2025-10-14"], SNAPSHOT_TODAY)
+        assert build_site.in_build_horizon(["2027-10-14"], SNAPSHOT_TODAY)
+        assert not build_site.in_build_horizon(["2027-10-15"], SNAPSHOT_TODAY)
+        assert not build_site.in_build_horizon(["2029-01-29"], SNAPSHOT_TODAY)
+
+    def test_any_occurrence_inside_the_horizon_keeps_the_event(self):
+        assert build_site.in_build_horizon(["2026-10-17", "2029-01-29"], SNAPSHOT_TODAY)
+
+    def test_event_without_dates_never_qualifies(self):
+        assert not build_site.in_build_horizon([], SNAPSHOT_TODAY)
+
+    def test_build_drops_the_events_beyond_the_horizon(self, tmp_path):
+        # 2029-01-29 (municipal) and 2029-09-12 (punto) are far past ±12 months.
+        today = date(2026, 11, 21)
+        stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=today)
+        html = (tmp_path / "index.html").read_text(encoding="utf-8")
+        assert "Recital de Violin" not in html
+        assert "2029-01-29" not in html
+        assert "Los Tabaleros" not in html
+        events, _, _ = build_site.collect_site_events(DATA_DIR, today)
+        assert len(events) == stats["upcoming"]
+
+    def test_near_events_survive_the_horizon(self):
+        today = date(2026, 11, 21)
+        events, _, _ = build_site.collect_site_events(DATA_DIR, today)
+        titles = [event["title"] for event in events]
+        assert "19º Encuentro Internacional de Coros Mardelcanto 2026" in titles
 
 
 class TestPriceFormatting:
@@ -342,7 +427,9 @@ class TestTicketLinkSelection:
         assert 'data-outbound="ticket"' not in row
         assert "Venta en Alpogo" in row
 
-    def test_details_carry_the_source_link_not_internal_sources(self):
+    def test_details_leave_the_source_unlinked_when_it_has_no_event_page(self):
+        # The municipal agenda is paginated by date: the recorded page drifts
+        # as events pass, so it never opens the event it claims to source.
         member = make_member(
             "municipal",
             price_text="$35000, en venta en www.plateanet.com",
@@ -353,11 +440,16 @@ class TestTicketLinkSelection:
         details = build_site.render_row_details(event)
         assert "Datos:" not in details
         assert "Venta:</b> Plateanet" in details
-        assert "Fuente:</b>" in details
-        assert (
-            'href="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=6&amp;tipo=11"'
-            in details
-        )
+        assert "Fuente:</b> Municipal" in details
+        assert "resultados-eventos.asp" not in details
+
+    def test_source_link_is_rendered_as_a_button(self):
+        # A bare anchor inherits the page color, so nothing marks it clickable.
+        member = make_member("punto", raw_url="https://puntomardelplata.com/actividades/x-1")
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert 'class="btn btn--source"' in details
+        assert "Ver en" in details
 
     def test_deep_link_seller_prefers_the_url_host(self):
         member = make_member(
@@ -367,6 +459,23 @@ class TestTicketLinkSelection:
         )
         event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
         assert event["seller"] == "Bombo"
+
+    def test_colon_program_page_is_the_source_link(self):
+        # S2: the exception is what turns the Colón rows into linked rows; the
+        # municipal member next to them keeps its paginated listing rejected.
+        members = [
+            make_member(
+                "municipal",
+                raw_url="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11",
+            ),
+            make_member("colon", raw_url=COLON_PROGRAM_URL),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["source_name"] == "colon"
+        assert event["source_url"] == COLON_PROGRAM_URL
+        details = build_site.render_row_details(event)
+        assert f'href="{COLON_PROGRAM_URL}"' in details
+        assert "Ver en Teatro Colón" in details
 
     def test_source_link_falls_back_to_a_member_with_a_source_page(self):
         homepage = make_member(
@@ -430,6 +539,186 @@ class TestTicketLinkSelection:
         event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
         details = build_site.render_row_details(event)
         assert "Fuente:</b> Municipal" in details
+
+    def test_source_falling_back_to_the_buy_page_is_plain_text(self):
+        # D1: when no ficha exists the source falls back to the member's own
+        # ticket link. Linking it again next to the buy CTA would render two
+        # affordances that open the same URL.
+        member = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+            ticket_url="https://articket.com.ar/AN-ESPIL/",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] == event["ticket_url"] == "https://articket.com.ar/AN-ESPIL/"
+        details = build_site.render_row_details(event)
+        assert "Fuente:</b> Articket" in details
+        assert 'class="btn btn--source"' not in details
+        assert details.count('href="https://articket.com.ar/AN-ESPIL/"') == 1
+        assert "Comprar en articket.com.ar" in details
+
+    def test_source_differing_from_the_buy_page_stays_a_link(self):
+        # PRESERVE: two different URLs are two affordances, not a duplicate.
+        member = make_member(
+            "articket",
+            raw_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+            ticket_url="https://articket.com.ar/AN-ESPIL/",
+            seller="Articket",
+        )
+        event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] != event["ticket_url"]
+        details = build_site.render_row_details(event)
+        assert 'class="btn btn--source"' in details
+        assert "Ver en Articket" in details
+        assert 'href="https://articket.com.ar/AN-ESPIL/"' in details
+
+
+class TestVenueSite:
+    """S6: the venue's own site gets its own detail line, never the Fuente link."""
+
+    VENUE_URL = "http://www.centrodeartemdp.com"
+
+    # The venue_url values a live run captured from the panels (2026-11-21): 23
+    # rows over 10 distinct values. Seven rows are not a venue site: an address
+    # in an http href, a handle, a scheme with no host, the municipality on the
+    # .gov.ar spelling. The snapshot still carries them, so the site filters.
+    BAD_VENUE_URLS = (
+        "http://abbeyroadreservas@hotmail.com",
+        "http://IG @feriadeartesanosdelbosque",
+        "http://https:/abbeyroadmdp.com.ar/",
+        "https:",
+        "ig @feriadeartesanosdelbosque",
+        "http://www.mardelplata.gov.ar",
+        "www.mardelplata.gov.ar",
+    )
+    GOOD_VENUE_URLS = (
+        "http://www.vorterixmdq.com.ar",
+        "http://bendu.com.ar",
+        "http://www.centrodeartemdp.com",
+        "http://www.programacionauditorium.blogspot.com",
+        "http://www.chauvin.com.ar",
+        "http://www.sheratonmardelplatahotel.com",
+    )
+
+    def municipal_with_site(self, **overrides):
+        fields = dict(
+            venue_name="Centro de Arte Radio City",
+            raw_url="https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=1&tipo=11",
+            venue_url=self.VENUE_URL,
+        )
+        fields.update(overrides)
+        return make_member("municipal", **fields)
+
+    def test_venue_site_is_merged_from_the_municipal_member(self):
+        members = [self.municipal_with_site(), make_member("articket", source_event_id="articket-2")]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["venue_url"] == self.VENUE_URL
+
+    def test_venue_site_renders_its_own_detail_line(self):
+        event = build_site.merge_members([self.municipal_with_site()], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert (
+            f'<p><b>Sala:</b> <a class="btn btn--source" href="{self.VENUE_URL}" '
+            'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
+        ) in details
+
+    def test_venue_site_is_never_the_fuente_link(self):
+        # The panel page is a paginated listing: rejected as a source link, so
+        # the venue site must not sneak in as one either.
+        event = build_site.merge_members([self.municipal_with_site()], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert "Fuente:</b> Municipal" in details
+        assert "Fuente:</b> <a" not in details
+        assert details.count(f'href="{self.VENUE_URL}"') == 1
+
+    def test_venue_site_does_not_replace_a_purchase_cta(self):
+        members = [
+            self.municipal_with_site(),
+            make_member(
+                "articket",
+                source_event_id="articket-2",
+                ticket_url="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/",
+            ),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["ticket_url"] == "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"
+        row = build_site.render_row(event, SNAPSHOT_TODAY)
+        assert f'href="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"' in row
+        assert 'data-outbound="ticket"' in row
+
+    def test_venue_site_does_not_replace_a_real_event_page(self):
+        members = [
+            self.municipal_with_site(),
+            make_member(
+                "punto",
+                source_event_id="punto-2",
+                raw_url="https://puntomardelplata.com/actividades/fiesta-plop-20501",
+            ),
+        ]
+        event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
+        assert event["source_url"] == "https://puntomardelplata.com/actividades/fiesta-plop-20501"
+        details = build_site.render_row_details(event)
+        assert f'href="{self.VENUE_URL}"' in details
+        assert "Ver en Punto MDP" in details
+
+    def test_unknown_venue_site_renders_nothing(self):
+        event = build_site.merge_members([self.municipal_with_site(venue_url=None)], empty_index(), SNAPSHOT_TODAY)
+        details = build_site.render_row_details(event)
+        assert "Sala:" not in details
+        assert "Ver sitio de la sala" not in details
+
+    @pytest.mark.parametrize("venue_url", BAD_VENUE_URLS)
+    def test_a_bad_venue_url_renders_no_sala_line(self, venue_url):
+        event = build_site.merge_members(
+            [self.municipal_with_site(venue_url=venue_url)], empty_index(), SNAPSHOT_TODAY
+        )
+        assert event["venue_url"] == venue_url  # the snapshot value stays as it is
+        details = build_site.render_row_details(event)
+        assert "Sala:" not in details
+        assert "Ver sitio de la sala" not in details
+
+    @pytest.mark.parametrize("venue_url", GOOD_VENUE_URLS)
+    def test_a_good_venue_url_renders_its_sala_line(self, venue_url):
+        event = build_site.merge_members(
+            [self.municipal_with_site(venue_url=venue_url)], empty_index(), SNAPSHOT_TODAY
+        )
+        details = build_site.render_row_details(event)
+        assert (
+            f'<p><b>Sala:</b> <a class="btn btn--source" href="{venue_url}" '
+            'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
+        ) in details
+
+    def test_the_site_and_the_collector_share_one_venue_site_rule(self):
+        # R2-001: the rule had a copy at each end, so a fix in one could leave
+        # the other rejecting the same URLs. Now a single module owns it and
+        # both callers import that same function -- no mirrored copy to drift.
+        from collectors import municipal
+        from lib import site_urls
+
+        assert build_site.venue_site_url is site_urls.venue_site_url
+        assert municipal.venue_site_url is site_urls.venue_site_url
+        assert not hasattr(build_site, "MUNICIPAL_HOSTS")
+        assert not hasattr(municipal, "MUNICIPAL_HOSTS")
+
+    def test_build_site_imports_with_only_the_standard_library(self):
+        # -S drops site-packages: bs4 and requests are invisible, so the site
+        # build (and the module it shares with the collector) must be stdlib.
+        result = subprocess.run(
+            [sys.executable, "-S", "-c", "import build_site"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        assert result.returncode == 0, result.stderr
+
+    def test_duplicate_merge_keeps_the_venue_site(self):
+        site_event = build_site.merge_members([make_member("municipal")], empty_index(), SNAPSHOT_TODAY)
+        other = dict(site_event)
+        other["venue_url"] = self.VENUE_URL
+        merged = build_site.merge_site_duplicates(site_event, other)
+        assert merged["venue_url"] == self.VENUE_URL
 
 
 class TestExactDuplicateGuard:
@@ -569,6 +858,32 @@ class TestDisplayHelpers:
         event = build_site.merge_members(members, empty_index(), SNAPSHOT_TODAY)
         assert event["display_title"] == "Georgie Boy en Wolfgang"
 
+    def test_quoted_word_is_capitalized(self):
+        # S5: the opening quote used to eat the capital ('‘norma Fontenla’).
+        assert build_site.title_case(
+            "CICLO ANUAL BALLET DE CÁMARA DE LA ESCUELA MUNICIPAL DE DANZAS ‘NORMA FONTENLA’"
+        ) == "Ciclo Anual Ballet de Cámara de la Escuela Municipal de Danzas ‘Norma Fontenla’"
+
+    def test_already_mixed_case_words_are_preserved(self):
+        # Sentence-casing must not lowercase proper nouns into nonsense.
+        assert build_site.title_case("HOMENAJE A McCartney EN VIVO") == "Homenaje a McCartney en Vivo"
+
+    def test_uppercase_municipal_title_gets_a_readable_display_title(self):
+        raw = "CICLO ANUAL BALLET DE CÁMARA DE LA ESCUELA MUNICIPAL DE DANZAS ‘NORMA FONTENLA’"
+        event = build_site.merge_members([make_member("municipal", title=raw)], empty_index(), SNAPSHOT_TODAY)
+        assert event["title"] == raw
+        assert event["display_title"] == (
+            "Ciclo Anual Ballet de Cámara de la Escuela Municipal de Danzas ‘Norma Fontenla’"
+        )
+
+    def test_uppercase_colon_title_keeps_the_raw_title(self):
+        raw = "ORQUESTA SINFÓNICA MUNICIPAL"
+        event = build_site.merge_members(
+            [make_member("colon", title=raw, raw_url=COLON_PROGRAM_URL)], empty_index(), SNAPSHOT_TODAY
+        )
+        assert event["title"] == raw
+        assert event["display_title"] == "Orquesta Sinfónica Municipal"
+
     def test_initials_and_thumb_variant_are_stable(self):
         assert build_site.initials("Koino Yokan en Club TRI") == "KY"
         assert build_site.initials("C4") == "C"
@@ -606,6 +921,53 @@ def day_groups(html):
     return groups
 
 
+def test_is_event_page_rejects_listings_and_endpoints():
+    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+    assert not build_site.is_event_page(
+        "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11"
+    )
+    assert not build_site.is_event_page("https://articket.com.ar/obtener_eventos/?cantidad_eventos=500")
+    assert not build_site.is_event_page("https://api.venti.live/api/home/events?limit=100&page=1")
+    assert not build_site.is_event_page("https://clubtri.com/")
+    assert not build_site.is_event_page(None)
+
+
+def test_is_event_page_requires_an_http_scheme_and_a_real_path():
+    # D3: the scheme was never checked and an empty path with a query passed.
+    assert not build_site.is_event_page("ftp://host/colonprogramacion")
+    assert not build_site.is_event_page("ftp://www.mardelplata.gob.ar/colonprogramacion")
+    assert not build_site.is_event_page("https://host/?p=1")
+    assert not build_site.is_event_page("https://puntomardelplata.com/?p=1")
+    # PRESERVE: both accepted schemes, and a real path is still a ficha.
+    assert build_site.is_event_page("http://example.com.ar/evento/123")
+    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+    assert build_site.is_event_page("https://clubtri.com/fuego-sagrado")
+    assert not build_site.is_event_page("https://articket.com.ar/obtener_eventos/")
+    assert not build_site.is_event_page("https://api.venti.live/api/home/events")
+    assert not build_site.is_event_page("https://clubtri.com")
+    assert not build_site.is_event_page("https://clubtri.com/")
+    # PRESERVE: the Colón exception tolerates www and a trailing slash.
+    assert build_site.is_event_page(COLON_PROGRAM_URL)
+    assert build_site.is_event_page("https://mardelplata.gob.ar/colonprogramacion/")
+    assert not build_site.is_event_page(COLON_PROGRAM_URL + "?pagina=2")
+
+
+def test_colon_program_page_qualifies_as_a_source_link():
+    # S2: Colón publishes the whole temporada on one page that is not
+    # paginated by date, so the recorded URL still opens the events it lists.
+    assert build_site.is_event_page(COLON_PROGRAM_URL)
+    assert build_site.is_event_page(COLON_PROGRAM_URL + "/")
+
+
+def test_colon_exception_is_only_that_host_and_path():
+    assert not build_site.is_event_page("https://www.mardelplata.gob.ar/colonprogramacion-old")
+    assert not build_site.is_event_page(COLON_PROGRAM_URL + "?pagina=2")
+    assert not build_site.is_event_page("https://otro-sitio.com.ar/colonprogramacion")
+    assert not build_site.is_event_page(
+        "https://www.turismomardelplata.gob.ar/ASP/SP/resultados-eventos.asp?pagina=4&tipo=11"
+    )
+
+
 class TestDeterministicBuild:
     """Full build from the committed snapshot into a tmp dir."""
 
@@ -618,9 +980,23 @@ class TestDeterministicBuild:
         stats, _ = self.build(tmp_path)
         assert (tmp_path / "index.html").exists()
         assert (tmp_path / "assets" / "style.css").exists()
+        assert (tmp_path / "assets" / "filter.js").exists()
         assert (tmp_path / "assets" / "app.js").exists()
         assert (tmp_path / "favicon.svg").exists()
-        assert stats["files"] == ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"]
+        assert stats["files"] == [
+            "index.html",
+            "assets/style.css",
+            "assets/filter.js",
+            "assets/app.js",
+            "favicon.svg",
+        ]
+
+    def test_filter_module_loads_before_the_script_that_uses_it(self, tmp_path):
+        # app.js reads the predicate from that module at parse time, so the
+        # tag order is part of the contract.
+        _, html = self.build(tmp_path)
+        assert '<script src="assets/filter.js"></script>' in html
+        assert html.index("assets/filter.js") < html.index("assets/app.js")
 
     def test_counts_match_the_snapshot(self, tmp_path):
         stats, html = self.build(tmp_path)
@@ -678,6 +1054,25 @@ class TestDeterministicBuild:
         assert 'href="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"' in html
         assert html.count('data-outbound="ticket"') > 0
         assert html.count('target="_blank" rel="noopener"') >= html.count('data-outbound="ticket"')
+
+    def test_source_links_point_at_events_not_listings(self, tmp_path):
+        # The municipal agenda is paginated by date, so the recorded page
+        # drifts; the ticketeras expose a JSON endpoint instead of a ficha.
+        _, html = self.build(tmp_path)
+        assert "resultados-eventos.asp" not in html
+        assert "obtener_eventos" not in html
+        assert "api.venti.live" not in html
+
+    def test_colon_program_page_recovers_the_seven_unlinked_rows(self, tmp_path):
+        # S2 recovery target: 2 Colón-only rows + 5 shared with Municipal.
+        today = date(2026, 11, 21)
+        build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=today)
+        html = (tmp_path / "index.html").read_text(encoding="utf-8")
+        assert html.count(f'href="{COLON_PROGRAM_URL}"') == 7
+
+    def test_event_page_source_link_survives(self, tmp_path):
+        _, html = self.build(tmp_path)
+        assert "puntomardelplata.com/actividades/" in html
 
     def test_json_ld_is_parseable_and_lists_the_weekend(self, tmp_path):
         stats, html = self.build(tmp_path)
@@ -1047,6 +1442,125 @@ class TestRedesignMarkup:
         first = payload["events"][0]
         for field in ("id", "title", "venue_id", "dates", "is_free", "price_label"):
             assert field in first
+
+
+TICKET_ONLINE_LABEL = "Solo con entrada online"
+TICKET_STORAGE_KEY = "cartelera-ticket-only"
+
+
+class TestTicketOnlyFilter:
+    """S3: a chip isolates the events that have a purchase link.
+
+    Filtering stays client-side like the rest of the bar, so the build keeps
+    every row and only marks it; the browser decides whether to show it.
+    """
+
+    def build(self, tmp_path):
+        stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=BUILD_TODAY)
+        html = (tmp_path / "index.html").read_text(encoding="utf-8")
+        css = (tmp_path / "assets" / "style.css").read_text(encoding="utf-8")
+        app_js = (tmp_path / "assets" / "app.js").read_text(encoding="utf-8")
+        payload = json.loads(DATA_RE.search(html).group(1))
+        return stats, html, css, app_js, payload
+
+    def filterbar(self, html):
+        return html.split('class="filterbar"', 1)[1].split('id="filter-count"', 1)[0]
+
+    def test_ticket_chip_is_a_chip_in_the_existing_filter_bar(self, tmp_path):
+        _, html, _, _, _ = self.build(tmp_path)
+        bar = self.filterbar(html)
+        chip = re.search(
+            r'<button type="button" class="fchip fchip--ticket" id="filter-ticket" '
+            r'data-filter="ticket" aria-pressed="false">(.*?)</button>',
+            bar,
+        )
+        assert chip, "the ticket toggle must reuse the fchip button pattern"
+        assert TICKET_ONLINE_LABEL in chip.group(1)
+        # Sits with gratis and the venues, not in a separate panel.
+        assert bar.index('id="filter-free"') < bar.index('id="filter-ticket"')
+        assert bar.index('id="filter-ticket"') < bar.index('class="filterbar__venues"')
+
+    def test_ticket_chip_counts_the_events_with_a_purchase_link(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        with_ticket = [event for event in payload["events"] if event["ticket_url"]]
+        assert with_ticket
+        assert len(with_ticket) < len(payload["events"])
+        chip = self.filterbar(html).split('id="filter-ticket"', 1)[1]
+        assert re.search(r"<em>(\d+)</em>", chip).group(1) == str(len(with_ticket))
+
+    def test_payload_carries_no_unused_ticket_flag(self, tmp_path):
+        # D2: the toggle reads the row's data-ticket, so a payload boolean
+        # nobody read was dead weight in every build.
+        _, _, _, _, payload = self.build(tmp_path)
+        filter_js = (tmp_path / "assets" / "filter.js").read_text(encoding="utf-8")
+        for event in payload["events"]:
+            assert "has_ticket" not in event
+        assert "row.dataset.ticket" in filter_js
+
+    def test_every_row_carries_the_ticket_flag_of_its_event(self, tmp_path):
+        _, html, _, _, payload = self.build(tmp_path)
+        flags = {event["id"]: bool(event["ticket_url"]) for event in payload["events"]}
+        rows = re.findall(r'<article class="row" data-row data-id="([^"]+)"([^>]*)>', html)
+        assert rows
+        for event_id, attrs in rows:
+            flag = re.search(r'data-ticket="([01])"', attrs)
+            assert flag, f"row {event_id} has no ticket flag"
+            assert flag.group(1) == ("1" if flags[event_id] else "0")
+        assert any(flags.values()) and not all(flags.values())
+
+    def test_toggle_extends_the_single_filter_path(self, tmp_path):
+        _, _, _, app_js, _ = self.build(tmp_path)
+        filter_js = (tmp_path / "assets" / "filter.js").read_text(encoding="utf-8")
+        assert 'getElementById("filter-ticket")' in app_js
+        # The predicate lives in the shared module -- which the page loads and
+        # Node can require -- and is not duplicated in the script.
+        assert "row.dataset.ticket" in filter_js
+        assert "row.dataset.ticket" not in app_js
+        assert "function matchesFilters" not in app_js
+        assert "CarteleraFilter" in app_js
+        assert "module.exports" in filter_js
+        # The day badges and the count recalculate through the same predicate.
+        tab_counts = app_js.split("function updateTabCounts", 1)[1].split("\n  }", 1)[0]
+        assert "matches(row)" in tab_counts
+        assert "inView(row, view)" in tab_counts
+        # The toggle counts as a filter, so the existing auto-switch/empty
+        # state logic engages instead of leaving a dead day tab.
+        assert "state.ticket" in app_js.split("function activeFilters", 1)[1].split("\n  }", 1)[0]
+
+    def test_toggle_is_remembered_and_announced(self, tmp_path):
+        _, _, _, app_js, _ = self.build(tmp_path)
+        assert f'var TICKET_KEY = "{TICKET_STORAGE_KEY}"' in app_js
+        assert "localStorage.getItem(TICKET_KEY)" in app_js
+        assert "localStorage.setItem(TICKET_KEY" in app_js
+        assert "ticket: storedTicketOnly()" in app_js
+        sync = app_js.split("function syncControls", 1)[1].split("\n  }", 1)[0]
+        assert 'ticketButton.setAttribute("aria-pressed", String(state.ticket))' in sync
+        assert 'ticketButton.classList.toggle("is-on", state.ticket)' in sync
+
+    def test_ticket_chip_styles_reuse_the_chip_variant(self, tmp_path):
+        _, _, css, _, _ = self.build(tmp_path)
+        assert ".fchip--ticket" in css
+        assert ".fchip--ticket.is-on" in css
+
+    def test_clear_filters_turns_the_toggle_off(self, tmp_path):
+        _, _, _, app_js, _ = self.build(tmp_path)
+        reset = app_js.split("function resetFilters", 1)[1].split("\n  }", 1)[0]
+        assert "state.ticket = false" in reset
+        assert "persistTicketOnly(false)" in reset
+        # The empty state is the one filters already use.
+        assert "emptyState.hidden = visible !== 0" in app_js
+
+    def test_existing_chips_still_share_the_bar_with_the_new_toggle(self, tmp_path):
+        # PRESERVE: gratis and the venue chips keep their markup and counts.
+        _, html, _, _, _ = self.build(tmp_path)
+        bar = self.filterbar(html)
+        assert re.search(
+            r'class="fchip fchip--free" id="filter-free" data-filter="free" '
+            r'aria-pressed="false">Gratis <em>\d+</em>',
+            bar,
+        )
+        assert len(re.findall(r'class="fchip" data-venue=', bar)) == 6
+        assert 'id="sala-toggle"' in bar
 
 
 class TestWave2Sources:

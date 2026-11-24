@@ -458,6 +458,12 @@ img { max-width: 100%; }
 .fchip--free { border-color: var(--line-2); color: var(--text); }
 .fchip--free.is-on { background: var(--sea-soft); border-color: var(--sea-line); color: var(--sea-text); }
 .fchip--free.is-on em { color: var(--sea-text); }
+/* The ticket toggle is the strongest promise the bar makes (a link you can
+   buy from), so it fills with the CTA color once on. */
+.fchip--ticket { border-color: var(--line-2); color: var(--text); }
+.fchip--ticket em { color: var(--accent); }
+.fchip--ticket.is-on { background: var(--cta-bg); border-color: var(--cta-bg); color: var(--cta-ink); }
+.fchip--ticket.is-on em { color: var(--cta-ink); opacity: 0.72; }
 .fchip--more { background: var(--surface-2); border-style: dashed; color: var(--text); }
 .fchip--more svg {
   width: 11px;
@@ -898,6 +904,18 @@ img { max-width: 100%; }
 }
 .btn--ghost:hover { background: var(--surface-2); color: var(--text); }
 
+/* Inline source link: a pill, so the reader sees it is clickable. */
+.btn--source {
+  margin-left: 0.3rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
+  vertical-align: middle;
+}
+.btn--source:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
 /* ------------------------------------------------------------------ agenda */
 
 .agenda { display: flex; flex-direction: column; gap: 1.5rem; scroll-margin-top: 64px; }
@@ -1218,13 +1236,14 @@ img { max-width: 100%; }
 
   .filterbar {
     display: grid;
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto auto auto 1fr;
     align-items: center;
     border-radius: 10px;
     padding: 0.55rem;
   }
   .fchip--free { grid-column: 1; grid-row: 1; justify-self: start; }
-  .fchip--more { grid-column: 2; grid-row: 1; justify-self: start; }
+  .fchip--ticket { grid-column: 2; grid-row: 1; justify-self: start; }
+  .fchip--more { grid-column: 3; grid-row: 1; justify-self: start; }
   .filterbar__venues {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -1235,8 +1254,15 @@ img { max-width: 100%; }
   }
   .filterbar__venues::-webkit-scrollbar { display: none; }
   .fchip { flex: 0 0 auto; }
-  .filterbar__count { grid-column: 3; grid-row: 1; margin: 0; justify-self: end; }
-  .filterbar__active { grid-column: 1 / -1; grid-row: 3; }
+  /* Three chips plus the count do not fit one phone row: the count drops
+     under the venue scroller instead of overflowing it. */
+  .filterbar__count {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin: 0;
+    justify-self: end;
+  }
+  .filterbar__active { grid-column: 1 / -1; grid-row: 4; }
   .filterbar--open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 
   .sala-drawer { padding: 0.9rem 0.8rem 0.8rem; border-radius: 0 0 10px 10px; }

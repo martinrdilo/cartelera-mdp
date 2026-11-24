@@ -1,8 +1,8 @@
 """Duplicates the dedupe pass left behind.
 
 `lib.dedupe` clusters what it can prove; this layer searches for pairs that
-stayed apart while sharing a strong identity signal (same ticket slug, or same
-venue and session with near-identical titles).
+stayed apart while sharing a strong identity signal (same ticket slug on a
+shared session, or same venue and session with near-identical titles).
 """
 
 from __future__ import annotations
@@ -42,6 +42,17 @@ def _as_event(row) -> Event:
     return Event(**{field: row.get(field) for field in Event.__dataclass_fields__})
 
 
+def _dates_compatible(first: set[str], second: set[str]) -> bool:
+    """Known date sets must intersect; an unknown set joins either way.
+
+    Same rule lib.dedupe applies to a shared ticket slug: one page can serve
+    every function of a show.
+    """
+    if first and second:
+        return bool(first & second)
+    return True
+
+
 def _slug_findings(events, cluster_of) -> list[Finding]:
     by_slug: dict[str, dict[str, dict]] = defaultdict(dict)
     for event in events:
@@ -58,14 +69,34 @@ def _slug_findings(events, cluster_of) -> list[Finding]:
         for reference in rows:
             groups[cluster_of.get(reference, f"unclustered:{reference}")].append(reference)
         if len(groups) > 1:
-            findings.append(
-                Finding(
-                    "duplicates.slug_across_clusters",
-                    "error",
-                    f"{slug} belongs to {len(groups)} separate groups",
-                    {"slug": slug, "refs": sorted(rows), "groups": [sorted(group) for group in groups.values()]},
+            # Sellers reuse one page for every function of a show, so two rows
+            # that stayed apart because their known sessions do not intersect
+            # are the split dedupe makes on purpose, not a missed join. Only
+            # pairs the date cannot explain are suspects.
+            suspects = sorted(
+                reference
+                for reference, row in rows.items()
+                if any(
+                    cluster_of.get(reference, f"unclustered:{reference}")
+                    != cluster_of.get(other, f"unclustered:{other}")
+                    and _dates_compatible(_dates(row), _dates(other_row))
+                    for other, other_row in rows.items()
+                    if other != reference
                 )
             )
+            if suspects:
+                findings.append(
+                    Finding(
+                        "duplicates.slug_across_clusters",
+                        "error",
+                        f"{slug} belongs to {len(groups)} separate groups",
+                        {
+                            "slug": slug,
+                            "refs": suspects,
+                            "groups": [sorted(group) for group in groups.values()],
+                        },
+                    )
+                )
     return findings
 
 

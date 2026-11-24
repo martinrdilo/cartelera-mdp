@@ -26,6 +26,7 @@ No network, standard library only (Python 3.12).
 from __future__ import annotations
 
 import argparse
+import calendar
 import html
 import json
 import re
@@ -37,6 +38,7 @@ from urllib.parse import urlparse, quote
 from zoneinfo import ZoneInfo
 
 from lib.sellers import seller_from_url
+from lib.site_urls import venue_site_url
 
 # ---------------------------------------------------------------------------
 # Site identity and constants
@@ -79,6 +81,11 @@ SOURCE_ORDER = SELLER_SOURCES + (
     "quehacemos",
     "municipal",
 )
+
+# The site only publishes what a visitor can still plan around. A date more
+# than a year out is not a season announcement but bad data (a 2029 typo, a
+# far-future import), so it never reaches the agenda; data/ stays untouched.
+HORIZON_MONTHS = 12
 
 WEEKDAY_ABBR = ("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -170,6 +177,31 @@ def upcoming_dates(event: dict, today: date) -> list[str]:
     return [d for d in event_dates(event) if d >= today.isoformat()]
 
 
+def add_months(day: date, months: int) -> date:
+    """Shift a date by whole months, clamping to the last day of the target month."""
+    index = day.month - 1 + months
+    year = day.year + index // 12
+    month = index % 12 + 1
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(day.day, last_day))
+
+
+def horizon_bounds(today: date) -> tuple[date, date]:
+    """±12 months around the build date, both ends inclusive."""
+    return add_months(today, -HORIZON_MONTHS), add_months(today, HORIZON_MONTHS)
+
+
+def in_build_horizon(dates: list[str], today: date) -> bool:
+    """True when at least one occurrence falls inside the build horizon.
+
+    Multi-date events are judged by their occurrences: one date in range keeps
+    the event. An event with no known date has nothing to place on the agenda
+    and never qualifies.
+    """
+    start, end = horizon_bounds(today)
+    return any(start.isoformat() <= value <= end.isoformat() for value in dates)
+
+
 def matches_window(dates: list[str], window: str, today: date) -> bool:
     """True when any of the (upcoming) ISO dates falls inside the window."""
     start, end = window_bounds(window, today)
@@ -226,6 +258,56 @@ def is_usable(value) -> bool:
     if isinstance(value, str) and value.strip().casefold() in PRICE_PLACEHOLDERS:
         return False
     return True
+
+
+# The venue's own site comes from the municipal panel and is republished from
+# the snapshot, so a stale value is re-validated here before it becomes a
+# "Sala" link. The rule is shared with the collector (lib/site_urls.py), so
+# both ends accept and reject exactly the same values.
+
+
+# Pages that list many events, or expose raw data, instead of one ficha. The
+# municipal agenda is paginated by date, so a recorded page keeps moving as
+# events pass: linking it as "Fuente" sends the reader to a page that no
+# longer carries the event. Ticketeras publish a JSON endpoint, not a page.
+LISTING_URL_PATTERNS = (
+    "resultados-eventos.asp",
+    "/obtener_eventos/",
+    "api.venti.live",
+    "/colonprogramacion",
+)
+
+# The one listing that still opens the events it sources: Colón publishes the
+# whole temporada on a single page, not paginated by date. The exception is
+# exact host+path, so every other /colonprogramacion URL stays a listing.
+COLON_PROGRAM_HOST = "mardelplata.gob.ar"
+COLON_PROGRAM_PATH = "/colonprogramacion"
+
+
+def _is_colon_program_page(parsed) -> bool:
+    """True only for https://www.mardelplata.gob.ar/colonprogramacion."""
+    host = parsed.netloc.lower().removeprefix("www.")
+    if host != COLON_PROGRAM_HOST or parsed.query:
+        return False
+    return parsed.path.rstrip("/") == COLON_PROGRAM_PATH
+
+
+def is_event_page(url) -> bool:
+    """True when the URL opens one event, not a listing, an API or a site root."""
+    if not isinstance(url, str) or not is_usable(url):
+        return False
+    parsed = urlparse(url)
+    # A clickable source is a web page; ftp:// never opens the event.
+    if parsed.scheme not in ("http", "https"):
+        return False
+    if not parsed.netloc:
+        return False
+    # A root with a query string ("https://host/?p=1") is still a site root.
+    if not parsed.path.strip("/"):
+        return False
+    if _is_colon_program_page(parsed):
+        return True
+    return not any(pattern in url for pattern in LISTING_URL_PATTERNS)
 
 
 def is_event_url(url: str | None) -> bool:
@@ -385,12 +467,22 @@ def _source_rank(member: dict) -> int:
     return SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER)
 
 
-def pick_source_member(members: list[dict]) -> dict | None:
-    """Highest-priority member that carries a source page."""
-    for member in sorted(members, key=_source_rank):
-        if is_usable(member.get("raw_url")):
+def pick_source_member(members: list[dict], ticket_member: dict | None = None) -> dict | None:
+    """Best member that can be linked as an event page.
+
+    The member behind the chosen ticket goes first, so that "Fuente" and
+    "Comprar" agree. Then priority order. A listing page, an API endpoint or a
+    site root never qualifies: better an unlinked source name than a link that
+    opens nothing.
+    """
+    ordered = [ticket_member, *sorted(members, key=_source_rank)]
+    for member in ordered:
+        if member and is_event_page(member.get("raw_url")):
             return member
-    return members[0] if members else None
+    for member in ordered:
+        if member and is_event_page(member.get("ticket_url")):
+            return member
+    return None
 
 
 def pick_ticket_info(members: list[dict]) -> tuple[str | None, str | None, dict | None]:
@@ -475,11 +567,12 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
     venue_name = (resolved or {}).get("name") or venue_hint or members[0].get("venue_name") or "Mar del Plata"
     venue_id = (resolved or {}).get("id") or slugify(venue_name)
     ticket_url, seller, ticket_member = pick_ticket_info(members)
-    source_member = (
-        ticket_member
-        if ticket_member and is_usable(ticket_member.get("raw_url"))
-        else pick_source_member(members)
-    )
+    source_member = pick_source_member(members, ticket_member)
+    source_url = None
+    if source_member:
+        source_url = source_member.get("raw_url")
+        if not is_event_page(source_url):
+            source_url = source_member.get("ticket_url")
     event = {
         "title": pick_field(members, "title") or venue_name,
         "venue_id": venue_id,
@@ -493,9 +586,12 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
         "ticket_url": ticket_url,
         "seller": seller,
         "image_url": pick_field(members, "image_url"),
+        # The venue's own site (municipal panels) never becomes the Fuente
+        # link: it is rendered as its own detail line.
+        "venue_url": pick_field(members, "venue_url"),
         "sources": sorted({member.get("source", "") for member in members}),
         "source_name": (source_member or {}).get("source"),
-        "source_url": (source_member or {}).get("raw_url"),
+        "source_url": source_url,
     }
     event["price_label"] = price_label(event)
     event["display_title"] = choose_display_title(members, event["title"])
@@ -526,7 +622,7 @@ def merge_site_duplicates(left: dict, right: dict) -> dict:
         for field in ("seller", "source_name", "source_url"):
             if not is_usable(merged.get(field)) and is_usable(right.get(field)):
                 merged[field] = right[field]
-    for field in ("time", "price_min", "price_text", "image_url", "address"):
+    for field in ("time", "price_min", "price_text", "image_url", "address", "venue_url"):
         if not is_usable(merged.get(field)) and is_usable(right.get(field)):
             merged[field] = right[field]
     merged["price_label"] = price_label(merged)
@@ -580,7 +676,11 @@ def collect_site_events(data_dir: Path, today: date) -> tuple[list[dict], list[d
     ]
     events += [merge_members([event], index, today) for event in normalized if event_ref(event) not in clustered]
 
-    events = [event for event in events if event["dates"]]
+    events = [
+        event
+        for event in events
+        if event["dates"] and in_build_horizon(event["dates"], today)
+    ]
     events = collapse_exact_duplicates(events)
     events.sort(key=lambda event: (event["dates"][0], event["time"] or "99:99", event["title"].casefold()))
     seen: dict[str, int] = {}
@@ -629,7 +729,11 @@ def looks_clean(text: str) -> bool:
 
 
 def title_case(text: str) -> str:
-    """'THE BEATLES SINFONICO' -> 'The Beatles Sinfonico'."""
+    """'THE BEATLES SINFONICO' -> 'The Beatles Sinfonico'.
+
+    Only all-caps words are rewritten, so a word that already mixes cases
+    ("McCartney", "iPhone") survives the pass instead of being lowercased.
+    """
     words = []
     for position, word in enumerate(text.split()):
         lowered = word.lower()
@@ -637,9 +741,24 @@ def title_case(text: str) -> str:
             words.append(word.upper())
         elif position > 0 and lowered in SMALL_WORDS:
             words.append(lowered)
+        elif _is_mixed_case(word):
+            words.append(word)
         else:
-            words.append(word[:1].upper() + word[1:].lower())
+            words.append(_capitalize_word(word))
     return " ".join(words)
+
+
+def _is_mixed_case(word: str) -> bool:
+    """True when the word carries both an uppercase and a lowercase letter."""
+    return any(char.islower() for char in word) and any(char.isupper() for char in word)
+
+
+def _capitalize_word(word: str) -> str:
+    """Uppercase the first letter, left punctuation aside: '‘NORMA' -> '‘Norma'."""
+    for index, char in enumerate(word):
+        if char.isalpha():
+            return word[:index] + char.upper() + word[index + 1:].lower()
+    return word
 
 
 def choose_display_title(members: list[dict], fallback: str) -> str:
@@ -994,9 +1113,10 @@ def render_toolbar(
     default_view: str,
     registry: list[dict] | None = None,
 ) -> str:
-    """Inline filter bar: free toggle, six venue chips and a drawer toggle."""
+    """Inline filter bar: free and ticket toggles, venue chips, drawer toggle."""
     venues = venue_options(events, registry)
     free = sum(1 for event in events if event["is_free"])
+    with_ticket = sum(1 for event in events if event.get("ticket_url"))
     weekend_count = sum(1 for event in events if matches_window(event["dates"], "weekend", today))
     initial_visible = weekend_count if default_view == "weekend" else len(events)
 
@@ -1028,6 +1148,11 @@ def render_toolbar(
         '<button type="button" class="fchip fchip--free" id="filter-free" '
         'data-filter="free" aria-pressed="false">'
         f"Gratis <em>{free}</em></button>"
+        # Only events whose ticket_url opens a sale page: the client hides the
+        # rest while this toggle is on, so no row leaves the payload.
+        '<button type="button" class="fchip fchip--ticket" id="filter-ticket" '
+        'data-filter="ticket" aria-pressed="false">'
+        f"Solo con entrada online <em>{with_ticket}</em></button>"
         f"{venues_html}"
         f"{more}"
         '<div class="filterbar__active" id="active-filters" hidden>'
@@ -1326,16 +1451,29 @@ def render_row_details(event: dict) -> str:
     facts = [f"<p><b>Fechas:</b> {esc(dates)}</p>"]
     if event.get("address"):
         facts.append(f"<p><b>Dónde:</b> {esc(event['address'])}</p>")
+    venue_url = venue_site_url(event.get("venue_url"))
+    if venue_url:
+        # The venue's own site, not the event page nor the fuente: its own line.
+        # Validated again here: the snapshot may predate the collector's check.
+        facts.append(
+            f'<p><b>Sala:</b> <a class="btn btn--source" href="{esc(venue_url)}" '
+            f'target="_blank" rel="noopener">Ver sitio de la sala ↗</a></p>'
+        )
     if not event.get("ticket_url"):
         name = sale_name(event)
         if name:
             facts.append(f"<p><b>Venta:</b> {esc(name)}</p>")
     if event.get("source_url"):
         source_label = SOURCE_LABELS.get(event.get("source_name"), event.get("source_name") or "Fuente")
-        facts.append(
-            f'<p><b>Fuente:</b> <a href="{esc(event["source_url"])}" target="_blank" rel="noopener">'
-            f"{esc(source_label)} ↗</a></p>"
-        )
+        if event["source_url"] == event.get("ticket_url"):
+            # The chosen ficha is the sale page itself: the buy CTA already
+            # opens it, so the source is named, not linked twice.
+            facts.append(f"<p><b>Fuente:</b> {esc(source_label)}</p>")
+        else:
+            facts.append(
+                f'<p><b>Fuente:</b> <a class="btn btn--source" href="{esc(event["source_url"])}" '
+                f'target="_blank" rel="noopener">Ver en {esc(source_label)} ↗</a></p>'
+            )
     elif event.get("sources"):
         labels = " + ".join(
             SOURCE_LABELS.get(source, source) for source in event["sources"]
@@ -1398,6 +1536,7 @@ def render_row(event: dict, today: date) -> str:
         f'data-row data-id="{slug}" data-date="{primary}" '
         f'data-in-weekend="{1 if in_weekend(primary, today) else 0}" '
         f'data-free="{1 if event["is_free"] else 0}" data-venue="{esc(event["venue_id"])}" '
+        f'data-ticket="{1 if event.get("ticket_url") else 0}" '
         f'data-search="{esc(search_blob(event))}" data-initials="{esc(initials(event["display_title"]))}" '
         f'data-title="{esc(event["display_title"])}" data-venue-name="{esc(event["venue_name"])}" '
         f'data-when="{esc(format_when(event["dates"], event["time"]))}" '
@@ -1591,6 +1730,7 @@ def render_index(
 {render_footer(last_run)}
 </main>
 <script id="events-data" type="application/json">{payload}</script>
+<script src="assets/filter.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
@@ -1614,6 +1754,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         render_index(events, last_run, today, registry=registry), encoding="utf-8"
     )
     shutil.copyfile(ASSETS_SRC / "style.css", out_dir / "assets" / "style.css")
+    shutil.copyfile(ASSETS_SRC / "filter.js", out_dir / "assets" / "filter.js")
     shutil.copyfile(ASSETS_SRC / "app.js", out_dir / "assets" / "app.js")
     shutil.copyfile(ASSETS_SRC / "favicon.svg", out_dir / "favicon.svg")
 
@@ -1622,7 +1763,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, out_dir: Path = DEFAULT_OUT_DIR, to
         "upcoming": len(events),
         "weekend": weekend_count,
         "venues": len(venue_options(events, registry)),
-        "files": ["index.html", "assets/style.css", "assets/app.js", "favicon.svg"],
+        "files": ["index.html", "assets/style.css", "assets/filter.js", "assets/app.js", "favicon.svg"],
     }
 
 

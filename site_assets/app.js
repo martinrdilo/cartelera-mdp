@@ -60,6 +60,28 @@
     });
   }
 
+  /* -------------------------------------------------------- ticket filter */
+
+  /* Remembered like the theme: a visitor who only cares about events they
+     can buy for should not re-enable the toggle on every visit. */
+  var TICKET_KEY = "cartelera-ticket-only";
+
+  function storedTicketOnly() {
+    try {
+      return localStorage.getItem(TICKET_KEY) === "1";
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function persistTicketOnly(value) {
+    try {
+      localStorage.setItem(TICKET_KEY, value ? "1" : "0");
+    } catch (error) {
+      /* private mode: the choice lasts for this visit only */
+    }
+  }
+
   /* ---------------------------------------------------------------- state */
 
   function slice(list) {
@@ -74,6 +96,7 @@
   var emptyState = document.getElementById("empty-state");
   var clearButton = document.getElementById("clear-filters");
   var freeButton = document.getElementById("filter-free");
+  var ticketButton = document.getElementById("filter-ticket");
   var venueChips = slice(document.querySelectorAll(".fchip[data-venue]"));
   var salaToggle = document.getElementById("sala-toggle");
   var salaDrawer = document.getElementById("sala-drawer");
@@ -94,7 +117,7 @@
     if (button.classList.contains("is-on")) defaultView = button.dataset.view;
   });
 
-  var state = { view: defaultView, free: false, venue: null, query: "" };
+  var state = { view: defaultView, free: false, ticket: storedTicketOnly(), venue: null, query: "" };
   var autoSwitched = false;
   var showAllVenues = false;
 
@@ -107,37 +130,20 @@
       .trim();
   }
 
-  function matchesFilters(row, overrides) {
-    var free = overrides && "free" in overrides ? overrides.free : state.free;
-    var venue = overrides && "venue" in overrides ? overrides.venue : state.venue;
-    if (free && row.dataset.free !== "1") return false;
-    if (venue && row.dataset.venue !== venue) return false;
-    if (state.query && (row.dataset.search || "").indexOf(state.query) === -1) return false;
-    return true;
-  }
+  /* The filter predicates live in filter.js, loaded before this script, so
+     the page and the Node tests run one rule. */
+  var Filter = window.CarteleraFilter;
 
   function matches(row) {
-    return matchesFilters(row, null);
-  }
-
-  function dateInWindow(iso, window) {
-    return Boolean(window) && iso >= window.start && iso <= window.end;
-  }
-
-  function inMonth(iso, key) {
-    return iso.indexOf(key) === 0;
+    return Filter.matchesFilters(row, state);
   }
 
   function inView(row, view) {
-    if (view === "all") return true;
-    if (view === "weekend") return row.dataset.inWeekend === "1";
-    if (view === "next-weekend") return dateInWindow(row.dataset.date, data.windows && data.windows.next_weekend);
-    if (view.indexOf("month:") === 0) return inMonth(row.dataset.date, view.slice(6));
-    return row.dataset.date === view;
+    return Filter.inView(row, view, data.windows);
   }
 
   function activeFilters() {
-    return state.free || Boolean(state.venue) || Boolean(state.query);
+    return state.free || state.ticket || Boolean(state.venue) || Boolean(state.query);
   }
 
   function updateTabCounts() {
@@ -158,6 +164,10 @@
     if (freeButton) {
       freeButton.classList.toggle("is-on", state.free);
       freeButton.setAttribute("aria-pressed", String(state.free));
+    }
+    if (ticketButton) {
+      ticketButton.classList.toggle("is-on", state.ticket);
+      ticketButton.setAttribute("aria-pressed", String(state.ticket));
     }
     var chipHasVenue = false;
     venueChips.forEach(function (chip) {
@@ -206,13 +216,7 @@
         row.hidden = !show;
         if (show) shown += 1;
       });
-      var groupInView =
-        state.view === "all" ||
-        (state.view === "weekend" && group.dataset.inWeekend === "1") ||
-        (state.view === "next-weekend" &&
-          dateInWindow(group.dataset.date, data.windows && data.windows.next_weekend)) ||
-        (state.view.indexOf("month:") === 0 && inMonth(group.dataset.date, state.view.slice(6))) ||
-        group.dataset.date === state.view;
+      var groupInView = inView(group, state.view);
       group.hidden = !groupInView || shown === 0;
       var label = group.querySelector(".daygroup__head span");
       if (label) label.textContent = shown + (shown === 1 ? " evento" : " eventos");
@@ -242,6 +246,7 @@
       reason: reason,
       view: state.view,
       free: state.free,
+      ticket: state.ticket,
       venue: state.venue,
       query: state.query,
       visible: visible
@@ -292,6 +297,8 @@
 
   function resetFilters() {
     state.free = false;
+    state.ticket = false;
+    persistTicketOnly(false);
     state.venue = null;
     state.query = "";
     state.view = "all";
@@ -314,6 +321,14 @@
     freeButton.addEventListener("click", function () {
       state.free = !state.free;
       render("free");
+    });
+  }
+
+  if (ticketButton) {
+    ticketButton.addEventListener("click", function () {
+      state.ticket = !state.ticket;
+      persistTicketOnly(state.ticket);
+      render("ticket");
     });
   }
 
