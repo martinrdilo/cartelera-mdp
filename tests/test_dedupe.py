@@ -966,6 +966,48 @@ class TestDeudaAgendaBuckets:
 
         assert cluster_events([fiesta, noche]) == []
 
+    def test_genre_or_short_name_does_not_name_the_event(self):
+        # S_R2-001 / S_R3-001: a genre word names a kind of night, not which
+        # one, so it cannot be the surviving name in either order.
+        pairs = [
+            ("Fiesta Rock", "Rock Pop"), ("Fiesta Rock", "Rock de Cámara"),
+            ("Fiesta Rock", "Rock"), ("Fiesta Electrónica", "Electrónica Buenos Aires"),
+        ]
+        for wrapper_title, plain_title in pairs:
+            wrapper = make_event("municipal", wrapper_title, "Club Uno", "2026-12-12")
+            other = make_event("punto", plain_title, "Club Uno", "2026-12-12", event_id="p2")
+            assert cluster_events([wrapper, other]) == []
+            assert cluster_events([other, wrapper]) == []
+
+    def test_specific_wrapper_name_survives_the_bill_in_both_orders(self):
+        # The bill after the party's own name is a list, not a second name.
+        pairs = [
+            ("NOCHE RASTONE", "¡FIESTA EN MAR DEL RASTONE! 💚💛❤️ 🎸 50% RASTA, 50% STONE"),
+            ("Fiesta La Nosti", "La Nosti - 5 aniversario-sábado 21/11"),
+        ]
+        for wrapper_title, plain_title in pairs:
+            wrapper = make_event("cultutickets", wrapper_title, "Ciudad Cultural Brew House", "2026-11-27")
+            other = make_event("cualpinta", plain_title, "Ciudad Cultural Brew House", "2026-11-27", event_id="p2")
+            for first, second in ((wrapper, other), (other, wrapper)):
+                clusters = cluster_events([first, second])
+                assert len(clusters) == 1
+                assert clusters[0]["pairs"][0]["score"] == 100.0
+
+    def test_wrapper_score_is_identical_when_the_rows_swap(self):
+        # S_R2-001: the old rule picked a side by token count, so the score
+        # depended on the order. Both directions now run on the token sets.
+        fiesta = make_event("municipal", "Fiesta Rock", "Club Uno", "2026-12-12")
+        camara = make_event("punto", "Rock de Cámara", "Club Uno", "2026-12-12", event_id="p2")
+        bresh = make_event("cualpinta", "¡FIESTA EN MAR DEL RASTONE!", "Club Uno", "2026-12-12")
+        noche = make_event("cultutickets", "NOCHE RASTONE", "Club Uno", "2026-12-12", event_id="c2")
+
+        def score(first, second):
+            clusters = cluster_events([first, second])
+            return clusters[0]["pairs"][0]["score"] if clusters else None
+
+        assert score(fiesta, camara) == score(camara, fiesta) is None
+        assert score(noche, bresh) == score(bresh, noche) == 100.0
+
     def test_municipal_fiesta_la_nosti_joins_the_anniversary_title(self):
         # stadium-la-normandina 21/11: the municipal agenda prints the party's
         # wrapper title, Venti prints the party plus its anniversary bill.

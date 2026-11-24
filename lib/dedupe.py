@@ -206,7 +206,7 @@ def _single_token_match(event_a, event_b):
         short, longer = tokens_b[0], tokens_a
     else:
         return None
-    if len(short) < 4:
+    if len(short) < 4 or short in _GENRE_WORDS:
         return None
     score = max(fuzz.ratio(short, token) for token in longer)
     return round(float(score), 1) if score >= 90 else None
@@ -222,29 +222,48 @@ _NIGHT_WRAPPER_WORDS = {
     "party", "previa",
 }
 
+# Genres and formats name a kind of night too, never which one: "Fiesta Rock"
+# and "Rock de Cámara" are two shows at one venue on one date. Titles here are
+# already normalized (lowercase, accents dropped), so only single-token forms.
+_GENRE_WORDS = (
+    "rock", "pop", "jazz", "trap", "house", "techno", "cumbia", "cuarteto",
+    "folklore", "folclore", "reggae", "funk", "soul", "electronica", "indie",
+    "punk", "metal", "hiphop", "rap", "salsa", "bachata", "tango", "blues",
+    "acustico", "sinfonico", "orquesta", "festival", "fiesta", "noche",
+    "party", "live", "show", "concierto", "recital", "edition", "edicion",
+)
+
+
+def _wrapper_name_is_weak(event):
+    """True when a wrapper title keeps only genre/format words as its name."""
+    tokens = set(_significant_tokens(event))
+    name = tokens - _NIGHT_WRAPPER_WORDS
+    return bool(tokens & _NIGHT_WRAPPER_WORDS) and (
+        not name or all(len(token) < 5 or token in _GENRE_WORDS for token in name)
+    )
+
 
 def _wrapper_title_match(event_a, event_b):
     """One title is the other's own name behind a wrapper noun.
 
-    Only the shorter title may carry the wrapper and extra words: every name
-    token that survives the wrapper must appear literally in the other title,
-    and each one has to be a real name (four characters or more) so a genre
-    slot ("Noche 90s") is not mistaken for one.
+    Match only when one side carries a wrapper token, that side's tokens once
+    the wrapper is removed are a subset of the other side's significant
+    tokens, and every surviving name token is at least five characters and
+    absent from the genre/format list. Both directions run on the token sets,
+    so the outcome is identical when the rows swap and a genre name ("Fiesta
+    Rock") cannot stand as the name in either order.
     """
-    tokens_a = _significant_tokens(event_a)
-    tokens_b = _significant_tokens(event_b)
-    if len(tokens_a) <= len(tokens_b):
-        short, longer = tokens_a, tokens_b
-    else:
-        short, longer = tokens_b, tokens_a
-    if not any(token in _NIGHT_WRAPPER_WORDS for token in short):
-        return None
-    name = [token for token in short if token not in _NIGHT_WRAPPER_WORDS]
-    if not name or len(name) > 3 or not all(len(token) >= 4 for token in name):
-        return None
-    if not all(token in longer for token in name):
-        return None
-    return 100.0
+    tokens_a = set(_significant_tokens(event_a))
+    tokens_b = set(_significant_tokens(event_b))
+    for wrapped, other in ((tokens_a, tokens_b), (tokens_b, tokens_a)):
+        if not wrapped & _NIGHT_WRAPPER_WORDS:
+            continue
+        name = wrapped - _NIGHT_WRAPPER_WORDS
+        if name and len(name) <= 3 and name <= other and not any(
+            len(token) < 5 or token in _GENRE_WORDS for token in name
+        ):
+            return 100.0
+    return None
 
 
 def _concatenated_title_match(event_a, event_b):
@@ -382,6 +401,14 @@ def _pair_evidence(event_a, event_b, threshold):
     wrapper_score = _wrapper_title_match(event_a, event_b)
     if wrapper_score is not None:
         return {"kind": "title_core", "score": wrapper_score}
+    # Identical titles name one event whatever they say ("Fiesta Fa"); a
+    # wrapper that keeps only a genre or format ("Fiesta Rock") names none,
+    # so the fuzzy subset signal must not merge two shows on that word.
+    same_title = normalize_text(strip_title_noise(event_a.title)) == normalize_text(
+        strip_title_noise(event_b.title)
+    )
+    if not same_title and (_wrapper_name_is_weak(event_a) or _wrapper_name_is_weak(event_b)):
+        return None
     score = title_similarity(event_a.title, event_b.title)
     if score >= threshold:
         return {"kind": "title_fuzzy", "score": round(float(score), 1)}
