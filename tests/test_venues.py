@@ -280,6 +280,24 @@ class TestEventVenue:
             title="Max Styler en MUTE en Mar del Plata", venue_name="", venue_raw=""
         ) == ("mute-club-de-mar", "Mute Club de Mar")
 
+    def test_multi_word_room_wins_over_a_shorter_registered_prefix(self):
+        # "Teatro Auditorium" is a registered alias of the city auditorium and
+        # the first two words of the registered four-word alias of the Puerto
+        # hall, so a shorter candidate that wins here answers the wrong room.
+        # The trailing city or time makes the whole remainder unresolvable, so
+        # only the candidate order decides.
+        expected = (
+            "auditorium-laureti-puerto",
+            "Teatro Auditorium Laureti Puerto",
+        )
+        for title in (
+            "Nick Warren en Teatro Auditorium Laureti Puerto en Mar del Plata",
+            "Nick Warren en Teatro Auditorium Laureti Puerto @ 23:00",
+        ):
+            assert venues.resolve_event(
+                title=title, venue_name="", venue_raw=""
+            ) == expected, title
+
     def test_title_naming_no_registered_alias_stays_unresolved(self):
         # Shorter candidates must never be invented into a venue: a room, a
         # zone and a city that the registry does not know add no evidence.

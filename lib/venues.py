@@ -101,10 +101,12 @@ def _venue_candidates(title):
     5 aniversario", "MUTE en Mar del Plata") -- so each phrase expands into
     progressively shorter candidates: the whole remainder, the remainder cut
     at the first separator, both with trailing punctuation stripped, and its
-    first one to four words. The rightmost preposition is tried first, but a
-    phrase that names no registered alias falls back to the one before it,
-    because a trailing time or city is not the room. A candidate that looks
-    like a clock or a bare number is skipped: those are never rooms.
+    first one to four words, ordered longest first so a shorter registered
+    alias that is a prefix of a longer one can never win. The rightmost
+    preposition is tried first, but a phrase that names no registered alias
+    falls back to the one before it, because a trailing time or city is not
+    the room. A candidate that looks like a clock or a bare number is
+    skipped: those are never rooms.
     """
     if not title:
         return
@@ -119,6 +121,9 @@ def _venue_candidates(title):
             candidates.append(remainder[: separator.start()])
         for size in range(1, min(4, len(words)) + 1):
             candidates.append(" ".join(words[:size]))
+        # Longer phrases are tried first: a multi-word room must never be
+        # shadowed by a shorter registered alias that is just its prefix.
+        candidates.sort(key=lambda phrase: len(phrase.split()), reverse=True)
         seen = set()
         for candidate in candidates:
             candidate = candidate.strip().rstrip(_TRAILING_PUNCTUATION).strip()
