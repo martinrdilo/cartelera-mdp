@@ -41,6 +41,11 @@ def _anchor_today() -> date:
 SNAPSHOT_TODAY = date(2026, 10, 14)
 # Integration builds use the committed snapshot, anchored on a real Thursday.
 BUILD_TODAY = _anchor_today()
+# The ficha asserted by the ticket-link test is the 2026-11-20 AN ESPIL show,
+# so both build dates are pinned inside that event's lifetime: BUILD_TODAY
+# follows the calendar and drops the row once the show has passed, which made
+# that test fail for a reason unrelated to the link.
+TICKET_TODAYS = (date(2026, 11, 10), date(2026, 11, 20))
 JSON_LD_RE = re.compile(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.DOTALL)
 DATA_RE = re.compile(r'<script id="events-data" type="application/json">(.*?)</script>', re.DOTALL)
 COLON_PROGRAM_URL = "https://www.mardelplata.gob.ar/colonprogramacion"
@@ -972,6 +977,22 @@ def test_articket_endpoint_is_rejected_without_the_trailing_slash():
     assert build_site.is_event_page("https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/")
 
 
+def test_listing_marker_in_the_query_keeps_the_ficha_linkable():
+    # R3-003: listing-ness is decided from the path, so a ficha whose query
+    # string or fragment merely carries the marker (a redirect or ref
+    # parameter) is still an event page and keeps its "Fuente" link. The
+    # previous guard searched the whole URL and dropped these.
+    for url in (
+        "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/?ref=/obtener_eventos",
+        "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/?next=https://articket.com.ar/obtener_eventos/?cantidad_eventos=500",
+        "https://puntomardelplata.com/actividades/fiesta-plop-20501?volver=/colonprogramacion",
+        "https://puntomardelplata.com/actividades/fiesta-plop-20501?origen=resultados-eventos.asp",
+        "https://puntomardelplata.com/actividades/fiesta-plop-20501?fallback=api.venti.live",
+        "https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/#/obtener_eventos",
+    ):
+        assert build_site.is_event_page(url), url
+
+
 @pytest.mark.parametrize("marker", build_site.LISTING_URL_PATTERNS)
 def test_every_listing_marker_rejects_its_trailing_slash_spellings(marker):
     # S3c: the guard drops the marker's trailing slash before comparing, so
@@ -1022,8 +1043,8 @@ def test_colon_exception_is_only_that_host_and_path():
 class TestDeterministicBuild:
     """Full build from the committed snapshot into a tmp dir."""
 
-    def build(self, tmp_path):
-        stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=BUILD_TODAY)
+    def build(self, tmp_path, today=BUILD_TODAY):
+        stats = build_site.build(data_dir=DATA_DIR, out_dir=tmp_path, today=today)
         html = (tmp_path / "index.html").read_text(encoding="utf-8")
         return stats, html
 
@@ -1100,8 +1121,11 @@ class TestDeterministicBuild:
         _, html = self.build(tmp_path)
         assert "19º Encuentro Internacional de Coros Mardelcanto 2026" in html
 
-    def test_known_ticket_url_is_linked(self, tmp_path):
-        _, html = self.build(tmp_path)
+    @pytest.mark.parametrize("today", TICKET_TODAYS)
+    def test_known_ticket_url_is_linked(self, tmp_path, today):
+        # Two pinned build dates, both inside the show's lifetime, so the row
+        # is linked no matter what the calendar says the day the suite runs.
+        _, html = self.build(tmp_path, today=today)
         assert 'href="https://articket.com.ar/AN-ESPIL-EN-CLUB-TRI/"' in html
         assert html.count('data-outbound="ticket"') > 0
         assert html.count('target="_blank" rel="noopener"') >= html.count('data-outbound="ticket"')
