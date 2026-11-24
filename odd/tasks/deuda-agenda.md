@@ -35,24 +35,32 @@ Rama: `feat/deuda-agenda`, desde `origin/main` (`41de1e9`). Runner: `.venv/bin/p
 
 | ID | Spec | Alcance | Commit |
 |---|---|---|---|
-| T1 | S4 | Documento de feature, handoff de T7 versionado y L13 | — |
+| T1 | S4 | Documento de feature, handoff de T7 versionado y L13 | `4484be5` |
 | T2 | S1 | Ocho buckets con veredicto y tests de unión | `4619338` |
-| T3 | S2 | Quince filas de venue y criterio escrito | `pending` |
-| T4 | S3a | Evidencia de pares en el join por slug | — |
-| T5 | S3b | Una sola regla de compatibilidad de fechas | — |
-| T6 | S3c | Guard de Articket sin barra final | — |
-| T7 | S3d | Fallback de `CarteleraFilter` en el cliente | — |
+| T3 | S2 | Quince filas de venue y criterio escrito | `789f656` |
+| T4 | S3a | Evidencia de pares en el join por slug | `aa8ac31` |
+| T5 | S3b | Una sola regla de compatibilidad de fechas | `b837351` |
+| T6 | S3c | Guard de Articket sin barra final | `20f04aa` |
+| T7 | S3d | Fallback de `CarteleraFilter` en el cliente | `a3ef4aa` |
 | T8 | S5 | Sincronización y limpieza de ramas | — |
 
 T4 a T7 son independientes entre sí y tocan archivos disjuntos salvo `tests/`, que se reparte por suite: `tests/test_dedupe.py`, `tests/test_verify.py`, `tests/test_build_site.py` y un test nuevo para `app.js`.
 
-T1 y T2 suman 519 líneas autoradas en 2 commits, por encima de la guía de ~400 por slice; el límite se registra acá y la forma de entrega (un PR o slices encadenados) se decide al publicar.
+T1 a T7 suman 1.561 líneas autoradas en 7 commits, muy por encima de la guía de ~400 por slice; el límite se registra acá y la forma de entrega (un PR o slices encadenados) se decide al publicar.
 
 **L5.** T3 (2026-11-24): venues. Nueva API `lib/venues.resolve_event(title=, venue_name=, venue_raw=)`: los campos de venue ganan y sólo si no hay ninguno se usa la mención final del título (`en`/`at`/`@`) contra un alias **ya registrado**; nunca se inventa una sala. Siete entradas nuevas (`samsara-beach`, `immc`, `the-clap`, `fisker`, `lina-club-cultural`, `fichin-bar`, `club-de-foodies`) y el alias «Casino Central de Mar del Plata» en `casinos-de-la-provincia`.
 
 Cableado en `run_pipeline._venue_stats` (`run_pipeline.py:120-131`): sin caller, el resolver era código muerto y el snapshot no cambiaba — el mismo defecto que el review anterior marcó con `has_ticket`. Diferencial sobre 595 filas: **23 unknown → 12**, 11 flips (3 por título + 8 por registro + el alias), 0 regresiones y ningún venue re-apuntado a otro id. `resolve()` y `venue_key()` siguen byte-idénticas (chequeo AST). RED 9 fallas / GREEN 50 en `tests/test_venues.py`; suite completa 778 pasan, 1 falla previa.
 
 Quedan 12 filas sin resolver, con criterio escrito en los tests: `Playa Chapadmalal` y `Playa Grande` son zonas, `Mar Del Plata` es la ciudad, `Avenida Patricio Peralta Ramos` y las rutas son vías sin sala, `Antesala` es la productora de Bombo, `Festival Silvermare` es marca de festival, `El Plan de La Mariposa` es el artista, y las filas de Bresh y Camelphat no nombran sala en título, campos ni dirección.
+
+**L6.** T4 (2026-11-24): evidencia de pares. En `lib/dedupe.py:555-575` el borde de slug ahora registra un par `ticket_slug` por **cada** anchor compatible que une (antes sólo `anchors[-1]`), con las dos referencias ordenadas para que el registro no dependa del orden de entrada. `union()` sigue recibiendo la misma secuencia, así que el membership no cambia por construcción: 123 clusters antes y después, sets idénticos. Pares 555 → 618 (438 → 439 distintos); el único borde nuevo es `punto:19994 ↔ elevenflow:tan-bionica-…`, exactamente la evidencia que el defecto ocultaba. RED 2 fallas / GREEN 83. Riesgo declarado: los registros redundantes suben de 117 a 179 (duplicación pre-existente al cruzar el pase de venue); deduplicarlos toca todos los tipos de par y queda como follow-up.
+
+**L7.** T5 (2026-11-24): una sola regla de fechas. `verify/duplicates.py:71` llama `dedupe._slug_dates_compatible` en lugar de tener su propia copia; el fallback de `date_start` sobrevive como paso explícito (`_with_known_dates`) que además reusa `dedupe.occurrences_of`. Tabla de paridad de 10 casos, incluida una prueba de «flip»: si se invierte la regla de `lib`, el verificador la sigue. El verificador queda **más estricto** en 2 casos (una fila con sólo `date_start` contradice la noche conocida), nunca más laxo. RED 10 fallas / GREEN 45. Riesgo: `_slug_dates_compatible` es privada; un rename futuro falla fuerte con ImportError, que es la señal buscada.
+
+**L8.** T6 (2026-11-24): guard de Articket. `LISTING_URL_PATTERNS` pierde la barra final y `is_event_page` compara contra `_LISTING_MARKERS`, la misma tupla con la barra recortada, así que el endpoint se rechaza con y sin barra, con query y con fragmento; la normalización cubre cualquier entrada futura. Diferencial: 605 URLs del snapshot, **0 flips**; build completo byte-idéntico. RED 3 fallas nuevas / GREEN 174 pasan y la previa conocida. Nota: `cultutickets.com/obtener_eventos` también pasa a rechazarse por compartir el marcador; no hay ninguna URL así en el snapshot.
+
+**L9.** T7 (2026-11-24): el cliente ya no depende duro de `filter.js`. `app.js:133-149` sondea `filterReady`; sin módulo, `matches()` e `inView()` devuelven `true`, así que el render no tira y la página degrada a «sin filtrado del cliente» sin copiar ninguna regla. Los tests **ejecutan** `app.js` bajo Node con un stub de DOM, con y sin el módulo, y afirman estado renderizado: sin módulo, 3 filas visibles, contador «3 eventos», badges «3», sin error de init; con módulo, el toggle sigue recortando a 1. RED 3 fallas / GREEN 17.
 
 ## Log
 
