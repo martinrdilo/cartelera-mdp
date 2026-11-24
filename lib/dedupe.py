@@ -248,13 +248,16 @@ def _wrapper_title_match(event_a, event_b):
 
 
 def _concatenated_title_match(event_a, event_b):
-    """The shorter title's tokens spell one whole token of the other title.
+    """One title's tokens spell a whole token of the other title.
 
     Articket glues the festival name into a single word and appends the bill
     ("RETROPARTUZAFEST - CHARLY MORENO Y LOS CHIKILINES"), so the municipal
-    title ("Retropartuza Fest") never matches token by token. The joined name
-    must be a whole token on the other side and at least eight characters, so
-    a short title cannot match a morpheme of an unrelated one.
+    title ("Retropartuza Fest") never matches token by token. The rule is
+    symmetric: both directions are tried, so it does not matter which side
+    carries the concatenated name (the seller may glue it on either side).
+    The joined name must be a whole token on the other side and at least
+    eight characters, so a short title cannot match a morpheme of an
+    unrelated one.
     """
     tokens_a = _significant_tokens(event_a)
     tokens_b = _significant_tokens(event_b)
@@ -275,28 +278,18 @@ def _single_significant_token(event):
     return None
 
 
-# A series publishes different entries under one shared prefix ("41° Festival
-# Internacional de Cine: <film>"). Only a prefix that names a series can hide
-# two entries, so the guard below checks for one of these markers instead of
-# treating every shared opening as a series.
-_SERIES_MARKERS = {
-    "festival", "festivales", "festivalito", "fest", "festi", "ciclo",
-    "ciclos", "muestra", "muestras", "encuentro", "encuentros", "temporada",
-    "temporadas", "programa", "programacion",
-}
-
-
 def series_prefix_conflict(event_a, event_b):
-    """True when two titles share a series prefix but differ in the entry.
+    """True when two titles share a long series prefix but differ in the entry.
 
-    A film festival publishes every screening under the same prefix
-    ("41° Festival Internacional de Cine: <film>"). The shared prefix inflates
-    token_set_ratio, so two different films look alike. When the common
-    leading tokens name such a series and the remaining tails are dissimilar,
-    the titles are different entries of that series. An artist name or a
-    show's own title in front of two descriptions ("Valentín Garvie Quinteto
-    <framing>" against "VALENTIN GARVIE QUINTETO FEAT HERNAN HECHT") is one
-    event, not a series, and must not be swallowed by this guard.
+    A series publishes every entry under one shared prefix, and it need not
+    announce itself: a film festival ("41° Festival Internacional de Cine:
+    <film>") does, a concert cycle ("Concierto de Piano Barroco: <pianist>")
+    does not. Because no marker list covers every such prefix, the guard does
+    not try to recognise one: any three-token opening whose tails are
+    dissimilar may hide two entries, so a fuzzy score inflated by that
+    opening is not evidence. Only a signal that proves one event on its own
+    (the shared ticket slug, decided before this guard) may still join the
+    rows.
     """
     tokens_a = _significant_tokens(event_a)
     tokens_b = _significant_tokens(event_b)
@@ -306,8 +299,6 @@ def series_prefix_conflict(event_a, event_b):
             break
         common += 1
     if common < 3:
-        return False
-    if not any(token in _SERIES_MARKERS for token in tokens_a[:common]):
         return False
     tail_a = " ".join(tokens_a[common:])
     tail_b = " ".join(tokens_b[common:])

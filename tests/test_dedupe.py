@@ -1,6 +1,13 @@
 """Tests for cross-source dedupe (venue+date fingerprint, slug join, fuzzy title)."""
 
-from lib.dedupe import cluster_events, extract_slug, normalize_text, strip_title_noise, title_similarity
+from lib.dedupe import (
+    cluster_events,
+    extract_slug,
+    normalize_text,
+    series_prefix_conflict,
+    strip_title_noise,
+    title_similarity,
+)
 from lib.schema import Event
 
 
@@ -986,10 +993,11 @@ class TestDeudaAgendaBuckets:
         assert len(clusters) == 1
         assert len(clusters[0]["events"]) == 2
 
-    def test_artist_name_prefix_is_not_a_festival_series(self):
-        # teatro-auditorium 05/12: one concert, two titles. The shared opening
-        # is the artist's name, not a festival prefix hiding two entries, so
-        # the series guard must not swallow the pair.
+    def test_shared_artist_prefix_alone_does_not_join_two_descriptions(self):
+        # teatro-auditorium 05/12: the pair looked like one concert, but the
+        # only evidence is the three-token opening; the tails disagree. A
+        # prefix that names no series is still not evidence of one event (R3),
+        # so the bucket stays unmerged until another signal proves it.
         auditorium = make_event(
             "auditorium",
             "Valentín Garvie Quinteto llega al Teatro Auditorium con una propuesta de jazz contemporáneo",
@@ -1013,10 +1021,30 @@ class TestDeudaAgendaBuckets:
             ),
         )
 
-        clusters = cluster_events([auditorium, quehacemos])
+        assert series_prefix_conflict(auditorium, quehacemos) is True
+        assert cluster_events([auditorium, quehacemos]) == []
 
-        assert len(clusters) == 1
-        assert clusters[0]["pairs"][0]["kind"] == "title_prefix"
+    def test_markerless_series_prefix_does_not_join_distinct_entries(self):
+        # A series need not announce itself with a marker word: a piano cycle
+        # publishes every concert under "Concierto de Piano Barroco" and the
+        # entries differ. The guard cannot enumerate every such prefix, so a
+        # shared three-token opening with dissimilar tails blocks the pair.
+        first = make_event(
+            "municipal",
+            "Concierto de Piano Barroco: Ana Ruiz",
+            "Teatro Auditorium",
+            "2026-11-14",
+            event_id="49411",
+        )
+        second = make_event(
+            "cualpinta",
+            "CONCIERTO DE PIANO BARROCO - LUIS PAZ",
+            "Teatro Auditorium",
+            "2026-11-14",
+        )
+
+        assert series_prefix_conflict(first, second) is True
+        assert cluster_events([first, second]) == []
 
     def test_date_stamp_with_a_space_joins_the_lineup_title(self):
         # umano 08/01: Qué Hacemos stamps the date as "08 .01.2027", with a

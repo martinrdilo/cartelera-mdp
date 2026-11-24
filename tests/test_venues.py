@@ -400,34 +400,69 @@ class TestRemainingVenueRows:
 
 
 class TestPipelineVenueStats:
-    def test_title_named_venue_counts_as_resolved(self):
-        # The pipeline counters must use the same rule as the registry, or the
-        # snapshot keeps reporting a resolved venue as unknown.
+    @staticmethod
+    def _event(title, venue_name="", venue_raw=""):
         from lib.schema import Event
-        from run_pipeline import _venue_stats
 
-        def event(title, venue_name="", venue_raw=""):
-            return Event(
-                source="quehacemos",
-                source_event_id="1",
-                title=title,
-                venue_name=venue_name,
-                venue_raw=venue_raw,
-                date_start="2027-01-10",
-                date_end="2027-01-10",
-                occurrences=["2027-01-10"],
-            )
+        return Event(
+            source="quehacemos",
+            source_event_id="1",
+            title=title,
+            venue_name=venue_name,
+            venue_raw=venue_raw,
+            date_start="2027-01-10",
+            date_end="2027-01-10",
+            occurrences=["2027-01-10"],
+        )
+
+    def test_title_named_venue_is_materialised_into_the_event(self):
+        # The counter used to resolve the title again, so a row could be
+        # counted as resolved while the event itself carried no venue. The
+        # pipeline now writes the registry name into the event, and the
+        # counter reads only what the event carries.
+        from run_pipeline import _materialise_venues, _venue_stats
 
         events = [
-            event("Max Styler en MUTE"),
-            event(
+            self._event("Max Styler en MUTE"),
+            self._event(
                 "SAMSARA | Christmas Edition | Jueves 24 dic",
                 "SAMSARA BEACH",
                 "SAMSARA BEACH, Ruta Provincial 11 4866, Mar del Plata",
             ),
-            event("CAMELPHAT", "", ", Ruta Provincial 11"),
+            self._event("CAMELPHAT", "", ", Ruta Provincial 11"),
         ]
+
+        _materialise_venues(events)
+
+        assert events[0].venue_name == "Mute Club de Mar"
+        # A source that already names a resolvable venue keeps its own string.
+        assert events[1].venue_name == "SAMSARA BEACH"
+        # Nothing is invented from a route: the row stays unresolved.
+        assert events[2].venue_name == ""
         assert _venue_stats(events) == {"resolved": 2, "unknown": 1}
+
+    def test_title_only_row_ends_with_the_venue_in_the_event(self):
+        from run_pipeline import _materialise_venues, _venue_stats
+
+        event = self._event("Max Styler en MUTE")
+
+        _materialise_venues([event])
+
+        assert resolve(event.venue_name) == ("mute-club-de-mar", "Mute Club de Mar")
+        assert event.to_dict()["venue_name"] == "Mute Club de Mar"
+        assert _venue_stats([event]) == {"resolved": 1, "unknown": 0}
+
+    def test_counter_does_not_resolve_the_title_on_its_own(self):
+        # The count must describe the events, not a second independent
+        # inference: an unmaterialised row is unknown however its title reads.
+        from run_pipeline import _venue_stats
+
+        events = [
+            self._event("Max Styler en MUTE"),
+            self._event("CAMELPHAT", "", ", Ruta Provincial 11"),
+        ]
+
+        assert _venue_stats(events) == {"resolved": 0, "unknown": 2}
 
 
 class TestVenueKey:
