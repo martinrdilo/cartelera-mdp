@@ -1273,8 +1273,17 @@ class TestRedesignMarkup:
         keys = re.findall(r'data-view="month:(\d{4}-\d{2})"', month_nav)
         expected = sorted({event["dates"][0][:7] for event in payload["events"]})[: build_site.MONTH_NAV_LIMIT]
         assert keys == expected
-        assert "Noviembre" in month_nav
-        assert "Enero 2027" in month_nav
+        # The labels are the formatter's, not a month name that only exists
+        # while the committed corpus is fresh: "Noviembre" went red the moment
+        # the calendar passed the snapshot, because the build anchors on the
+        # next Thursday with events.
+        labels = re.findall(r"<b>([^<]+)</b>", month_nav)
+        assert labels == [build_site.format_month_tab(key, BUILD_TODAY) for key in keys]
+
+    def test_month_tab_label_carries_the_year_only_outside_the_current_one(self):
+        today = date(2026, 11, 28)
+        assert build_site.format_month_tab("2026-11", today) == "Noviembre"
+        assert build_site.format_month_tab("2027-01", today) == "Enero 2027"
 
     def test_day_tab_counts_match_their_groups(self, tmp_path):
         stats, html, _, _, payload = self.build(tmp_path)
