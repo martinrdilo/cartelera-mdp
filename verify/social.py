@@ -29,7 +29,8 @@ from lib.social_posts import (
     VERDICT_UNKNOWN,
     merge_verdicts,
     post_urls,
-    verdict_from_title,
+    verdict_from_page,
+    verdict_key,
 )
 
 CHECK_FILE = "social_post_checks.json"
@@ -53,6 +54,33 @@ def posts_to_check(data_dir: Path) -> list[str]:
     return post_urls(events)
 
 
+PAGE_SIGNALS = """() => ({
+  title: document.title,
+  ogTitle: (document.querySelector('meta[property="og:title"]') || {}).content || '',
+  times: document.querySelectorAll('time').length,
+  media: document.querySelectorAll('img[src*="cdninstagram"], img[src*="fbcdn"]').length,
+})"""
+
+
+def read_verdict(page, attempts: int = 6, wait_ms: int = 1_000) -> str:
+    """Poll the page until it says something; a slow render is not a verdict.
+
+    A post that opens keeps the login wall's generic "Instagram" title, so the
+    decision reads the page signals, never "it loaded and said nothing".
+    """
+    for _ in range(attempts):
+        page.wait_for_timeout(wait_ms)
+        signals = page.evaluate(PAGE_SIGNALS)
+        verdict = verdict_from_page(
+            signals.get("title"),
+            signals.get("ogTitle") or "",
+            bool((signals.get("times") or 0) + (signals.get("media") or 0)),
+        )
+        if verdict != VERDICT_UNKNOWN:
+            return verdict
+    return VERDICT_UNKNOWN
+
+
 def check_urls(urls, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
     """One verdict per URL, read from the page a stranger gets."""
     try:
@@ -62,21 +90,26 @@ def check_urls(urls, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
 
     verdicts: dict[str, str] = {}
     with sync_playwright() as playwright:
-        # A fresh context holds no cookies: that is the visitor this site serves.
-        browser = playwright.chromium.launch()
-        context = browser.new_context(locale="es-AR")
-        page = context.new_page()
+        try:
+            browser = playwright.chromium.launch()
+        except Exception as exc:  # installed without its browser
+            raise RuntimeError(AUTH_STATE_HINT) from exc
         try:
             for url in urls:
+                key = verdict_key(url) or url
+                # A fresh context per URL holds no cookies: cookies set by the
+                # first navigation must not decide the next verdict.
+                context = browser.new_context(locale="es-AR")
                 try:
+                    page = context.new_page()
                     page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
-                    page.wait_for_timeout(1_500)
-                    verdicts[url] = verdict_from_title(page.title())
+                    verdicts[key] = read_verdict(page)
                 except Exception:
                     # A timeout or a navigation error is not evidence either way.
-                    verdicts[url] = VERDICT_UNKNOWN
+                    verdicts[key] = VERDICT_UNKNOWN
+                finally:
+                    context.close()
         finally:
-            context.close()
             browser.close()
     return verdicts
 
@@ -86,7 +119,11 @@ def run(data_dir: Path, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
     url_list = posts_to_check(data_dir)
     fresh = check_urls(url_list, timeout_ms=timeout_ms) if url_list else {}
     target = data_dir / CHECK_FILE
-    previous = json.loads(target.read_text(encoding="utf-8")) if target.exists() else None
+    try:
+        previous = json.loads(target.read_text(encoding="utf-8")) if target.exists() else None
+    except (json.JSONDecodeError, OSError):
+        # An interrupted write is not a reason to lose this run.
+        previous = None
     payload = merge_verdicts(
         previous,
         fresh,

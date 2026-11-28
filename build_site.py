@@ -33,6 +33,14 @@ import re
 import shutil
 import unicodedata
 from datetime import date, datetime, timedelta
+
+from lib.social_posts import (
+    is_social_account,
+    is_social_host,
+    is_social_story,
+    publishable_social,
+    verdict_map,
+)
 from pathlib import Path
 from urllib.parse import urlparse, quote
 from zoneinfo import ZoneInfo
@@ -291,22 +299,10 @@ _LISTING_MARKERS = tuple(marker.rstrip("/") for marker in LISTING_URL_PATTERNS)
 COLON_PROGRAM_HOST = "mardelplata.gob.ar"
 COLON_PROGRAM_PATH = "/colonprogramacion"
 
-# A social post is not a ficha. The venue deletes or privatizes its own posts
-# whenever it wants, and Instagram answers an unavailable post with its login
-# wall: the visitor reads "this post is not available", never the event. The
-# account page stays a page, so only the post permalinks are rejected.
-SOCIAL_POST_HOSTS = ("instagram.com",)
-SOCIAL_POST_SECTIONS = ("p", "reel", "reels", "stories", "tv", "s")
-
-
-def _is_social_post(parsed) -> bool:
-    """True for a post permalink (/p/..., /reel/...), not for the account page."""
-    host = parsed.netloc.lower().removeprefix("www.")
-    if not any(host == own or host.endswith("." + own) for own in SOCIAL_POST_HOSTS):
-        return False
-    section = parsed.path.strip("/").split("/", 1)[0].lower()
-    return section in SOCIAL_POST_SECTIONS
-
+# A story is not a ficha: it lives 24 hours and then reads "story unavailable",
+# whatever the club meant to publish. A post permalink does open the event -- the
+# club announces each show there -- and what keeps a restricted post out of the
+# "Fuente" link is the verdict `verify/social.py` records, not the URL shape.
 
 def _listing_target(parsed) -> str:
     """The URL without its query string or fragment, as host+path.
@@ -339,7 +335,7 @@ def is_event_page(url) -> bool:
     # A root with a query string ("https://host/?p=1") is still a site root.
     if not parsed.path.strip("/"):
         return False
-    if _is_social_post(parsed):
+    if is_social_story(parsed.geturl()):
         return False
     if _is_colon_program_page(parsed):
         return True
@@ -356,7 +352,23 @@ def is_event_url(url: str | None) -> bool:
     if not url:
         return False
     parsed = urlparse(url)
+    if is_social_host(url):
+        # A post is never the place where tickets are sold.
+        return False
     return bool(parsed.netloc) and bool(parsed.path.strip("/"))
+
+
+def linkable_source(url, verdicts: dict) -> bool:
+    """True when `url` may be published as a row's "Fuente" link.
+
+    On a social host only the account page is a page by itself; every other
+    shape needs a verdict that a check opened it, so nothing unverified lands.
+    """
+    if not is_event_page(url):
+        return False
+    if is_social_host(url) and not is_social_account(url):
+        return publishable_social(url or "", verdicts)
+    return True
 
 
 def _parse_amount(raw: str) -> float | None:
@@ -504,7 +516,9 @@ def _source_rank(member: dict) -> int:
     return SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER)
 
 
-def pick_source_member(members: list[dict], ticket_member: dict | None = None) -> dict | None:
+def pick_source_member(
+    members: list[dict], ticket_member: dict | None = None, verdicts: dict | None = None
+) -> dict | None:
     """Best member that can be linked as an event page.
 
     The member behind the chosen ticket goes first, so that "Fuente" and
@@ -514,10 +528,10 @@ def pick_source_member(members: list[dict], ticket_member: dict | None = None) -
     """
     ordered = [ticket_member, *sorted(members, key=_source_rank)]
     for member in ordered:
-        if member and is_event_page(member.get("raw_url")):
+        if member and linkable_source(member.get("raw_url"), verdicts or {}):
             return member
     for member in ordered:
-        if member and is_event_page(member.get("ticket_url")):
+        if member and linkable_source(member.get("ticket_url"), verdicts or {}):
             return member
     return None
 
@@ -587,7 +601,13 @@ def _duplicate_title_key(event: dict) -> str:
     return normalize_key(title).replace(" ", "")
 
 
-def merge_members(members: list[dict], index: dict[str, dict], today: date, venue_hint: str | None = None) -> dict:
+def merge_members(
+    members: list[dict],
+    index: dict[str, dict],
+    today: date,
+    venue_hint: str | None = None,
+    verdicts: dict | None = None,
+) -> dict:
     """Merge cluster members (or a single event) into one site event."""
     dates = sorted({d for member in members for d in upcoming_dates(member, today)})
     resolved = resolve_venue(venue_hint or "", "", index)
@@ -604,12 +624,14 @@ def merge_members(members: list[dict], index: dict[str, dict], today: date, venu
     venue_name = (resolved or {}).get("name") or venue_hint or members[0].get("venue_name") or "Mar del Plata"
     venue_id = (resolved or {}).get("id") or slugify(venue_name)
     ticket_url, seller, ticket_member = pick_ticket_info(members)
-    source_member = pick_source_member(members, ticket_member)
+    source_member = pick_source_member(members, ticket_member, verdicts)
     source_url = None
     if source_member:
-        source_url = source_member.get("raw_url")
-        if not is_event_page(source_url):
-            source_url = source_member.get("ticket_url")
+        for field in ("raw_url", "ticket_url"):
+            candidate = source_member.get(field)
+            if linkable_source(candidate, verdicts or {}):
+                source_url = candidate
+                break
     event = {
         "title": pick_field(members, "title") or venue_name,
         "venue_id": venue_id,
@@ -706,12 +728,20 @@ def collect_site_events(data_dir: Path, today: date) -> tuple[list[dict], list[d
 
     index = venue_index(registry)
     clustered = {event_ref(member) for cluster in deduped.get("clusters", []) for member in cluster["events"]}
+    # What the browser check recorded about each post: the only evidence that
+    # lets a post be a "Fuente" link.
+    checks_path = data_dir / "social_post_checks.json"
+    verdicts = verdict_map(load_json(checks_path) if checks_path.exists() else None)
 
     events = [
-        merge_members(cluster["events"], index, today, cluster.get("venue_name"))
+        merge_members(cluster["events"], index, today, cluster.get("venue_name"), verdicts)
         for cluster in deduped.get("clusters", [])
     ]
-    events += [merge_members([event], index, today) for event in normalized if event_ref(event) not in clustered]
+    events += [
+        merge_members([event], index, today, None, verdicts)
+        for event in normalized
+        if event_ref(event) not in clustered
+    ]
 
     events = [
         event

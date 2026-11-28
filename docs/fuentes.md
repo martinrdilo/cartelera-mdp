@@ -121,3 +121,20 @@ Build diferencial sobre una misma corrida real (`--today 2026-11-28`, **614 fila
 `data/` quedó sin regrabar en el repo, igual que en la sección 7: el deploy corre el pipeline y recién ahí las filas de Club TRI toman el `venue_url` nuevo. El snapshot commiteado conserva la corrida anterior.
 
 Estado de la suite: **819 tests pasan, 1 falla** (`test_build_site.py::TestRedesignMarkup::test_month_navigation_markup`). Esa falla es **previa a estos cambios** y de la misma familia que la de la sección 7: depende de la fecha, porque el fixture construye la agenda desde «hoy» y a fin de mes no queda ningún evento de noviembre en el build.
+
+## 10. El post de Instagram, verificado con navegador (2026-11-28)
+
+La sección 9 dejó el tema cerrado en falso. `clubtri.com` no tiene página por evento, así que para un show gratis el único enlace propio es el post donde el club lo anuncia — y ese post **sí se puede verificar**, sólo que no con un cliente HTTP. Con un navegador sin cookies, el post restringido renderiza `<title>Post isn't available</title>` (o `Post no está disponible` con `locale=es-AR`) y el que abre renderiza su propia página. Esa diferencia es la que usa la nueva capa:
+
+**1. `lib/social_posts.py`.** Predicado de permalink de post (`/p/`, `/reel/`, `/tv/`; los stories quedan afuera a propósito: expiran en 24 h, así que ni se verifican ni se publican), lectura del veredicto desde la página renderizada con plegado de acentos, y `merge_verdicts`: un `unknown` de una corrida fallida no pisa el veredicto que sí abrió la página, así que un timeout no resucita un post muerto. Un `available` nuevo sí reemplaza a un `unavailable`. La página de cuenta es el único URL social que no necesita veredicto, y las raíces de sección (`/reels/`, `/explore/`) no cuentan como cuenta.
+
+**2. `verify/social.py` y `python -m verify social`.** Abre cada permalink que el snapshot lleva, en un contexto sin cookies, y escribe `data/social_post_checks.json` con un veredicto por URL. Es opt-in: necesita Playwright (`pip install playwright && playwright install chromium`), que el deploy no tiene. Los veredictos se versionan, así que el sitio no depende de que Instagram conteste durante el deploy.
+
+**3. `build_site.py`.** En un host social sólo la página de cuenta es página por sí misma. Todo lo demás —un post, un story, la pestaña de reels, un link corto de compartir— necesita un veredicto `available` para ser «Fuente»: sin veredicto la fila nombra la fuente en texto y ofrece el sitio del club. Así ninguna forma social llega al sitio sin haberse abierto alguna vez. Un post de Instagram tampoco puede ser nunca el link de compra.
+
+Corrida del 2026-11-28 sobre la agenda real: **7 permalinks**, **6 `available`** y **1 `unavailable`** (`instagram.com/p/Dfpe3r7ghri/`, el de Ciclo Costa Cannabis). Build de esa corrida: las 6 fichas publican «Ver en Club TRI» a su post, Ciclo Costa Cannabis queda con «Fuente: Club TRI» en texto y «Sala: Ver sitio de la sala» → `clubtri.com`.
+
+Un bug real que salió de la primera corrida y quedó pineado en `tests/test_social_posts.py`: con `locale=es-AR` el título es **`Post no está disponible`**, y la primera lista de marcadores sólo tenía la variante genérica («publicación no está disponible»), así que el verificador marcó el post muerto como `available`. Por eso el parser compara con acentos plegados y el test cubre las dos lenguas.
+
+**Lo que sigue sin resolverse.** Un post que muera después de la última corrida queda publicado hasta la próxima verificación: los veredictos son una foto, no un reloj. `checked_at` en el archivo dice de cuándo es la foto.
+

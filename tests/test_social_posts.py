@@ -12,9 +12,13 @@ from lib.social_posts import (
     VERDICT_AVAILABLE,
     VERDICT_UNAVAILABLE,
     VERDICT_UNKNOWN,
+    is_social_account,
+    is_social_host,
     is_social_post,
-    unavailable_urls,
+    publishable_social,
+    verdict_from_page,
     verdict_from_title,
+    verdict_map,
 )
 
 
@@ -33,10 +37,20 @@ def test_a_restricted_post_is_read_from_the_rendered_title(title):
     assert verdict_from_title(title) == VERDICT_UNAVAILABLE
 
 
-def test_a_post_that_renders_its_page_is_available():
-    # The shortest signal a logged-out browser gets: the page itself.
+def test_only_a_title_that_names_the_post_is_available():
     assert verdict_from_title("Club TRI on Instagram: “CICLO COSTA CANNABIS”") == VERDICT_AVAILABLE
-    assert verdict_from_title("Instagram") == VERDICT_AVAILABLE
+    # A bare "Instagram" is the login wall: reading it as available is the false
+    # positive that published a dead link once already.
+    assert verdict_from_title("Instagram") == VERDICT_UNKNOWN
+
+
+def test_a_live_post_behind_the_login_wall_is_available():
+    # Measured 2026-11-28: the live post keeps og:title and markup (14 <time>,
+    # 26 media) and the error page has none.
+    assert verdict_from_page("Instagram", 'Club TRI en Instagram: "x"', True) == VERDICT_AVAILABLE
+    assert verdict_from_page("Instagram", "", True) == VERDICT_AVAILABLE
+    assert verdict_from_page("Instagram", "", False) == VERDICT_UNKNOWN
+    assert verdict_from_page("Post no está disponible • Instagram", "x en Instagram: y", True) == VERDICT_UNAVAILABLE
 
 
 @pytest.mark.parametrize("title", ("", None, "   "))
@@ -45,22 +59,45 @@ def test_a_page_without_a_signal_stays_unknown(title):
     assert verdict_from_title(title) == VERDICT_UNKNOWN
 
 
-def test_only_unavailable_urls_are_blocked():
+def test_a_reserved_section_root_is_not_an_account_page():
+    # /reels/ and /explore/ are one segment too; exempting them from the verdict
+    # (as any one-segment path was) publishes them unchecked.
+    assert is_social_account("https://www.instagram.com/club.tri/") is True
+    for url in (
+        "https://www.instagram.com/reels/",
+        "https://www.instagram.com/explore/",
+        "https://www.instagram.com/p/",
+    ):
+        assert is_social_account(url) is False, url
+
+
+def test_publishing_a_post_needs_a_recorded_available_verdict():
     payload = {
         "schema": "cartelera-mdp.social-post-checks/v1",
-        "checked_at": "2026-11-28T14:00:00+00:00",
         "verdicts": {
-            "https://www.instagram.com/p/AAA/": VERDICT_AVAILABLE,
+            "https://www.instagram.com/p/AAA/?img_index=1": VERDICT_AVAILABLE,
             "https://www.instagram.com/p/BBB/": VERDICT_UNAVAILABLE,
             "https://www.instagram.com/p/CCC/": VERDICT_UNKNOWN,
         },
     }
-    assert unavailable_urls(payload) == frozenset({"https://www.instagram.com/p/BBB/"})
+    verdicts = verdict_map(payload)
+    # The stored key keeps a query string; the bare permalink still matches it.
+    assert publishable_social("https://www.instagram.com/p/AAA/", verdicts) is True
+    assert publishable_social("https://www.instagram.com/p/BBB/", verdicts) is False
+    assert publishable_social("https://www.instagram.com/p/CCC/", verdicts) is False
+    # Never checked: not published. The loose direction is the bug.
+    assert publishable_social("https://www.instagram.com/p/DDD/", verdicts) is False
+
+
+def test_the_account_page_is_the_only_social_url_that_needs_no_verdict():
+    assert is_social_host("https://www.instagram.com/reels/audio/1/") is True
+    assert is_social_account("https://www.instagram.com/club.tri/") is True
+    assert is_social_account("https://www.instagram.com/p/abc/") is False
 
 
 @pytest.mark.parametrize("payload", (None, {}, {"verdicts": {}}, {"verdicts": "nope"}, []))
-def test_a_missing_or_broken_file_blocks_nothing(payload):
-    assert unavailable_urls(payload) == frozenset()
+def test_a_missing_or_broken_file_decides_nothing(payload):
+    assert verdict_map(payload) == {}
 
 
 @pytest.mark.parametrize(
@@ -69,7 +106,7 @@ def test_a_missing_or_broken_file_blocks_nothing(payload):
         "https://www.instagram.com/p/Dfpe3r7ghri/",
         "https://www.instagram.com/p/Df5eV8hmEhG/?img_index=1",
         "https://instagram.com/reel/Cabc123/",
-        "https://www.instagram.com/stories/club.tri/3141592653/",
+        "https://www.instagram.com/tv/Cabc123/",
     ),
 )
 def test_a_post_permalink_is_recognised(url):
@@ -80,6 +117,7 @@ def test_a_post_permalink_is_recognised(url):
     "url",
     (
         "https://www.instagram.com/club.tri/",
+        "https://www.instagram.com/stories/club.tri/1/",
         "https://clubtri.com/",
         "https://puntomardelplata.com/actividades/fiesta-plop-20501",
         None,

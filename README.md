@@ -76,7 +76,7 @@ La página es una agenda agrupada por fecha, no una grilla de tarjetas:
 | Capa | Red | Qué prueba |
 |---|---|---|
 | `snapshot` | no | Esquema, fechas, ocurrencias, precio, moneda, link/vendedor, unicidad de `source_event_id`, contadores y membresía del dedupe, y coherencia del merge multi-fuente del sitio (precio de un vendedor con link de otro). |
-| `social` | sí (navegador) | Abre cada permalink de post social del snapshot en un contexto sin cookies y anota en `data/social_post_checks.json` si la página renderiza el post o «Post isn't available». El build no publica como «Fuente» los posts que ese archivo marca `unavailable`. Necesita `pip install playwright && playwright install chromium`; los veredictos se versionan, así que el deploy no depende de Instagram. |
+| `social` | sí (navegador) | Abre cada permalink de post social del snapshot en un contexto sin cookies y anota en `data/social_post_checks.json` si la página renderiza el post o «Post isn't available». El build publica como «Fuente» solo los posts que ese archivo marca `available`: sin veredicto, el post no es link. Necesita `pip install playwright && playwright install chromium`; los veredictos se versionan, así que el deploy no depende de Instagram. |
 | `rebuild` | no | Re-ejecuta `normalize` sobre `data/raw/*.json` y compara campo por campo contra `events_normalized.json`: detecta ediciones manuales y drift de parsers. Se saltea si `data/raw/` no existe (es gitignored). |
 | `duplicates` | no | Mismo slug de ticket en clusters distintos (error) y mismo venue + fecha + título parecido entre fuentes (warning). Reusa el guard de series del dedupe. |
 | `links` | sí | `HTTP >= 400`, fallos de red, esquemas inválidos y redirecciones que abandonan la ficha. |

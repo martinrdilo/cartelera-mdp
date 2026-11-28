@@ -1,0 +1,13 @@
+{
+  "schema": "cartelera-mdp.social-post-checks/v1",
+  "verdicts": {
+    "https://www.instagram.com/p/Df0TWZyhR94/": "available",
+    "https://www.instagram.com/p/Dfpe3r7ghri/": "unavailable",
+    "https://www.instagram.com/p/DfyAr0QAtO7/": "available",
+    "https://www.instagram.com/p/DgECHjvgALo/": "available",
+    "https://www.instagram.com/p/DgGglTjxIuu/": "available",
+    "https://www.instagram.com/p/DgNcIAMB8LP/": "available",
+    "https://www.instagram.com/p/DgOSrHqFTtG/": "available"
+  },
+  "checked_at": "2026-11-28T14:50:50+00:00"
+}
