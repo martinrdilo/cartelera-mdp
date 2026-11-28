@@ -115,7 +115,13 @@ def check_urls(urls, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
 
 
 def run(data_dir: Path, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
-    """Check every post, merge with the recorded verdicts and write the file."""
+    """Check every post, merge with the recorded verdicts, write only on change.
+
+    A run that could not decide -- a blocked runner answers `unknown` for every
+    URL -- must leave the file exactly as it is. Rewriting it would move
+    `checked_at` and claim a check that never happened, and it would make the
+    scheduled job commit a timestamp every day.
+    """
     url_list = posts_to_check(data_dir)
     fresh = check_urls(url_list, timeout_ms=timeout_ms) if url_list else {}
     target = data_dir / CHECK_FILE
@@ -129,6 +135,8 @@ def run(data_dir: Path, timeout_ms: int = DEFAULT_TIMEOUT_MS) -> dict:
         fresh,
         checked_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
     )
+    if previous and payload["verdicts"] == previous.get("verdicts"):
+        return previous
     payload["schema"] = SCHEMA
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return payload

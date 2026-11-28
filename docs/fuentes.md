@@ -136,5 +136,5 @@ Corrida del 2026-11-28 sobre la agenda real: **7 permalinks**, **6 `available`**
 
 Un bug real que salió de la primera corrida y quedó pineado en `tests/test_social_posts.py`: con `locale=es-AR` el título es **`Post no está disponible`**, y la primera lista de marcadores sólo tenía la variante genérica («publicación no está disponible»), así que el verificador marcó el post muerto como `available`. Por eso el parser compara con acentos plegados y el test cubre las dos lenguas.
 
-**Lo que sigue sin resolverse.** Un post que muera después de la última corrida queda publicado hasta la próxima verificación: los veredictos son una foto, no un reloj. `checked_at` en el archivo dice de cuándo es la foto.
+**Lo que sigue sin resolverse.** Un post que muera después de la última corrida queda publicado hasta la próxima verificación: los veredictos son una foto, no un reloj. `checked_at` en el archivo dice de cuándo es la foto, y sólo avanza cuando cambia un veredicto: una corrida que no pudo decidir no reescribe el archivo ni afirma un chequeo que no pasó.
 
