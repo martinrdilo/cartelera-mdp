@@ -1004,6 +1004,25 @@ def test_every_listing_marker_rejects_its_trailing_slash_spellings(marker):
         assert not build_site.is_event_page(url), url
 
 
+def test_social_post_permalink_is_not_an_event_page():
+    # A post on the club's Instagram is not a ficha: the club deletes it or
+    # makes it private whenever it wants, and then the "Fuente" button opens
+    # "this post is not available". Better an unlinked source name than a
+    # link that dies.
+    for url in (
+        "https://www.instagram.com/p/Dfpe3r7ghri/",
+        "https://www.instagram.com/p/Df5eV8hmEhG/?img_index=1",
+        "https://instagram.com/reel/Cabc123/",
+        "https://www.instagram.com/reels/Cabc123/",
+        "https://www.instagram.com/stories/club.tri/3141592653/",
+        "https://www.instagram.com/tv/Cabc123/",
+    ):
+        assert not build_site.is_event_page(url), url
+    # PRESERVE: the account page still opens, and so does every real ficha.
+    assert build_site.is_event_page("https://www.instagram.com/club.tri/")
+    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+
+
 def test_is_event_page_requires_an_http_scheme_and_a_real_path():
     # D3: the scheme was never checked and an empty path with a query passed.
     assert not build_site.is_event_page("ftp://host/colonprogramacion")

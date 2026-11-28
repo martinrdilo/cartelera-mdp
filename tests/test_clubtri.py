@@ -44,6 +44,24 @@ def test_free_card_keeps_its_info_link_as_origin():
     assert event.raw_url == link
 
 
+def test_every_card_carries_the_club_site_as_the_venue_link():
+    # The club publishes its agenda on its own site, so the row can offer it
+    # even when the card has no stable event page: a free card links to an
+    # Instagram post, and those disappear.
+    events = normalize(
+        [
+            make_record(),
+            make_record(
+                title="Noche de Salsa",
+                status_text="Gratis",
+                link="https://www.instagram.com/club.tri/",
+                image_id="731",
+            ),
+        ]
+    )
+    assert [event.venue_url for event in events] == ["https://clubtri.com/"] * 2
+
+
 def test_ticket_card_keeps_the_listing_as_origin():
     event = normalize([make_record()])[0]
     assert event.ticket_url == "https://articket.com.ar/DANTE/"

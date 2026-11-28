@@ -14,6 +14,7 @@ from lib.dates import extract_time, parse_spanish_date, to_iso
 from lib.schema import Event
 
 URL = "https://clubtri.com/"
+VENUE_SITE = "https://clubtri.com/"
 USER_AGENT = "cartelera-mdp-pipeline/0.2 (local research)"
 SOURCE = "clubtri"
 VENUE_NAME = "Club TRI"
@@ -92,6 +93,9 @@ def normalize(records):
                 ticket_url=record["link"] if is_ticket_link else None,
                 seller=seller,
                 image_url=record["image_url"],
+                # The agenda is the club's own site: the row can always offer
+                # it, which matters when the card has no stable page of its own.
+                venue_url=VENUE_SITE,
                 city="Mar del Plata",
                 raw_url=info_link or record["raw_url"],
             )
