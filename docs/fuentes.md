@@ -105,3 +105,19 @@ Estado de la suite en el head actual: **750 tests pasan, 1 falla** (`test_build_
 - **Venti con dos nombres.** `lib/sellers.py` mapea `venti.live` → `"Venti"`, y el collector `venti.py` produce `Venti`, pero `municipal` deja `"Venti.live"` en 6 filas. Hay que unificar el string para que agrupe bien.
 - **`source` no refleja al vendedor real en Qué Hacemos.** Sus 146 filas quedan como `source=quehacemos` aunque el `seller` sea Plateanet, Dogma, Bandsintown o Alpogo. Es correcto por diseño, pero engaña si se cuenta cobertura por vendedor.
 - **90 venues sin resolver** en la última corrida (`last_run.json`: 511 resueltos, 90 sin resolver), en su mayoría nombres de productora y zonas.
+
+## 9. Un post social no es una ficha (2026-11-28)
+
+El cambio **1** de la sección 7 apuntó las tarjetas gratis de Club TRI a su post de Instagram. El relevamiento del sitio publicado mostró el costo: el botón «Ver en Club TRI» del evento *CICLO COSTA CANNABIS: Hongos & Cannabis* abría `instagram.com/p/Dfpe3r7ghri/` y el visitante leía «este post no está disponible». El club borra o privatiza sus propios posts cuando quiere, y no publica una página por evento: `clubtri.com` es la agenda entera, así que la tarjeta tampoco tiene otra ficha propia. Un post caído no se puede detectar al colectar —Instagram contesta `200` con su muro de login (`<title>Instagram</title>`) tanto para un post vivo como para uno borrado—, de modo que ningún chequeo en vivo arregla el enlace: el permalink no es una fuente durable y deja de publicarse.
+
+Dos cambios, corregidos el mismo día:
+
+**1. `build_site.py`.** `is_event_page()` rechaza los permalinks de post social (`/p/`, `/reel/`, `/reels/`, `/stories/`, `/tv/`, `/s/`) en cualquier host de `SOCIAL_POST_HOSTS`, no sólo en Club TRI: la regla es del tipo de enlace, así que protege a toda fuente que mañana publique uno. La página de cuenta (`instagram.com/club.tri/`) sigue siendo enlace válido: es una página que existe mientras exista la cuenta.
+
+**2. `collectors/clubtri.py`.** Cada fila de Club TRI lleva `venue_url = https://clubtri.com/`, el sitio del club. La ficha muestra «Sala: Ver sitio de la sala» apuntando ahí, que es el único enlace estable que el club ofrece; antes esa línea no aparecía para ninguna fila de Club TRI.
+
+Build diferencial sobre una misma corrida real (`--today 2026-11-28`, **614 filas**): con el código anterior y con el nuevo, sobre los mismos `data/`, el único cambio en el HTML son **7 filas** que pierden el «Ver en Club TRI» de Instagram y quedan con «Fuente: Club TRI» en texto plano. Ningún otro enlace del sitio cambia, y no aparece ningún enlace nuevo. Las 7 son las tarjetas gratis de Club TRI de esta corrida (Ciclo Costa Cannabis, Pistilo 27 Aniversario, Latin Gateo, Cultura Abierta, Feria TRI Navideña, un documental de Boom Boom Kid, Mala Sangre 50 años).
+
+`data/` quedó sin regrabar en el repo, igual que en la sección 7: el deploy corre el pipeline y recién ahí las filas de Club TRI toman el `venue_url` nuevo. El snapshot commiteado conserva la corrida anterior.
+
+Estado de la suite: **819 tests pasan, 1 falla** (`test_build_site.py::TestRedesignMarkup::test_month_navigation_markup`). Esa falla es **previa a estos cambios** y de la misma familia que la de la sección 7: depende de la fecha, porque el fixture construye la agenda desde «hoy» y a fin de mes no queda ningún evento de noviembre en el build.

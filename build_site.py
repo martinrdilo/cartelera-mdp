@@ -291,6 +291,22 @@ _LISTING_MARKERS = tuple(marker.rstrip("/") for marker in LISTING_URL_PATTERNS)
 COLON_PROGRAM_HOST = "mardelplata.gob.ar"
 COLON_PROGRAM_PATH = "/colonprogramacion"
 
+# A social post is not a ficha. The venue deletes or privatizes its own posts
+# whenever it wants, and Instagram answers an unavailable post with its login
+# wall: the visitor reads "this post is not available", never the event. The
+# account page stays a page, so only the post permalinks are rejected.
+SOCIAL_POST_HOSTS = ("instagram.com",)
+SOCIAL_POST_SECTIONS = ("p", "reel", "reels", "stories", "tv", "s")
+
+
+def _is_social_post(parsed) -> bool:
+    """True for a post permalink (/p/..., /reel/...), not for the account page."""
+    host = parsed.netloc.lower().removeprefix("www.")
+    if not any(host == own or host.endswith("." + own) for own in SOCIAL_POST_HOSTS):
+        return False
+    section = parsed.path.strip("/").split("/", 1)[0].lower()
+    return section in SOCIAL_POST_SECTIONS
+
 
 def _listing_target(parsed) -> str:
     """The URL without its query string or fragment, as host+path.
@@ -322,6 +338,8 @@ def is_event_page(url) -> bool:
         return False
     # A root with a query string ("https://host/?p=1") is still a site root.
     if not parsed.path.strip("/"):
+        return False
+    if _is_social_post(parsed):
         return False
     if _is_colon_program_page(parsed):
         return True
