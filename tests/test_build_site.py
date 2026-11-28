@@ -13,6 +13,10 @@ from pathlib import Path
 
 import pytest
 
+from lib.social_posts import verdict_key
+
+from lib.social_posts import verdict_key
+
 import build_site
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -1004,23 +1008,56 @@ def test_every_listing_marker_rejects_its_trailing_slash_spellings(marker):
         assert not build_site.is_event_page(url), url
 
 
-def test_social_post_permalink_is_not_an_event_page():
-    # A post on the club's Instagram is not a ficha: the club deletes it or
-    # makes it private whenever it wants, and then the "Fuente" button opens
-    # "this post is not available". Better an unlinked source name than a
-    # link that dies.
+def test_a_story_is_not_an_event_page():
+    # A story lives 24 hours and then reads "story unavailable", whatever the
+    # club meant to publish, so it is never a ficha.
     for url in (
-        "https://www.instagram.com/p/Dfpe3r7ghri/",
-        "https://www.instagram.com/p/Df5eV8hmEhG/?img_index=1",
-        "https://instagram.com/reel/Cabc123/",
-        "https://www.instagram.com/reels/Cabc123/",
         "https://www.instagram.com/stories/club.tri/3141592653/",
-        "https://www.instagram.com/tv/Cabc123/",
+        "https://instagram.com/stories/club.tri/3141592653?utm_source=ig_story_item_share",
     ):
         assert not build_site.is_event_page(url), url
-    # PRESERVE: the account page still opens, and so does every real ficha.
-    assert build_site.is_event_page("https://www.instagram.com/club.tri/")
-    assert build_site.is_event_page("https://puntomardelplata.com/actividades/fiesta-plop-20501")
+    # PRESERVE: a post permalink opens the event the club announced -- the
+    # verified-unavailable verdicts, not the URL shape, decide the rest -- and
+    # so do the account page and every real ficha.
+    for url in (
+        "https://www.instagram.com/p/Dfpe3r7ghri/",
+        "https://www.instagram.com/reel/Cabc123/",
+        "https://www.instagram.com/club.tri/",
+        "https://puntomardelplata.com/actividades/fiesta-plop-20501",
+    ):
+        assert build_site.is_event_page(url), url
+
+
+def test_a_social_link_becomes_the_source_only_with_a_recorded_available_verdict():
+    # Shape is not evidence. Without a check that opened it, no social URL is a
+    # "Fuente", whatever its shape: a short link, a reels tab or a story would
+    # otherwise be published unverified, and a post the club restricted reads
+    # "Post isn't available" to every logged-out visitor.
+    for raw_url in (
+        "https://www.instagram.com/p/Dfpe3r7ghri/",
+        "https://www.instagram.com/s/abc/",
+        "https://www.instagram.com/reels/audio/123/",
+    ):
+        member = make_member("clubtri", raw_url=raw_url, is_free=True)
+        for verdicts in ({}, {verdict_key(raw_url): "unknown"}, {verdict_key(raw_url): "unavailable"}):
+            event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY, None, verdicts)
+            assert event["source_url"] is None, (raw_url, verdicts)
+            assert event["source_name"] is None, (raw_url, verdicts)
+    url = "https://www.instagram.com/p/DgNcIAMB8LP/"
+    verified = build_site.merge_members(
+        [make_member("clubtri", raw_url=url, is_free=True)],
+        empty_index(),
+        SNAPSHOT_TODAY,
+        None,
+        {verdict_key(url): "available"},
+    )
+    assert verified["source_url"] == url
+
+
+def test_an_instagram_post_is_never_the_buy_link():
+    member = make_member("clubtri", ticket_url="https://www.instagram.com/p/DgNcIAMB8LP/")
+    event = build_site.merge_members([member], empty_index(), SNAPSHOT_TODAY)
+    assert event["ticket_url"] is None
 
 
 def test_is_event_page_requires_an_http_scheme_and_a_real_path():

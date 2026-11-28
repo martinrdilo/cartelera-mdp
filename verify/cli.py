@@ -8,11 +8,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import core, duplicates, live, rebuild, snapshot
+from . import core, duplicates, live, rebuild, snapshot, social
 
 ROOT = Path(__file__).resolve().parents[1]
 
-COMMANDS = ("all", "snapshot", "rebuild", "duplicates", "links", "live")
+COMMANDS = ("all", "snapshot", "rebuild", "duplicates", "links", "live", "social")
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -28,6 +28,12 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--source", help="source name for the live command")
     parser.add_argument("--limit", type=int, help="max URLs for the links command")
     parser.add_argument("--timeout", type=float, default=10.0, help="per-request timeout in seconds")
+    parser.add_argument(
+        "--social-timeout-ms",
+        type=int,
+        default=social.DEFAULT_TIMEOUT_MS,
+        help="per-post browser timeout for the social command, in milliseconds",
+    )
     return parser
 
 
@@ -79,6 +85,25 @@ def main(argv=None, root=None) -> int:
             report.extend(
                 live.check_links(normalized, timeout=args.timeout, limit=args.limit)
             )
+
+        if args.command == "social":
+            try:
+                payload = social.run(data_dir, timeout_ms=args.social_timeout_ms)
+            except RuntimeError as exc:
+                print(f"verify: {exc}", file=sys.stderr)
+                return 2
+            verdicts = payload.get("verdicts") or {}
+            unavailable = sum(1 for value in verdicts.values() if value == "unavailable")
+            report.meta["scope"] = (
+                f"social: {len(verdicts)} post(s) checked, {unavailable} unavailable"
+            )
+            print(f"verify: wrote {data_dir / social.CHECK_FILE}")
+            if args.as_json:
+                print(json.dumps(payload, ensure_ascii=False, indent=2))
+            else:
+                for url, verdict in verdicts.items():
+                    print(f"  {verdict:<12} {url}")
+            return 0
 
         if args.command == "live":
             if not args.source:
