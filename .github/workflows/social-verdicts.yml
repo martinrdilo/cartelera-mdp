@@ -1,0 +1,57 @@
+name: Social post verdicts
+
+# Probe/manual for now: it answers one question before anything is scheduled --
+# can a GitHub runner open an Instagram post at all? A datacenter IP is often
+# answered with the login wall, which reads as "unknown" and leaves the
+# committed verdicts untouched (merge_verdicts keeps them).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verdicts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      # The committed snapshot carries no post links (the repo keeps data/ as
+      # the deploy left it), so the probe needs a real collect first.
+      - name: Run pipeline
+        run: python run_pipeline.py
+        continue-on-error: true
+
+      - name: Posts in the snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from verify.social import posts_to_check
+          urls = posts_to_check(Path("data"))
+          print(f"posts to check: {len(urls)}")
+          for url in urls:
+              print(f"  {url}")
+          PY
+
+      - name: Browser check
+        run: python -m verify social
+
+      - name: What the runner saw
+        run: |
+          echo "--- committed ---"
+          git show HEAD:data/social_post_checks.json || echo "(no committed file)"
+          echo "--- this run ---"
+          cat data/social_post_checks.json
